@@ -32,8 +32,8 @@ const getAccessToken = (timestamp) => {
     md5.update(key + timestamp);
     return md5.digest('hex');
 }
-console.log(getCheckQuery());
-console.log('token', getAccessToken(timestamp), timestamp);
+// console.log(getCheckQuery());
+// console.log('token', getAccessToken(timestamp), timestamp);
 
 /**
  * 
@@ -124,3 +124,21 @@ const findFirstPositive = (array) => {
 
 // let r = findFirstPositive([7, 8, 9, 11, 12]);
 // console.log('r', r); //1
+
+/**
+ * 计算m 的 n次幂
+ * @param {*} m 
+ * @param {*} n 
+ */
+const pow = (m, n) => {
+    let isPosix = n < 0 ? true : false;
+    n = Math.abs(Number(n));
+    let res = 1;
+    for (let i = 0; i < n; ++i) {
+        res *= m;
+    }
+    console.log(res);
+    return isPosix ? 1/res : res;
+}
+// let r = pow(2, -2);
+// console.log('r', r); 0.25
