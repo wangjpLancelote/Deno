@@ -2,6 +2,7 @@ const _ = require('lodash');
 const key = 'wangjianpingabcdefghijklmnuvwrstxyz1234567890';
 const moment = require('moment');
 const crypto = require('crypto');
+const domain = require('domain');
 const superagent = require('superagent');
 const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 const appKey = '338f8ee1c88d36f69812cbd299de2677';
@@ -284,6 +285,7 @@ class Solution {
 /**
  * 最近最少使用 策略
  * 可扩展为 k 容量
+ * @author W.J.P
  */
 class LRUCache {
     constructor () {
@@ -355,6 +357,7 @@ class Nim {
  * 存在有两个及以上的元素
  * @param {[*]} array
  * @returns Boolean
+ * @author W.J.P
  */
 const boolDoubleItem = (array) => {
     if (array.length <= 1) return false;
