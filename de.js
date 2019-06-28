@@ -4,6 +4,7 @@ const moment = require('moment');
 const crypto = require('crypto');
 const domain = require('domain');
 const superagent = require('superagent');
+const elasticsearch = require('elasticsearch');
 const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 const appKey = '338f8ee1c88d36f69812cbd299de2677';
 
@@ -370,3 +371,154 @@ const boolDoubleItem = (array) => {
 }
 // let r = boolDoubleItem([1,2,3,1]);
 // console.log('r', r); //true
+// superagent.get('https://ntt-demo.benewtech.cn/v6/service/detail/repair?userId=1122033156')
+// .withCredentials()
+// .set('Accept', 'application/json, text/plain, */*')
+// .set('User-Agent', 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1')
+// .then((data) => {
+//     console.log('data', data);
+// }).catch(err => {
+//     console.log('err', err);
+// })
+// console.log('sa', sa);
+// sa.set('Accept', 'application/json, text/plain, */*');
+// sa.set('User-Agent', 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1');
+// sa.end((err, body) => {
+//     if (err) return console.log(err);
+//     // console.log('body', body);
+// })
+
+/**
+ * 转换一个字符串为整数
+ * 找到第一个非空字符串，若为符号或数字，则查找之后的连续整数，并输出该连续整数
+ * 若满足以上条件且有空格，则跳过空格查找
+ * 若无法找到，则返回 0
+ * @example
+ * 'ewf123' => 0
+ * '   -435dff' => - 435
+ */
+class Atoi {
+    constructor (str) {
+        this.str = str;
+
+        this.res = this.search();
+    }
+
+    find () {
+        let arr = this.str.split('');
+        let item = arr.find((item, index) => {
+            return item !== ' ';
+        })
+        return arr.indexOf(item);
+    }
+    
+    search () {
+        let I = this.find();
+        const tmp = this.str.split('');
+        let res = '';
+        for (let i = I; i < tmp.length; ++i) {
+            if (!/(\-|\d|\+)/g.test(tmp[i])) break;
+            res += tmp[i];
+        }
+        return Number(res);
+    }
+}
+// let r = new Atoi('   -123d')
+// console.log(r.res); //-123
+
+/**
+ * @type 动态规划
+ * 最大水池容量问题
+ * 给定一组向量，找出两个元素，使得，x轴和y轴组成的面积最大
+ * @example
+ * [1,8,6,2,5,4,8,3,7] => 7 * (8 - 1) = 49;
+ * @returns
+ * area
+ */
+class MaxPool {
+    constructor (vector) {
+        this.vector = vector;
+
+        this.res = this.find();
+    }
+
+    find () {
+        const L = this.vector.length;
+        let res = 0;
+        for (let i = 0; i < L; ++i) {
+            for (let j = 0; j < L; ++j) {
+                if (j <= i) continue;
+                let area = (j - i) * this.selectMin(this.vector[i], this.vector[j]);
+                if (!res) {
+                    res = area;
+                } else {
+                    res = area > res ? area : res;
+                }
+            }
+        }
+        return res;
+    }
+
+    selectMin (item1, item2) {
+        return item1 < item2 ? item1 : item2;
+    }
+}
+// let r = new MaxPool([1,8,6,2,5,4,8,3,7]);
+// console.log(r.res); //49
+
+/**
+ * 三数之和
+ * 给定一个数组，从中找出三个元素使得这三个元素相加为0，找出所有满足条件且不重复的三元组
+ * @example
+ * [-1, 0, 1, 2, -1] => [-1, 0 1] | [-1, -1, 2]
+ * @returns Array
+ */
+class ThreeSum {
+    constructor (vector) {
+        this.vector = vector;
+
+        this.res = this.find();
+    }
+
+    find () {
+        const L = this.vector.length;
+        const res = [];
+        for (let i = 0; i < L; ++i) {
+            for (let j = 0; j < L; ++j) {
+                if (j <= i) continue;
+                for (let k = 0; k < L; ++k) {
+                    if (k <= j) continue; //排除相同元素
+                    if (this.vector[i] + this.vector[j] + this.vector[k]) continue;
+                    // if (res.map(c => c.sort(() => {return 1})).some(e => this.commonArray(e, [this.vector[i], this.vector[j], this.vector[k]].sort(() => { return 1; })))) continue;
+                    let tmpRes = res.map(t => {return t.sort(() => { return 1; })});
+                    console.log('tmp', tmpRes);
+                    res.map(r => {
+                        
+                        let s = r.sort(() => {return 1});
+                        console.log('r', s);
+                    })
+                    if (tmpRes.some(e => {return this.commonArray(e, [this.vector[i], this.vector[j], this.vector[k]].sort(() => { return 1; }))})) continue;
+                    res.push([this.vector[i], this.vector[j], this.vector[k]]);
+                }
+            }
+        }
+        return res;
+    }
+
+    /** 是否是两个相同的数组 */
+    commonArray (arr1, arr2) {
+        if (!arr1.length || !arr2.length) return new Error('array no items error');
+        arr1.sort((a, b) => { return 1 });
+        arr2.sort((a, b) =>  { return -1 });
+        return arr1.toString() === arr2.toString();
+    }
+
+    /** main数组里是否有 两组target及以上的数组数量  */
+    hasTwoItemsOfArray (main, target) {
+        return target.every (c => {
+            return main.indexOf(c) !==  main.lastIndexOf(c);
+        });
+    }
+}
+let r = new ThreeSum([-1, 0, 1, 2, -1]);
+console.log(r.res);
