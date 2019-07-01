@@ -2,6 +2,7 @@ const _ = require('lodash');
 const key = 'wangjianpingabcdefghijklmnuvwrstxyz1234567890';
 const moment = require('moment');
 const crypto = require('crypto');
+const CryptoJS = require('crypto-js');
 const domain = require('domain');
 const superagent = require('superagent');
 const elasticsearch = require('elasticsearch');
@@ -520,5 +521,26 @@ class ThreeSum {
         });
     }
 }
-let r = new ThreeSum([-1, 0, 1, 2, -1]);
-console.log(r.res);
+// let r = new ThreeSum([-1, 0, 1, 2, -1]);
+// console.log(r.res);
+
+/**
+ * 程序延时执行
+ */
+class SleepHelper {
+    constructor () {
+
+    }
+    static sleep (seconds) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(null);
+            }, seconds * 1000)
+        })
+    }
+}
+
+for (let i = 0; i < 10; ++i) {
+    if (i === 5) SleepHelper.sleep(1);
+    console.log('i', i);
+}
