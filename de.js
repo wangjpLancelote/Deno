@@ -540,7 +540,12 @@ class SleepHelper {
     }
 }
 
-for (let i = 0; i < 10; ++i) {
-    if (i === 5) SleepHelper.sleep(1);
-    console.log('i', i);
-}
+// for (let i = 0; i < 10; ++i) {
+//     if (i === 5) {
+//         console.time('r');
+//         SleepHelper.sleep(1);
+//         console.timeEnd('r');
+//         console.log('---');
+//     } 
+//     console.log('i', i);
+// }
