@@ -1,0 +1,27 @@
+syntax = "proto3"; //默认使用proto2版本
+//NodeJS 无需预编译proto文件，因此不需要加option参数
+
+option java_multiple_files = true;  //参数--是否支持多文件
+option java_package = "io.grpc.examples.helloworld"; //java文件的包名
+option java_outer_classname = "HelloWorldProto";  //输出的文件名
+option objc_class_prefix = "HLW";
+
+package helloworld;
+
+service Greeter {
+    rpc sayHello (HelloRequest) returns (HelloReply) {}
+}
+
+/**
+定义请求的消息体
+*/
+message HelloRequest {
+    string name = 1;
+}
+
+/**
+定义响应的消息体
+*/
+message HelloReply {
+    string message = 1;
+}

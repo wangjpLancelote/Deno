@@ -549,3 +549,163 @@ class SleepHelper {
 //     } 
 //     console.log('i', i);
 // }
+
+/**
+ * 判断是否是闭合的括号
+ */
+class ensureBracket {
+    constructor (str = '') {
+        this.str = str;
+
+        this.res = this.find();
+    }
+
+    find () {
+        if ((this.str.length & 1) || !this.str.length) return false;
+
+        let L = this.str.length;
+        for (let i = 0; i < L; ++i) {
+            console.log(this.str[i]);
+        }
+        return true;
+    }
+
+    generateTrendsCode (deviceId) {
+        const base = 123456789;
+        // return Number(((deviceId + Date.now()) & base).toString().substr(0, 6));
+        let index = '';
+        for (let i = 0; i < 6; ++i) {
+        //    index += _.random(123456);
+        // console.log('d', _.random(123456));
+        index += Math.floor(Math.random() * 10);
+        }
+        return Number(index);
+      }
+}
+// let r = new ensureBracket();
+// console.log('r', r.generateTrendsCode());
+// // console.log('r', r.res);
+// console.log('-', _.isEmpty([]));
+
+/**
+ * 寻路迷宫问题
+ * 求最短路径
+ */
+class BinaryTreeSearch {
+    constructor () {
+        /**迷宫的为5 x 5的方形 */
+        this.len = 5;
+
+        /**起点 */
+        this.src = [0, 0];
+
+        /**终点 */
+        this.des = [2, 3];
+
+        /**下一步的方位 四个方向*/
+        this.next = [[0, -1], [0, 1], [1, 0], [-1, 0]];
+
+        /**
+         * 迷宫
+         * 三维数组组成，第三位表示能否通过
+         */
+        this.palace = [];
+
+        this.wall = [[0, 1], [1, 3], [3, 3]];
+
+        this.min = this.len * this.len + 1; //记录最短路径 (理论上的最大的长度，走遍所有地图)
+
+        this.map = [];
+    }
+
+    init () {
+        this.setPalace();
+
+        this.setWall();
+    }
+    setPalace () {
+        for (let i = 0; i < this.len; ++i) {
+            for (let j = 0; j < this.len; ++j) {
+                this.palace.push([i, j, 1]);
+            }
+        }
+        return this.palace;
+    }
+    setWall () {
+        for (let i = 0; i < this.wall.length; ++i) {
+            this.palace[this.wall[i][0] + this.palace[i][1]][2] = 0;
+        }
+        return this;
+    }
+
+    /**
+     * 绘制地图
+     */
+    fillPalace () {
+        console.log('-------------------------');
+        for (let i = 0; i < this.len; ++i) {
+            let shower = '';
+            for (let j = 0; j < this.len; ++j) {
+                if (i === this.src[0] && j === this.src[1]) {
+                    shower += ' ▶ '; //起点
+                } else if (i === this.des[0] && j === this.des[1]) {
+                    shower += ' ● ' //目标
+                } else if (this.palace[i * this.len + j][2] === 0) {
+                    shower += ' ■ '; //墙
+                } else if (this.palace[i * this.len + j][2] === 1) {
+                    shower += ' □ '; //空地
+                } else if (this.palace[i * this.len + j][2] === 2) {
+                    shower += '*';  //路径
+                }
+                
+            }
+            console.log(shower + '|');
+        }
+        console.log('--------------------');
+    }
+    /**
+     * 寻路
+     * 深度优先
+     */
+    search (pos, step, result) {
+        /**找到了目标 */
+        if (pos[0] === this.des[0] && pos[1] === this.des[1]) {
+            if (step < this.min) {
+                this.map = [];
+                for (let r = 0; r < result; ++r) {
+                    this.map.push(result[r])
+                }
+                this.min = step;
+                result = [];
+            }
+        }
+
+        /**递归搜索 */
+        for (let i = 0; i < this.next.length; ++i) {
+            let tmpPos = (pos[0] + this.next[i][0]) * this.len + pos[1] + this.next[i][1]; //下一步的坐标
+            if (pos[0] + this.next[i][0] < 0 || pos[0] + this.next[i][0] >= this.len || pos[1] + this.next[i][1] < 0 || pos[1] + this.next[i][1] >= this.len) {
+                continue; //下一步越界了
+            } else if (this.palace[tmpPos] && this.palace[tmpPos][2] === 1) { //下一步不是墙
+                this.palace[tmpPos][2] = 0;
+                result.push(pos[0] + this.next[i][0], pos[1] + this.next[i][1]);
+                this.search([pos[0] + this.next[i][0], pos[1] + this.next[i][1]], step + 1, result);
+                this.palace[tmpPos][2] = 1; //尝试结束，取消标记
+                result.pop();
+            }
+        }
+
+    }
+    start () {
+        this.init();
+        this.palace[0][2] = 0;
+        this.search(this.src, 0, []);
+        this.fillPalace();
+        return this;
+    }
+}
+let r = new BinaryTreeSearch();
+console.log('s', r.start());
+// console.log(r.palace);
+// r.fillPalace();
+
+
