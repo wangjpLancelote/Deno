@@ -703,9 +703,3 @@ class BinaryTreeSearch {
         return this;
     }
 }
-let r = new BinaryTreeSearch();
-console.log('s', r.start());
-// console.log(r.palace);
-// r.fillPalace();
-
-
