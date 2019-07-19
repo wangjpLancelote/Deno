@@ -703,3 +703,56 @@ class BinaryTreeSearch {
         return this;
     }
 }
+
+function tes () {
+    // const CONSTANT_NUM = 1234567890;
+    // const CONSTANT_STD_NUM = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const CONSTANT_STD_STR = [
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+    'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+    'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    let str = '';
+    let num = '';
+    const len = CONSTANT_STD_STR.length;
+
+    for (let i = 0; i < 2; ++i) {
+      str += CONSTANT_STD_STR[Math.round(Math.random() * (len - 1))];
+      num += Math.floor(Math.random() * 10);
+    }
+    let str_num = CONSTANT_STD_STR[Math.floor(Math.random() * (len - 1))] + Math.floor(Math.random() * 10);
+
+    return str + num + str_num;
+}
+// console.log('tes', tes());
+
+/**
+ * kNuth Shuffle 洗牌算法
+ */
+class KnuthShuffle {
+    constructor (array) {
+        this.array = array;
+
+        this.res = this.shuffle();
+    }
+
+    shuffle () {
+        for (let L = this.array.length; L >= 0 ; --L) {
+            let tmp = this.array[L];
+            this.array[L] = this.array[Math.random() % (L + 1)];
+            this.array[Math.floor((Math.random() * 10) % (L + 1))] = tmp;
+            // this.swap(this.array[L], this.array[Math.random() % (L + 1)]);
+        }
+        return this.array;
+    }
+
+    swap (key1, key2) {
+        let tmp = key1;
+        key1 = key2;
+        key2 = tmp;
+        tmp = null;
+    }
+}
+
+let r = new KnuthShuffle([1,2,3,4,5,6,7]);
+console.log('r', r);
