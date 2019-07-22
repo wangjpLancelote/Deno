@@ -754,5 +754,71 @@ class KnuthShuffle {
     }
 }
 
-let r = new KnuthShuffle([1,2,3,4,5,6,7]);
-console.log('r', r);
+// let r = new KnuthShuffle([1,2,3,4,5,6,7]);
+// console.log('r', r);
+
+class line_random {
+    constructor () {
+        this.res = null;
+    }
+
+    /**获取种子 */
+    getSeed () {
+        let n = Date.now();
+        return ((n * 9301 + 49297) % 233280) / 233280;
+    }
+
+    find (min, max, extract) {
+        if (arguments.length === 0) {
+            return Math.random();
+        } else if (arguments.length === 1) {
+            max = min;
+            min = 0;
+        }
+        let range = min + this.getSeed() * (max - min);
+        return extract === void(0) ? Math.round(range) : range.toFixed(extract);
+    }
+}
+
+// let r = new line_random();
+// console.log('r: %d, d: %d', r.find(), r.getSeed());
+class minimum_str {
+    constructor (str, target, offset) {
+        /**目标字符 */
+        this.str = str;
+        /**偏移量 */
+        this.offset = 0;
+
+        this.target = target;
+    }
+
+    find () {
+        let sl = this.target.length;
+        let L = this.str.length;
+
+        for (let i = this.offset; i < L; ++i) {
+            if (i < this.sl - 1) continue;
+            let res = this.sqrt(this.offset, i, this.str);
+        }
+    }
+
+    sqrt (first, second, array) {
+        let res = array.slice();
+        if (first === 0) return res.slice(0, second);
+        return res.splice(first, second);
+    }
+
+    forT (offset, array, str) {
+        for (let i = offset; i < array.length; ++i) {
+            if (i < str.length - 1) continue;
+            if (i === array.length - 1) {
+                offset += 1;
+                this.forT(offset, array, sl);
+            }
+            let res = this.sqrt(offset, i, str);
+            if (res.includes(str)) {
+                return 
+            }
+        }
+    }
+}
