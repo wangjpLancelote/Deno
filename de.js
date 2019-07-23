@@ -822,3 +822,4 @@ class minimum_str {
         }
     }
 }
+console.log('dd');
