@@ -816,10 +816,19 @@ class minimum_str {
                 this.forT(offset, array, sl);
             }
             let res = this.sqrt(offset, i, str);
-            if (res.includes(str)) {
-                return 
-            }
+            if (str.split('').every(n => {return res.includes(n)})) return str;
+            // if (res.includes(str)) {
+            //     return 
+            // }
         }
     }
 }
-console.log('dd');
+
+/**
+ * 梅森旋转法生成随机数
+ */
+class MesonRoundRandom {
+    constructor () {
+
+    }
+}
