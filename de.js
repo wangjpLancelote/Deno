@@ -829,6 +829,91 @@ class minimum_str {
  */
 class MesonRoundRandom {
     constructor () {
+        this.isInit = false;
 
+        this.index;
+
+        this.MT = new Array(624);
     }
+
+    static booArray (arr) {
+        return Array.isArray(arr);
+    }
+
+    /**
+     * 设置种子
+     * 初始化数组 MT
+     */
+    srand (seed) {
+        this.index = 0;
+        this.isInit = true;
+        this.MT[0] = seed;
+
+        for (let i = 1; i < 624; ++i) {
+            let t = 1812433253 * (this.MT[i - 1] ^ (this.MT[i - 1] >> 30)) + i;
+            this.MT[i] = t & 0xffffffff; //取最后的32位
+        }
+    }
+
+    generate () {
+        for (let i = 0; i < 624; ++i) {
+            let n = (this.MT[i] & 0x80000000) + (this.MT[(i + 1) % 624] & 0x7fffffff);
+            this.MT[i] = this.MT[(i + 397) % 624] ^ (n >> 1);
+            if (n & 1) { //奇数
+                this.MT[i] ^= 2567483615;
+            }
+        }
+    }
+
+    rand () {
+        if (!this.isInit) {
+            this.srand(new Date().getTime()); //非初始化，即初始化数组
+        }
+            if (this.index == 0) this.generate(); //偏移量
+
+            let y = this.MT[this.index];
+
+            y = y ^ (y >> 11);
+            y = y ^ ((y << 7) & 2636928640);
+            y = y ^ ((y << 15) & 4022730752);
+            y = y ^ (y >> 18);
+
+            this.index = (this.index + 1) % 624; //返回元素下标 保证index 永远在数组范围内
+            return y;
+    }
+
+    /**
+     * knuth shuffle
+     * @param {Array} arr 
+     */
+    shuffle (arr) {
+        this.srand(new Date().getTime());
+        for (let i = arr.length - 1; i >= 0; --i) {
+            let r = this.rand();
+            let randomIndex = r % arr.length;
+            let item = arr[randomIndex];
+            arr[randomIndex] = arr[i];
+            arr[i] = item;
+        }
+        return arr;
+    }
+
 }
+
+let r = new MesonRoundRandom();
+let t = r.shuffle([1,2,3,4,5,6,7]);
+r.srand(new Date().getTime());
+console.log('rand', r.rand());
+let m;
+let cnt = 0;
+let obj = {};
+for (let i = 0; i < 100000000; ++i) {
+    let se = r.rand();
+    if (m === se) {
+        obj[se] += 1
+        cnt += 1;
+    }
+    m = se;
+}
+console.log('obj: %j, m: %d, cnt : %d', obj, m, cnt);
+_.random();
