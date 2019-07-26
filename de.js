@@ -8,6 +8,7 @@ const superagent = require('superagent');
 const elasticsearch = require('elasticsearch');
 const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 const appKey = '338f8ee1c88d36f69812cbd299de2677';
+const Bluebird = require('bluebird');
 
 let a = [1,2,3,4];
 // _.each(a, (v) => {
@@ -826,20 +827,25 @@ class minimum_str {
 
 /**
  * 梅森旋转法生成随机数
+ * 对于一个 k位的MT数, 在[0, 2^k-1]的区间内能产生离散型均匀分布的随机数
+ * 最新的梅森素数(19937) 有32位和64位两种实现 因此最少都有2^32 - 1种随机范围 代表周期是2^19937 - 1 意味着,按顺序的话，要过2^19937次才会重复。
+ * 
+ * 这里用的32位算法
+ * 旋转：通过线性移位寄存器进行移位，将每一步移位之后的数与一个通过(不可约的多项式)计算后的某些位进行异或操作,将一个数按位进行位操作，经过一个周期后就能回复到原来的数，这个过程叫做旋转。
+ * 
  */
 class MesonRoundRandom {
     constructor () {
-        this.isInit = false;
+        this.isInit = false; //是否已经设置种子
 
-        this.index;
+        this.index; //偏移量
 
-        this.MT = new Array(624);
+        this.MT = new Array(624); //创建624长度的元素数组
     }
 
-    static booArray (arr) {
+    static boolArray (arr) {
         return Array.isArray(arr);
     }
-
     /**
      * 设置种子
      * 初始化数组 MT
@@ -864,24 +870,36 @@ class MesonRoundRandom {
             }
         }
     }
-
     rand () {
         if (!this.isInit) {
             this.srand(new Date().getTime()); //非初始化，即初始化数组
         }
-            if (this.index == 0) this.generate(); //偏移量
+        if (this.index == 0) this.generate(); //偏移量
 
-            let y = this.MT[this.index];
+        let y = this.MT[this.index];
 
-            y = y ^ (y >> 11);
-            y = y ^ ((y << 7) & 2636928640);
-            y = y ^ ((y << 15) & 4022730752);
-            y = y ^ (y >> 18);
+        /**移位 旋转 */
+        y = y ^ (y >> 11);
+        y = y ^ ((y << 7) & 2636928640);
+        y = y ^ ((y << 15) & 4022730752);
+        y = y ^ (y >> 18);
 
-            this.index = (this.index + 1) % 624; //返回元素下标 保证index 永远在数组范围内
-            return y;
+        this.index = (this.index + 1) % 624; //返回元素下标 保证index 永远在数组范围内
+        return y;
     }
-
+    /**
+     * 选取区间
+     * @param {Number} fixed 
+     */
+    toFixedRand (fixed) {
+        if (fixed) {
+            fixed = Number(fixed);
+            if (!_.isNumber(fixed)) throw new Error('输入正确的进制');
+        } else {
+            fixed = 10;
+        }
+        return this.rand() % fixed;
+    }
     /**
      * knuth shuffle
      * @param {Array} arr 
@@ -900,20 +918,37 @@ class MesonRoundRandom {
 
 }
 
-let r = new MesonRoundRandom();
-let t = r.shuffle([1,2,3,4,5,6,7]);
-r.srand(new Date().getTime());
-console.log('rand', r.rand());
-let m;
-let cnt = 0;
-let obj = {};
-for (let i = 0; i < 100000000; ++i) {
-    let se = r.rand();
-    if (m === se) {
-        obj[se] += 1
-        cnt += 1;
+// let r = new MesonRoundRandom();
+// let t = r.shuffle([1,2,3,4,5,6,7]);
+// r.srand(new Date().getTime());
+// console.log('rand', r.toFixedRand(26));
+// console.log('t', t);
+
+class strategy {
+    constructor () {
+
     }
-    m = se;
+
+    async model (params) {
+        let model = (params) => {
+            console.log('params', params);
+        }
+        let _model = Bluebird.promisify(model);
+        return await _model(params)
+    }
+
+    nool (param) {
+        console.log('param', param);
+    }
+
+    tool (p) {
+        let tool = (p) => {
+            console.log('p', p);
+        }
+        return tool(p);
+    }
 }
-console.log('obj: %j, m: %d, cnt : %d', obj, m, cnt);
-_.random();
+// let r = new strategy();
+// r.model(1);
+// r.nool(2);
+// r.tool(3);
