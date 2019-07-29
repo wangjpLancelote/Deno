@@ -952,3 +952,28 @@ class strategy {
 // r.model(1);
 // r.nool(2);
 // r.tool(3);
+
+class IntervalPool {
+    constructor () {
+
+    }
+
+    callback () {
+        console.log('callback');
+    }
+    event () {
+        let i = 0;
+        let arr = [0, 0, 0, 0, 1, 1, 1];
+        return () => {console.log('event轮询第' + i + "次"); return Boolean(arr[i++])};
+    }
+    boostrap (event, cb, interval) {
+        if (event()) {
+            return cb();
+        } else {
+            setTimeout(() => {this.boostrap(event, cb, interval)}, interval);
+        }
+    }
+}
+
+let r = new IntervalPool();
+r.boostrap(r.event(), r.callback, 1000);

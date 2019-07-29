@@ -5,7 +5,17 @@ class MyMQ {
         this.hosts = [];
         this.index = 0;
         this.length = this.hosts.length;
+        this.urlOpt = {
+            protocol: 'amqp',
+            hostname: this.hosts[this.index],
+            port: 15672,
+            username: 'guest',
+            password: 'guest',
+            frameMax: 0,
+            heartbeat: 30
+        };
         this.open = amqplib.connect(this.hosts[this.index]);
+        // this.open = amqplib.connect(this.urlOpt);
     }
 
     /**
@@ -90,3 +100,8 @@ class MyMQ {
             })
     }
 }
+
+let mq = new MyMQ();
+mq.sendQueueMessage('testQueue', 'my first message', (err) => {
+    console.log('error', err);
+});
