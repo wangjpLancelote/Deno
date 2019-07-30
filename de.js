@@ -849,6 +849,7 @@ class MesonRoundRandom {
     /**
      * 设置种子
      * 初始化数组 MT
+     * 一般用当前时间的毫秒数
      */
     srand (seed) {
         this.index = 0;
@@ -888,7 +889,7 @@ class MesonRoundRandom {
         return y;
     }
     /**
-     * 选取区间
+     * 选取区间 返回区间内的随机数
      * @param {Number} fixed 
      */
     toFixedRand (fixed) {
@@ -898,10 +899,12 @@ class MesonRoundRandom {
         } else {
             fixed = 10;
         }
+        this.srand(new Date().getTime());
         return this.rand() % fixed;
     }
     /**
      * knuth shuffle
+     * 洗牌算法, 打乱数组顺序
      * @param {Array} arr 
      */
     shuffle (arr) {
@@ -915,13 +918,12 @@ class MesonRoundRandom {
         }
         return arr;
     }
-
 }
 
 // let r = new MesonRoundRandom();
 // let t = r.shuffle([1,2,3,4,5,6,7]);
-// r.srand(new Date().getTime());
-// console.log('rand', r.toFixedRand(26));
+// // r.srand(new Date().getTime());
+// console.log('rand', r.toFixedRand(10));
 // console.log('t', t);
 
 class strategy {
@@ -975,5 +977,31 @@ class IntervalPool {
     }
 }
 
-let r = new IntervalPool();
-r.boostrap(r.event(), r.callback, 1000);
+// let r = new IntervalPool();
+// r.boostrap(r.event(), r.callback, 1000);
+
+/**
+ * 计算数量最大的编码方式
+ * 给定一个数字非空字符串
+ */
+class encodeAlpha {
+    constructor (target) {
+        this.target = target;
+
+        this.cnt = 0;
+    }
+
+    diliver () {
+        for (let i = 0; i < this.target.length; ++i) {
+            console.log('i', this.target[i]);
+            this.cnt += 1;
+            if ((i + 1) < this.target.length && Number(this.target[i] + this.target[i + 1]) < 27) {
+                this.cnt += 1;
+                continue;
+            }
+        }
+    }
+}
+// let r = new encodeAlpha('1234');
+// r.diliver();
+// console.log('r', r.cnt);
