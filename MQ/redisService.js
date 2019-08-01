@@ -2,6 +2,7 @@
 // require('../server.babel'); // babel registration (runtime transpilation for node)
 import redis from 'redis'
 import Bluebird from 'bluebird'
+import { formatWithOptions } from 'util';
 
 export default class RedisService {
     constructor () {
@@ -554,9 +555,9 @@ export default class RedisService {
     }
 
     /**交集 */
-    sinter (field, ...field) {
+    sinter (...field) {
         return new Promise((resolve, reject) => {
-            this.client.sinter(field, ...field, (err, res) => {
+            this.client.sinter(...field, (err, res) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -567,9 +568,9 @@ export default class RedisService {
     }
 
     /**取交集并保存到集合中 */
-    sinterStore (destination, field, ...field) {
+    sinterStore (destination, ...field) {
         return new Promise((resolve, reject) => {
-            this.client.sinterstore(destination, field, ...field, (err, res) => {
+            this.client.sinterstore(destination, ...field, (err, res) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -580,9 +581,9 @@ export default class RedisService {
     }
 
     /**并集 */
-    sunion (field, ...field) {
+    sunion (...field) {
         return new Promise((resolve, reject) => {
-            this.client.sunion(field, ...field, (err, res) => {
+            this.client.sunion(...field, (err, res) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -592,9 +593,9 @@ export default class RedisService {
         })
     }
 
-    sunionStore (destination, field, ...field) {
+    sunionStore (destination, ...field) {
         return new Promise((resolve, reject) => {
-            this.client.sunionstore(destination, field, ...field, (err, res) => {
+            this.client.sunionstore(destination, ...field, (err, res) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -605,9 +606,9 @@ export default class RedisService {
     }
 
     /**差集 */
-    sdiff (field, ...field) {
+    sdiff (...field) {
         return new Promise((resolve, reject) => {
-            this.client.sdiff(field, ...field, (err, res) => {
+            this.client.sdiff(...field, (err, res) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -639,9 +640,9 @@ export default class RedisService {
      * @returns
      * 返回成功添加的数量，不包括被更新的、已存在的成员
      */
-    zadd (field, ...score, ...member) {
+    zadd (field, score, ...member) {
         return new Promise((resolve, reject) => {
-            this.client.zadd(field, ...score, ...member, (err, res) => {
+            this.client.zadd(field, score, ...member, (err, res) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -663,10 +664,142 @@ export default class RedisService {
         })
     }
 
-    
+    zincrby (field, increment, member) {
+        return new Promise((resolve, reject) => {
+            this.client.zincrby(field, increment, member, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
 
+    zcard (field) {
+        return new Promise((resolve, reject) => {
+            this.client.zcard(field, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+    
+    zcount (field, min, max) {
+        return new Promise((resolve, reject) => {
+            this.client.zcount(field, min, max, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    zrange (field, start, stop) {
+        return new Promise((resolve, reject) => {
+            this.client.zrange(field, start, stop, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    zrangWithScores (field, start, stop) {
+        return new Promise((resolve, reject) => {
+            this.client.zrange(field, start, stop, 'WITHSCORES',  (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    zrank (field, member) {
+        return new Promise((resolve, reject) => {
+            this.client.zrank(field, member, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    zrem (field, member) {
+        return new Promise((resolve, reject) => {
+            this.client.zrem(field, member, (err ,res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    /**hyperLoglog */
+    pfadd (field, ...value) {
+        return new Promise((resolve, reject) => {
+            this.client.pfadd(field, ...value, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    pfcount (field) {
+        return new Promise((resolve, reject) => {
+            this.client.pfcount(field, (err ,res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    pfmerge (destkey, ...sourceKey) {
+        return new Promise((resolve, reject) => {
+            this.client.pfmerge(destkey, ...sourceKey, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    multi (section) {
+        return new Promise((resolve, reject) => {
+            let res = this.client.multi(section).exec((err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+        })
+    }
 
 }
+
+
 
 let fetch = async () => {
     let r = new RedisService();
@@ -691,7 +824,8 @@ let fetch = async () => {
     // let res = await r.sismember('member', 'a');
     // let res = await r.spop('member');
     // let res = await r.smember('member');
-    let res = await r.scard('member');
+    // let res = await r.scard('member');
+    let res = await r.multi(r.incr('tiny'))
 
     console.log('res', res);
 
