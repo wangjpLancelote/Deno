@@ -1005,3 +1005,10 @@ class encodeAlpha {
 // let r = new encodeAlpha('1234');
 // r.diliver();
 // console.log('r', r.cnt);
+
+console.log('time', moment().unix());
+console.log('time2', Date.now());
+console.log('time3', new Date().getTime());
+console.log('time4', Date.parse(new Date()));
+console.log('time5', new Date().valueOf());
+console.log('time7', +new Date());

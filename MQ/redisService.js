@@ -333,6 +333,8 @@ export default class RedisService {
         })
     }
 
+    /**list 有序数组 */
+
     lpush (field, ...value) {
         return new Promise ((resolve, reject) => {
             this.client.lpush(field, ...value, (err, res) => {
@@ -466,7 +468,7 @@ export default class RedisService {
         })
     }
 
-    /**set */
+    /**set 集合*/
     sadd (field, ...member) {
         return new Promise((resolve, reject) => {
             this.client.sadd(field, ...member, (err, res) => {
@@ -479,7 +481,7 @@ export default class RedisService {
         })
     }
 
-    smember (field) {
+    smembers (field) {
         return new Promise((resolve, reject) => {
             this.client.smembers(field, (err, res) => {
                 if (err) {
@@ -527,6 +529,142 @@ export default class RedisService {
         })
     }
 
+    sremove (field, key) {
+        return new Promise((resolve, reject) => {
+            this.client.srem(field, key, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res ? true : false);
+                }
+            })
+        })
+    }
+
+    scard (field) {
+        return new Promise((resolve, reject) => {
+            this.client.scard(field, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    /**交集 */
+    sinter (field, ...field) {
+        return new Promise((resolve, reject) => {
+            this.client.sinter(field, ...field, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    /**取交集并保存到集合中 */
+    sinterStore (destination, field, ...field) {
+        return new Promise((resolve, reject) => {
+            this.client.sinterstore(destination, field, ...field, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        }) 
+    }
+
+    /**并集 */
+    sunion (field, ...field) {
+        return new Promise((resolve, reject) => {
+            this.client.sunion(field, ...field, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    sunionStore (destination, field, ...field) {
+        return new Promise((resolve, reject) => {
+            this.client.sunionstore(destination, field, ...field, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    /**差集 */
+    sdiff (field, ...field) {
+        return new Promise((resolve, reject) => {
+            this.client.sdiff(field, ...field, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    sdiffStore (destination, ...field) {
+        return new Promise((err, res) => {
+            this.client.sdiffstore(destination, ...field, (err, res) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    /**有序集合 */
+
+    /**
+     * 
+     * @param {*} field 
+     * @param  {...any} score 
+     * @param  {...any} member 
+     * @returns
+     * 返回成功添加的数量，不包括被更新的、已存在的成员
+     */
+    zadd (field, ...score, ...member) {
+        return new Promise((resolve, reject) => {
+            this.client.zadd(field, ...score, ...member, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    zscore (field, member) {
+        return new Promise((resolve, reject) => {
+            this.client.zscore(field, member, (err, res) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            })
+        })
+    }
+
+    
+
 
 }
 
@@ -552,7 +690,8 @@ let fetch = async () => {
     // let res = await r.sadd('member', 'a', 'b', 'c');
     // let res = await r.sismember('member', 'a');
     // let res = await r.spop('member');
-    let res = await r.smember('member');
+    // let res = await r.smember('member');
+    let res = await r.scard('member');
 
     console.log('res', res);
 
