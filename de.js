@@ -6,8 +6,9 @@ const CryptoJS = require('crypto-js');
 const domain = require('domain');
 const superagent = require('superagent');
 const elasticsearch = require('elasticsearch');
-const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
-const appKey = '338f8ee1c88d36f69812cbd299de2677';
+const uuidV1 = require('uuid/v1');
+// const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
+// const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require('bluebird');
 
 let a = [1,2,3,4];
@@ -18,7 +19,7 @@ const md5 = require('crypto').createHash('md5');
 // md5.update(key + Date.now());
 // let t = md5.digest('hex');
 let timestamp = Date.now();
-const appId = '338f8ee1c88d36f69812cbd299de2677';
+// const appId = '338f8ee1c88d36f69812cbd299de2677';
 // console.log(t);
 const body = {
     "title":"工单标题",
@@ -68,29 +69,29 @@ const body = {
  * 七鱼接口 query参数
  * @param {*} body 
  */
-const getCheckQuery = (body = {}) => {
-    let unix = moment().unix();
-    console.log('checksum', checksum(JSON.stringify(body), unix));
-    return `appKey=${appId}&time=${unix}&checksum=${checksum(JSON.stringify(body), unix)}`;
-}
+// const getCheckQuery = (body = {}) => {
+//     let unix = moment().unix();
+//     console.log('checksum', checksum(JSON.stringify(body), unix));
+//     return `appKey=${appId}&time=${unix}&checksum=${checksum(JSON.stringify(body), unix)}`;
+// }
 
 
-const checksum = (content, time) => {
-    const sha1 = crypto.createHash('sha1');
-    const md5 = crypto.createHash('md5');
-    md5.update(content);
-    sha1.update(appSecret + md5.digest('hex') + time);
-    return sha1.digest('hex');
-  }
+// const checksum = (content, time) => {
+//     const sha1 = crypto.createHash('sha1');
+//     const md5 = crypto.createHash('md5');
+//     md5.update(content);
+//     sha1.update(appSecret + md5.digest('hex') + time);
+//     return sha1.digest('hex');
+//   }
 
 /**
  * 获取accessToken
  * @param {} timestamp  时间戳
  */
-const getAccessToken = (timestamp) => {
-    md5.update(appKey + timestamp);
-    return md5.digest('hex');
-}
+// const getAccessToken = (timestamp) => {
+//     md5.update(appKey + timestamp);
+//     return md5.digest('hex');
+// }
 // console.log('Query', getCheckQuery(body));
 // superagent.post(`https://qiyukf.com/openapi/v2/ticket/create?` + getCheckQuery(body))
 // .set('Content-Type', 'application/json;charset=utf-8')
@@ -103,7 +104,7 @@ const getAccessToken = (timestamp) => {
 //     }
 // })
 
-console.log('token', getAccessToken(timestamp), timestamp);
+// console.log('token', getAccessToken(timestamp), timestamp);
 
 /**
  * 
@@ -1006,9 +1007,71 @@ class encodeAlpha {
 // r.diliver();
 // console.log('r', r.cnt);
 
-console.log('time', moment().unix());
-console.log('time2', Date.now());
-console.log('time3', new Date().getTime());
-console.log('time4', Date.parse(new Date()));
-console.log('time5', new Date().valueOf());
-console.log('time7', +new Date());
+// console.log('time', moment().unix());
+// console.log('time2', Date.now());
+// console.log('time3', new Date().getTime());
+// console.log('time4', Date.parse(new Date()));
+// console.log('time5', new Date().valueOf());
+// console.log('time7', +new Date());
+class AES {
+    constructor (message, secretKey) {
+        this.message = message;
+        this.secretKey = secretKey;
+    }
+
+    /**加密 */
+    encrypt () {
+        const cipher = crypto.createCipher('aes192', this.secretKey);
+        let crypted = cipher.update(this.message, 'utf8', 'hex');
+        crypted += cipher.final('hex');
+        return crypted;
+
+    }
+
+    /**解密 */
+    decrypt (data) {
+        const decipher = crypto.createDecipher('aes192', this.secretKey);
+        let decrypted = decipher.update(data, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted;
+    }
+}
+
+// let r = new AES('this is data', 'secretKey');
+// let encry = r.encrypt();
+// let dencry = r.decrypt(encry);
+// console.log('encry: %j, dencry: %j', encry, dencry);
+
+class DiffieHelman {
+    constructor () {
+
+    }
+    
+    getAkeys () {
+        let base = crypto.createDiffieHellman(512);
+        let base_keys = base.generateKeys(); //生成随机素数
+
+        let prime = base.getPrime();
+        let generator = base.getGenerator();
+
+        console.log('prime: %j, generator: %j', prime.toString('hex'), generator.toString('hex'));
+
+        let tower = crypto.createDiffieHellman(prime, generator);
+        let towerKeys = tower.generateKeys();
+
+        console.log('tower: %j, towerKeys: %j', tower.toString('hex'), towerKeys.toString('hex'));
+
+        let base_secret = base.computeSecret(towerKeys);
+        let tower_secret = base.computeSecret(base_keys);
+
+        console.log('base_secret: %j, tower_secret: %j', base_secret.toString('hex'), tower_secret.toString('hex'));
+    }
+}
+
+// let r = new DiffieHelman();
+// r.getAkeys();
+// console.log('uuid', uuidV1());
+
+function promiseConvert (message) {
+    return Bluebird.promisify(message, {multiArgs: true})
+}
