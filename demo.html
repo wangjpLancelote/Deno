@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>demo</title>
+</head>
+<body>
+    <div>
+        this is demo
+    </div>
+</body>
+<script>
+    window.onload = function () {
+        (function ($) {
+            funcObj = {
+                timerUserFunc: 'timerUserFunc'
+            }
+            $[funcObj.timerUserFunc] = function (time) {
+                let time = time || 2;
+                let userTime = time;
+                let objTime = {
+                    init: 0,
+                    time: function () {
+                        objTime.init += 1;
+                        if (objTime.init == userTime) { //设定时间内没有操作
+                            console.log('no act');
+                        }
+                    },
+                    eventFunc: function () {
+                        clearInterval(timeUser);
+                        objTime.init = 0;
+                        timeUser = setInterval(objTime, 1000);
+                    }
+                }
+                var timeUser = setInterval(objTime, 1000);
+                var body = document.querySelector('html');
+                body.addEventListener('click', objTime.eventFunc)
+            }
+        })(window)
+        timerUserFunc(15);
+    }
+</script>
+</html>

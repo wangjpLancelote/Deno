@@ -1071,7 +1071,3 @@ class DiffieHelman {
 // let r = new DiffieHelman();
 // r.getAkeys();
 // console.log('uuid', uuidV1());
-
-function promiseConvert (message) {
-    return Bluebird.promisify(message, {multiArgs: true})
-}

@@ -1,2 +1,8 @@
 {"name":"log","hostname":"wangjianpingdeMacBook-Pro.local","pid":18836,"level":30,"msg":"info","time":"2019-06-20T12:08:55.043Z","v":0}
 {"name":"log","hostname":"wangjianpingdeMacBook-Pro.local","pid":18836,"level":40,"msg":"warn","time":"2019-06-20T12:08:55.044Z","v":0}
+{"name":"log","hostname":"cpe-172-100-100-216.twcny.res.rr.com","pid":62321,"level":30,"msg":"info","time":"2019-08-06T11:38:59.398Z","v":0}
+{"name":"log","hostname":"cpe-172-100-100-216.twcny.res.rr.com","pid":62321,"level":40,"msg":"warn","time":"2019-08-06T11:38:59.398Z","v":0}
+{"name":"log","hostname":"cpe-172-100-100-216.twcny.res.rr.com","pid":62351,"level":30,"msg":"info","time":"2019-08-06T11:39:25.064Z","v":0}
+{"name":"log","hostname":"cpe-172-100-100-216.twcny.res.rr.com","pid":62351,"level":40,"msg":"warn","time":"2019-08-06T11:39:25.065Z","v":0}
+{"name":"log","hostname":"cpe-172-100-100-216.twcny.res.rr.com","pid":62435,"level":30,"msg":"info","time":"2019-08-06T11:41:20.437Z","v":0}
+{"name":"log","hostname":"cpe-172-100-100-216.twcny.res.rr.com","pid":62435,"level":40,"msg":"warn","time":"2019-08-06T11:41:20.437Z","v":0}

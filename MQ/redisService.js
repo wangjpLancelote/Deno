@@ -797,6 +797,53 @@ export default class RedisService {
         })
     }
 
+    subscribe (channel) {
+        return new Promise((resolve, reject) => {
+            let resp = this.client.subscribe(channel, (err, res) => {
+                if (err) {
+                    resolve(false)
+                } else {
+                    console.log('re', res);
+                    resolve(res);
+                }
+            })
+            console.log('resp', resp);
+            if (!resp) {
+                resolve(false)
+            } else {
+                resolve(resp);
+            }
+        })
+    }
+
+    publish (channel, ...message) {
+        return new Promise((reject, resolve) => {
+            let resp = this.client.PUBLISH(channel, ...message, (err, res) => {
+                if (err) {
+                    console.log(err);
+                    resolve(false);
+                } else {
+                    console.log('res', res);
+                    resolve(res)
+                }
+            })
+            console.log('resp', resp)
+            if (!resp) {
+                resolve(false);
+            } else {
+                resolve(resp);
+            }
+        })
+        let res = this.client.publish(channel, message, (err, res) => {
+            if (err) {
+                console.log('err', err);
+            } else {
+                console.log('res', res);
+            }
+        });
+        return Promise.resolve(res);
+    }
+
 }
 
 
@@ -825,9 +872,13 @@ let fetch = async () => {
     // let res = await r.spop('member');
     // let res = await r.smember('member');
     // let res = await r.scard('member');
-    let res = await r.multi(r.incr('tiny'))
+    // let res = await r.multi(r.incr('tiny'))
+    // let res = await r.subscribe('channel1', 'hello');
+    let resp = await r.publish('channel1', 'word');
+    let ress = await r.subscribe('channel1');
 
-    console.log('res', res);
+    console.log('resp', resp);
+    console.log('ress', ress)
 
     process.exit(0);
 }
