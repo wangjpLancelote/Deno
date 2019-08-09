@@ -1,0 +1,17 @@
+{
+  "name": "shell",
+  "bin": {
+    "shell": "./shell.js"
+  },
+  "version": "1.0.0",
+  "description": "\"a shell script\"",
+  "main": "shell.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "'shell'"
+  ],
+  "author": "'W.J.P'",
+  "license": "MIT"
+}
