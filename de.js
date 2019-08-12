@@ -6,10 +6,10 @@ const CryptoJS = require('crypto-js');
 const domain = require('domain');
 const superagent = require('superagent');
 const elasticsearch = require('elasticsearch');
-const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
-const appKey = '338f8ee1c88d36f69812cbd299de2677';
-const Bluebird = require('bluebird')
-const redis  = require('redis');
+const uuidV1 = require('uuid/v1');
+// const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
+// const appKey = '338f8ee1c88d36f69812cbd299de2677';
+const Bluebird = require('bluebird');
 
 let a = [1,2,3,4];
 // _.each(a, (v) => {
@@ -19,7 +19,7 @@ const md5 = require('crypto').createHash('md5');
 // md5.update(key + Date.now());
 // let t = md5.digest('hex');
 let timestamp = Date.now();
-const appId = '338f8ee1c88d36f69812cbd299de2677';
+// const appId = '338f8ee1c88d36f69812cbd299de2677';
 // console.log(t);
 const body = {
     "title":"工单标题",
@@ -69,29 +69,29 @@ const body = {
  * 七鱼接口 query参数
  * @param {*} body 
  */
-const getCheckQuery = (body = {}) => {
-    let unix = moment().unix();
-    console.log('checksum', checksum(JSON.stringify(body), unix));
-    return `appKey=${appId}&time=${unix}&checksum=${checksum(JSON.stringify(body), unix)}`;
-}
+// const getCheckQuery = (body = {}) => {
+//     let unix = moment().unix();
+//     console.log('checksum', checksum(JSON.stringify(body), unix));
+//     return `appKey=${appId}&time=${unix}&checksum=${checksum(JSON.stringify(body), unix)}`;
+// }
 
 
-const checksum = (content, time) => {
-    const sha1 = crypto.createHash('sha1');
-    const md5 = crypto.createHash('md5');
-    md5.update(content);
-    sha1.update(appSecret + md5.digest('hex') + time);
-    return sha1.digest('hex');
-  }
+// const checksum = (content, time) => {
+//     const sha1 = crypto.createHash('sha1');
+//     const md5 = crypto.createHash('md5');
+//     md5.update(content);
+//     sha1.update(appSecret + md5.digest('hex') + time);
+//     return sha1.digest('hex');
+//   }
 
 /**
  * 获取accessToken
  * @param {} timestamp  时间戳
  */
-const getAccessToken = (timestamp) => {
-    md5.update(appKey + timestamp);
-    return md5.digest('hex');
-}
+// const getAccessToken = (timestamp) => {
+//     md5.update(appKey + timestamp);
+//     return md5.digest('hex');
+// }
 // console.log('Query', getCheckQuery(body));
 // superagent.post(`https://qiyukf.com/openapi/v2/ticket/create?` + getCheckQuery(body))
 // .set('Content-Type', 'application/json;charset=utf-8')
@@ -104,7 +104,7 @@ const getAccessToken = (timestamp) => {
 //     }
 // })
 
-console.log('token', getAccessToken(timestamp), timestamp);
+// console.log('token', getAccessToken(timestamp), timestamp);
 
 /**
  * 
@@ -850,6 +850,7 @@ class MesonRoundRandom {
     /**
      * 设置种子
      * 初始化数组 MT
+     * 一般用当前时间的毫秒数
      */
     srand (seed) {
         this.index = 0;
@@ -889,7 +890,7 @@ class MesonRoundRandom {
         return y;
     }
     /**
-     * 选取区间
+     * 选取区间 返回区间内的随机数
      * @param {Number} fixed 
      */
     toFixedRand (fixed) {
@@ -899,10 +900,12 @@ class MesonRoundRandom {
         } else {
             fixed = 10;
         }
+        this.srand(new Date().getTime());
         return this.rand() % fixed;
     }
     /**
      * knuth shuffle
+     * 洗牌算法, 打乱数组顺序
      * @param {Array} arr 
      */
     shuffle (arr) {
@@ -916,13 +919,12 @@ class MesonRoundRandom {
         }
         return arr;
     }
-
 }
 
 // let r = new MesonRoundRandom();
 // let t = r.shuffle([1,2,3,4,5,6,7]);
-// r.srand(new Date().getTime());
-// console.log('rand', r.toFixedRand(26));
+// // r.srand(new Date().getTime());
+// console.log('rand', r.toFixedRand(10));
 // console.log('t', t);
 
 class strategy {
@@ -1021,3 +1023,118 @@ let redisService = new RedisService();
 //     console.log('res', res);
 // }
 // getRes();
+class IntervalPool {
+    constructor () {
+
+    }
+
+    callback () {
+        console.log('callback');
+    }
+    event () {
+        let i = 0;
+        let arr = [0, 0, 0, 0, 1, 1, 1];
+        return () => {console.log('event轮询第' + i + "次"); return Boolean(arr[i++])};
+    }
+    boostrap (event, cb, interval) {
+        if (event()) {
+            return cb();
+        } else {
+            setTimeout(() => {this.boostrap(event, cb, interval)}, interval);
+        }
+    }
+}
+
+// let r = new IntervalPool();
+// r.boostrap(r.event(), r.callback, 1000);
+
+/**
+ * 计算数量最大的编码方式
+ * 给定一个数字非空字符串
+ */
+class encodeAlpha {
+    constructor (target) {
+        this.target = target;
+
+        this.cnt = 0;
+    }
+
+    diliver () {
+        for (let i = 0; i < this.target.length; ++i) {
+            console.log('i', this.target[i]);
+            this.cnt += 1;
+            if ((i + 1) < this.target.length && Number(this.target[i] + this.target[i + 1]) < 27) {
+                this.cnt += 1;
+                continue;
+            }
+        }
+    }
+}
+// let r = new encodeAlpha('1234');
+// r.diliver();
+// console.log('r', r.cnt);
+
+// console.log('time', moment().unix());
+// console.log('time2', Date.now());
+// console.log('time3', new Date().getTime());
+// console.log('time4', Date.parse(new Date()));
+// console.log('time5', new Date().valueOf());
+// console.log('time7', +new Date());
+class AES {
+    constructor (message, secretKey) {
+        this.message = message;
+        this.secretKey = secretKey;
+    }
+
+    /**加密 */
+    encrypt () {
+        const cipher = crypto.createCipher('aes192', this.secretKey);
+        let crypted = cipher.update(this.message, 'utf8', 'hex');
+        crypted += cipher.final('hex');
+        return crypted;
+
+    }
+
+    /**解密 */
+    decrypt (data) {
+        const decipher = crypto.createDecipher('aes192', this.secretKey);
+        let decrypted = decipher.update(data, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted;
+    }
+}
+
+// let r = new AES('this is data', 'secretKey');
+// let encry = r.encrypt();
+// let dencry = r.decrypt(encry);
+// console.log('encry: %j, dencry: %j', encry, dencry);
+
+class DiffieHelman {
+    constructor () {
+
+    }
+    
+    getAkeys () {
+        let base = crypto.createDiffieHellman(512);
+        let base_keys = base.generateKeys(); //生成随机素数
+
+        let prime = base.getPrime();
+        let generator = base.getGenerator();
+
+        console.log('prime: %j, generator: %j', prime.toString('hex'), generator.toString('hex'));
+
+        let tower = crypto.createDiffieHellman(prime, generator);
+        let towerKeys = tower.generateKeys();
+
+        console.log('tower: %j, towerKeys: %j', tower.toString('hex'), towerKeys.toString('hex'));
+
+        let base_secret = base.computeSecret(towerKeys);
+        let tower_secret = base.computeSecret(base_keys);
+
+        console.log('base_secret: %j, tower_secret: %j', base_secret.toString('hex'), tower_secret.toString('hex'));
+    }
+}
+
+// let r = new DiffieHelman();
+// r.getAkeys();
+// console.log('uuid', uuidV1());

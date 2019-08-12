@@ -19,8 +19,13 @@
       */
      init () {
          for (let i = 0; i < this.length; ++i) {
-             if (this.find(i) === 0) this.find(i) += 1;
-             this.find(i) = 0;
+             if (this.find(i) === 0) {
+                this.find(i) += 1;
+                continue;
+             } else {
+                this.find(i) = 0;
+             }
+             
          }
      }
 
