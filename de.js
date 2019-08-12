@@ -8,7 +8,8 @@ const superagent = require('superagent');
 const elasticsearch = require('elasticsearch');
 const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 const appKey = '338f8ee1c88d36f69812cbd299de2677';
-const Bluebird = require('bluebird');
+const Bluebird = require('bluebird')
+const redis  = require('redis');
 
 let a = [1,2,3,4];
 // _.each(a, (v) => {
@@ -952,3 +953,71 @@ class strategy {
 // r.model(1);
 // r.nool(2);
 // r.tool(3);
+
+let cnt = 0;
+async function tt (p) {
+    
+    if (p > 1) {
+        console.log('mo');
+        return '12345';
+        return await Promise.resolve('123');
+        
+    } else {
+        p ++;
+        console.log('tiems');
+        return tt(p);
+    }
+}
+async function dd () {
+    let data = await tt(1);
+    console.log('data', data);
+}
+dd();
+class RedisService {
+    constructor () {
+        this.client = redis.createClient({
+            host: '127.0.0.1',
+            port: '6379',
+
+            retry_strategy: function (options) {
+                if (options.error && options.error.code === 'ECONNREFUSED') {
+                  // End reconnecting on a specific error and flush all commands with
+                  // a individual error
+                  return new Error('The server refused the connection');
+                }
+                if (options.total_retry_time > 1000 * 60 * 60) {
+                  // End reconnecting after a specific timeout and flush all commands
+                  // with a individual error
+                  return new Error('Retry time exhausted');
+                }
+                if (options.attempt > 10) {
+                  // End reconnecting with built in error
+                  return undefined;
+                }
+                // reconnect after
+                return Math.min(options.attempt * 100, 3000);
+              }
+        })
+        this.asyncGet = Bluebird.promisify(this.client.get).bind(this.client);
+        this.asyncSPop = Bluebird.promisify(this.client.spop).bind(this.client);
+    }
+
+    async setnx (key, value) {
+        return new Promise((resolve, reject) => {
+            this.client.set(key, value, 'nx', function (err, result) {
+              if (err) {
+                resolve(false);
+              } else {
+                resolve(result === 'OK');
+              }
+            });
+          });
+    }
+}
+
+let redisService = new RedisService();
+// async function getRes () {
+//     let res = await redisService.setnx('names', Date.now());
+//     console.log('res', res);
+// }
+// getRes();
