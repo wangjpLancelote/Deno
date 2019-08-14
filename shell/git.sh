@@ -37,4 +37,9 @@ git add .
 git commit -m "${msg}"
 echo "文件已暂存"
 echo "--------==>>"
+
+git pull --rebase
+echo "拉取文件并变基"
+echo "--------==>>"
+
 echo "============>>>>end"
