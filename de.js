@@ -7,6 +7,7 @@ const domain = require('domain');
 const superagent = require('superagent');
 const elasticsearch = require('elasticsearch');
 const uuidV1 = require('uuid/v1');
+const redis = require('redis');
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require('bluebird');
@@ -1138,3 +1139,129 @@ class DiffieHelman {
 // let r = new DiffieHelman();
 // r.getAkeys();
 // console.log('uuid', uuidV1());
+
+// let target = [[1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, 14]]], 10];
+/**数组扁平 且排序 */
+class FlowArray {
+    constructor (arr, inc = true) {
+        this.base = arr;
+        /**是否升序 */
+        this.inc = inc;
+
+        this.res  = [];
+
+        this.arrType = false;
+    }
+
+    array (target) {
+        return Array.isArray(target);
+    }
+
+    /**深度遍历 */
+    DFS (target) {
+        for (let k of target) {
+            if (this.array(k)) return this.DFS(k);
+            if (!this.res.length) {
+                this.res.push(k);
+            } else {
+                this.res = [...this.sortBy(this.res, k)];
+            }
+        }
+    }
+    /**广度遍历 */
+    BFS () {
+        for (let v of this.base) {
+            if (this.array(v)) {
+                this.DFS(v)
+            } else {
+                if (!this.res.length) {
+                    this.res.push(v);
+                } else {
+                    this.res = [...this.sortBy(this.res, v)];
+                }
+            }
+        }
+    }
+
+    sortBy (target, item) {
+        if (item >= this.last(target)) return [...target, item];
+        // if (item >= target[target.length - 1]) return [...target, item];
+        target.push(item);
+        /**比自身小的项排除, 从更大的项开始, 从后往前，逐一交换位置 需跳过最后一项进行比较*/
+        for (let i = target.length - 2; i > -1; -- i) {
+            if (target[i] <= item) break;
+            let tmp = target[i + 1];
+            target[i + 1] = target[i];
+            target[i] = tmp;
+        }
+        return target;
+    }
+
+    last (target) {
+        return target[target.length - 1];
+    }
+}
+
+// let r = new FlowArray(target);
+// r.BFS();
+// console.log('r', r);
+
+const _new = function (fn, ...args) {
+    const obj = Object.create(fn.prototype);
+    const ret = fn.apply(obj, args);
+    return ret instanceof Object ?
+    ret !== null ?
+    ret : obj
+    : obj;
+}
+
+class Flat {
+    constructor (array) {
+        this.array = array;
+
+        this.res = [];
+
+        this.hasLoad = false;
+    }
+
+    DFS (target) {
+        for (let k of target) {
+            if (Array.isArray(k)) {
+                for (let j of k) {
+                    if (Array.isArray(j)) {
+                        if (!this.hasArrInArray(j)) {
+                            this.res.push(j);
+                            continue;
+                        }
+                    } else {
+                        this.res.push(j);
+                    }
+                }
+            } else {
+                this.res.push(k);
+            }
+        }
+    }
+
+    joinArr (arr) {
+        for (let t of arr) {
+            
+        }
+    }
+
+    BFS () {
+        for (let c of this.array) {
+            if (Array.isArray(c)) {
+                this.DFS(c);
+            } else {
+                this.res.push(c);
+            }
+        }
+    }
+
+    hasArrInArray (arr) {
+        return arr.some(item => Array.isArray(item));
+    }
+}
+
+// let sss = [1, [2, [3, [4], 5]]];
