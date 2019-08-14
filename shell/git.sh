@@ -42,4 +42,8 @@ git pull --rebase
 echo "拉取文件并变基"
 echo "--------==>>"
 
+git push
+echo "推送文件到远程"
+echo "--------==>>"
+
 echo "============>>>>end"
