@@ -30,11 +30,30 @@ echo "$2"
 echo "--------==>"
 echo `date` + "%H:%M:%S"
 
-if [ ! -n"$1" ] || [ ! -n"$2" ]; then
+def_valid_param () {
+    local msg = ""
+    if [ ! -n"$1" ]; then
+        echo "!!!!!!请输入必要参数!!!!!!"
+        exit
+    elif [ ! -n"$2" ]; then
+        echo "this si default message 4 commit please edit nextTime and remember"
+        msg="this si default message 4 commit please edit nextTime and remember"
+    else
+        echo "do"
+        msg=$2
+    fi
+}
+
+# def_valid_param()
+if [ ! -n"$1" ]; then
     echo "!!!!!!请输入必要参数!!!!!!"
     exit
+elif [ ! -n"$2" ]; then
+    echo "this si default message 4 commit please edit nextTime and remember"
+    msg="this si default message 4 commit please edit nextTime and remember"
 else
     echo "do"
+    msg=$2
 fi
 path=$1
 msg=$2
