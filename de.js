@@ -1265,3 +1265,229 @@ class Flat {
 }
 
 // let sss = [1, [2, [3, [4], 5]]];
+function isArray (arr) {
+    // return Object.prototype.toString.call(arr);
+    // return Array.isArray(arr);
+    // return arr instanceof Array
+}
+
+Number.MAX_SAFE_DIGITS = Number.MAX_SAFE_INTEGER.toString().length - 2;
+Number.prototype.digits = function () {
+    let result = this.valueOf().toString();
+    return result > Number.MAX_SAFE_DIGITS ? Number.MAX_SAFE_DIGITS : result;
+}
+Number.prototype.add  = function (i = 0) {
+    if (typeof i !== 'number') throw new Error('请输入正确的数字');
+    const v=  this.valueOf();
+    const thisDigits = this.digits();
+    const iDigits = i.digits();
+    const baseNum = Math.pow(10, Math.max(thisDigits, iDigits));
+    const result = (v * baseNum + i * baseNum) / baseNum;
+    if (result > 0) { return result > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : result}
+    else { return result < Number.MIN_SAFE_INTEGER ? Number.MIN_SAFE_INTEGER : result};
+}
+
+Number.prototype.minus = function (i = 0) {
+    if (typeof i !== 'number') throw new Error('请输入正确的数字');
+    const v = this.valueOf();
+    const thisDigits = this.digits();
+    const iDigits  = i.digits();
+    const baseNum = Math.pow(10, Math.max(thisDigits, iDigits));
+    const result = (v * baseNum - i * baseNum) / baseNum;
+    if (result > 0) { return result > Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : result}
+    else { return result < Number.MIN_SAFE_INTEGER ? Number.MIN_SAFE_INTEGER : result};
+}
+
+// Number(10).digits();
+// let r = Number(5).add(3).minus(2);
+// console.log('r', r);
+
+/**对象中带有length属性，就可用Array.from()方法转化为数组，数组长度为length的值 */
+function translate (obj = {length : 0}) {
+    return Array.from(obj);
+}
+// console.log('tran', translate()); //[]
+
+class Lazyman {
+    constructor (name) {
+        this.name = name;
+
+        this.task = [];
+
+        console.log(`Hi I am ${name}`);
+        Promise.resolve().then(() => {
+            this.next()
+        })
+        return this;
+    }
+
+    _sleep (time) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(null);
+            }, time * 1000)
+        })
+    }
+
+    next () {
+        let fn = this.task.shift();
+        fn && fn();
+    }
+
+    eat (food) {
+        this.task.push(() => {
+            console.log(`I am eating ${food}`);
+            this.next();
+        })
+        return this;
+    }
+
+    sleep (time) {
+        this.task.push(() => {
+            this._sleep(time).then(() => {
+                console.log(`等待了${time}秒`);
+                this.next();
+            })
+        })
+        return this;
+    }
+
+    sleepFirst (time) {
+        this.task.unshift(() => {
+            this._sleep(time).then(() => {
+                console.log(`先等待了${time}秒`);
+                this.next();
+            })
+        })
+        return this;
+    }
+}
+// new Lazyman('tom').sleep(10).eat('apple').sleepFirst(10).eat('junk food');
+const translateUpOrLow = function (str) {
+    const mapCode = {
+        'A': 'A'.charCodeAt(0),
+        'Z': 'Z'.charCodeAt(0),
+        'a': 'a'.charCodeAt(0),
+        'z': 'z'.charCodeAt(0)
+    }
+    let diff = mapCode.a - mapCode.A;
+    let target = str.split('');
+    for (let i = 0; i < target.length; ++i) {
+        let tmp = target[i].charCodeAt(0);
+        if (tmp >= mapCode.A && tmp <= mapCode.Z) {
+            target[i] = String.fromCharCode(tmp + diff); //转小写
+        } else if (tmp >= mapCode.a && tmp <= mapCode.z) {
+            target[i] = String.fromCharCode(tmp - diff); //转大写
+        } else { //非字母
+            target.splice(i, 1);
+        }
+    }
+    return target.join('');
+}
+// let r = translateUpOrLow('fsdssdQQdd');
+// console.log('r', r);
+/**
+ * 依据对象里某一条件将对象转化为树形结构
+ */
+class TreeConvert {
+    constructor (list, condition) {
+        this.list = list;
+
+        this.condition = condition;
+
+        this.res = [];
+    }
+
+    convert () {
+        let res = [];
+        let obj = {};
+        for (let c of this.list.slice()) {
+            if (!res.length) {
+                res.push(c);
+                obj = c;
+                continue;
+            } else {
+                if (obj[this.condition] === c[this.condition]) {
+                    let tmp = res.find(x => x[this.condition] === obj[this.condition]);
+                    tmp.children = [];
+                    tmp.children.push(c);
+                    obj = c;
+                    continue;
+                } else {
+                    res.push(c);
+                    obj = c;
+                    continue;
+                }
+            }
+        }
+        this.res = res
+        return this;
+    }
+}
+
+// let list = [
+//     {id: 1, name: 'wjp0', parentId: 1},
+//     {id: 2, name: 'wjp1', parentId: 1},
+//     {id: 3, name: 'wjp2', parentId: 2},
+//     {id: 4, name: 'wjp3', parentId: 3}
+// ]
+// let r = new TreeConvert(list, 'parentId');
+// r.convert();
+// console.log('r', r.res);
+/**
+ * 在给定字符串匹配出对应的目标字符串，并做高亮显示
+ * 返回该字符串第一个需要高亮显示的下标 该下标 + 给定字符串长度就是对应需要高亮显示的完整字符串
+ * @param {String} str 
+ * @param {[*]} list 
+ * @returns
+ * {idx(字符串位置): [index(第一个下标), lastIndex(最后一个下标)]}
+ */
+function searchHighLightWords (str, list) {
+    let l = str.length;
+    let res = {};
+    for (let s of list) {
+        if (s.length < l) continue;  //长度小于目标字符串长度，不可能匹配出来
+        if (s.length === l && s !== str) continue;
+        for (let i = 0; i < s.length; ++i) {
+            if (s.slice(i, i + l) === str) {
+                let idx = list.indexOf(s);
+                res[idx] = [i, i + l - 1];
+                break;
+            } else {
+                continue;
+            }
+        }
+    }
+    return res;
+}
+// let srr = 'wjp';
+// let list = ['aewjpdd', 'sj', 'wjplllk', 'adewjp'];
+// let r = searchHighLightWords(srr, list);
+// console.log('r', r);
+
+function reverseNum2Str (num) {
+    let target = num.toString();
+    let res = '';
+    for (let i = target.length - 1; i > -1; -- i) {
+        res += target[i];
+    }
+    return res;
+}
+// let r = reverseNum2Str(1234); '4321'
+superagent
+    // .post('http://www.baidu.com')
+    // .send({name: 'wjp', specieds: 'cat'})
+    .get('http://127.0.0.1:3333')
+    .then((res) => {
+        let result = '';
+        res.on('data', (chunk) => {
+            result += chunk.toString();
+        })
+        res.on('end', () => {
+            console.log('res', result);
+        })
+    })
+
+const keys = () => 'key';
+console.log('key', keys());
+
