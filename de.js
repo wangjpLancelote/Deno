@@ -1473,21 +1473,27 @@ function reverseNum2Str (num) {
     }
     return res;
 }
-// let r = reverseNum2Str(1234); '4321'
-superagent
-    // .post('http://www.baidu.com')
-    // .send({name: 'wjp', specieds: 'cat'})
-    .get('http://127.0.0.1:3333')
-    .then((res) => {
-        let result = '';
-        res.on('data', (chunk) => {
-            result += chunk.toString();
-        })
-        res.on('end', () => {
-            console.log('res', result);
-        })
-    })
+// // let r = reverseNum2Str(1234); '4321'
+// superagent
+//     // .post('http://www.baidu.com')
+//     // .send({name: 'wjp', specieds: 'cat'})
+//     .get('http://127.0.0.1:3333')
+//     .then((res) => {
+//         let result = '';
+//         res.on('data', (chunk) => {
+//             result += chunk.toString();
+//         })
+//         res.on('end', () => {
+//             console.log('res', result);
+//         })
+//     })
 
-const keys = () => 'key';
-console.log('key', keys());
-
+/**
+ * 笛卡尔积：两个集合的有序结合成新的集合的所有可能性组合。不支持分配律。
+ */
+class Dicaer {
+    constructor (setA, setB) {
+        this.setA = setA;
+        this.setB = setB;
+    }
+}
