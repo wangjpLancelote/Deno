@@ -1497,3 +1497,9 @@ class Dicaer {
         this.setB = setB;
     }
 }
+let ss = [
+    {a: 1, b: 2},
+    {c: '', d: 2}
+]
+let n = ss.filter(item => {return Object.values(item).every(c => {return c})});
+console.log('n', n);
