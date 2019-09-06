@@ -1669,3 +1669,51 @@ class strongCopy {
     }
   }
 }
+
+/**
+ * Dijkstra
+ * 计算最短路径算法
+ * 计算其他接节点到一个节点的距离
+ */
+class Dijkstra {
+  constructor(vexnum, edgnum, target) {
+    /**顶点数 */
+    this.vexnum = vexnum;
+
+    /**边数 */
+    this.edgnum = edgnum;
+
+    /**指定顶点 */
+    this.target = target || "D";
+
+    /**顶点，用字母表示 */
+    this.alpha = ["A", "B", "C", "D", "E", "F", "G"];
+
+    /**存储了结构体集合 */
+    this.set = new Set();
+
+    /**已计算出路径的顶点集合 */
+    this.S = new Set();
+
+    /**未计算出路径的顶点集合 */
+    this.U = new Set();
+  }
+
+  /**生成一个数据集合，集合中的数据为一个能够描述边长，边的起点，边的顶点的对象 该集合内的数据需要能够形成一个闭环*/
+  initClosure() {
+    let base = {
+      edgeLen: 0, //边长
+      edgeStart: "", //边的起点
+      edgeEnd: "" //边的终点
+    };
+    return base;
+  }
+  init_sbase(vex, distance) {
+    /**需要放进S集合中的对象 */
+    let Sbase = {
+      vex: vex, //节点
+      distance: distance //到顶点的距离
+    };
+    return Sbase;
+  }
+}

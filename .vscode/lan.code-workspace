@@ -29,10 +29,12 @@
     },
     {
       "path": "/Users/wangjianping/goPro",
-      "GOPATH": "/Users/wangjianping/goPro"
+      "GOPATH": "/Users/wangjianping/goPro/goBin"
     }
   ],
   "settings": {
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
+    "go.useLanguageServer": true,
+    "go.inferGopath": true
   }
 }
