@@ -1,0 +1,28 @@
+.item {
+	padding: 10px 5px;
+	background-color: gray;
+	color: #fff;
+	display: inline-block;
+	margin-right: 5px;
+	vertical-align: bottom;
+	transition: background-color 0.5s;
+}
+#box {
+	padding: 5px 0;
+}
+#buttons {
+	display: inline-block;
+}
+
+.item--current {
+	background-color: skyblue;
+}
+.item--checked {
+	background-color: green;
+}
+.item--selected {
+	background-color: red;
+}
+.item--target {
+	background-color: blue;
+}
