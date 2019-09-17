@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>斌斌学院任务五</title>
+		<link rel="stylesheet" href="css/style.css" />
+	</head>
+	<body>
+		<div>
+			<input type="text" id="input" />
+			<div id="buttons">
+				<button data-direction="left" data-way="in">左侧入</button>
+				<button data-direction="right" data-way="in">右侧入</button>
+				<button data-direction="left" data-way="out">左侧出</button>
+				<button data-direction="right" data-way="out">右侧出</button>
+			</div>
+		</div>
+		<div id="box">
+			<div class="item" style="height:54px">54</div>
+			<div class="item" style="height:14px">14</div>
+			<div class="item" style="height:77px">77</div>
+			<div class="item" style="height:28px">28</div>
+			<div class="item" style="height:99px">99</div>
+			<div class="item" style="height:65px">65</div>
+			<div class="item" style="height:49px">49</div>
+			<div class="item" style="height:89px">89</div>
+			<div class="item" style="height:21px">21</div>
+			<div class="item" style="height:25px">25</div>
+			<div class="item" style="height:50px">50</div>
+			<div class="item" style="height:80px">80</div>
+			<div class="item" style="height:19px">19</div>
+			<div class="item" style="height:37px">37</div>
+			<div class="item" style="height:31px">31</div>
+		</div>
+		<div id="sortBtn">
+			<button id="quickSortBtn" data-method="quickSort">快速排序动画</button>
+		</div>
+
+		<script src="js/in.js"></script>
+		<script src="js/sortMethod/quickSort.js"></script>
+		<script src="js/animation.js"></script>
+
+		<script>
+			var sortBtn = document.querySelector('#sortBtn');
+
+			sa.ownedMethod({
+				quickSort: {
+					method: quickSort,
+					animationMethod: quickSortAnimationDom
+				}
+			});
+			sortBtn.addEventListener('click', function(event) {
+				console.log('aa', event.target.dataset.method);
+				var arrDomBox = document.querySelector('#box');
+				// 注意，一定要是父元素，因为，在替换元素的过程中，被替换元素不会消失，如果在最开始直接引用子元素，那么，将无法取到替换后的元素
+				sa.getData(arrDomBox, event.target.dataset.method);
+				sa.timer = setInterval(sa.startAnimation(), sa.speed);
+			});
+		</script>
+	</body>
+</html>

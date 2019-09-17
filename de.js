@@ -8,6 +8,9 @@ const superagent = require("superagent");
 const elasticsearch = require("elasticsearch");
 const uuidV1 = require("uuid/v1");
 const redis = require("redis");
+const nodeCmd = require("node-cmd"); //node 调用cmd
+const dialog = require("dialog"); //node打开对话框
+const ora = require("ora"); //node 终端加载动画
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
@@ -1715,5 +1718,125 @@ class Dijkstra {
       distance: distance //到顶点的距离
     };
     return Sbase;
+  }
+}
+
+let ss = [
+  { id: 1, name: "wang" },
+  { id: 2, name: "jian" },
+  { id: 3, name: "ping" }
+];
+let tts = [1, 2, 3];
+let n = ss.map(c => {
+  if (tts.includes(c.id)) {
+    return c.name;
+  }
+});
+
+// dialog.info("hello", "wang", 1000, (code, retVal, stderr) => {
+//   console.log(code, retVal, stderr);
+// });
+
+// const spinner = ora("Loading unicorns").start();
+// setTimeout(() => {
+//   spinner.color = "yellow";
+//   spinner.text = "Loading rainbows";
+//   spinner.stop();
+// }, 1000);
+
+/**
+ * base64 编码原理
+ * 本质上：格式转换
+ * 3 * 8 === 4 * 6 [3个8位的二进制数，可以转化为4个6位的二进制数](计算机一个字节占8为,6位二进制数高位补00,凑8位,若目标字符不是3的倍数,则将分配剩下的数继续转,通过加0补全的方式，变为3个8位数,所以要从地位开始每3位分配)
+ * 
+ * 流程：先将字符串的字符转为ascii码，得到N个number类型的数字，二进制转换，得到6位二进制数，高位补0，转为10进制数，对照base64码表，查找对应转化后的字符->新的字符串(base64码)
+ * 常见的base64码表基本是根据字母从大到小->数字->+/从0开始排列的。
+ * 解码的过程和编码相反，将N个二进制位重组得到3 * N个8位的值
+ */
+class Base64Code {
+  constructor() {
+    this.base = [
+      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+      'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+      'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+    ];
+  }
+
+  /**编码 */
+  encode (bin) {
+    let codes = [];
+    let remain = bin % 3; //若不能除尽3，则会剩下的几个数
+    if (remain === 1) {  //补全两个
+      bin.push(0, 0);
+    } else if (remain === 2) {
+      bin.push(0);
+    }
+
+    for (let i = 2; i < bin.length; i += 3) { //高位开始操作
+      let c = bin[i - 2] << 16;
+      c |= bin[i - 1] << 8;
+      c |= bin[i];
+      this.codes.push(this.base[c >> 18 & 0x3f]);
+      this.codes.push(this.base[c >> 12 & 0x3f]);
+      this.codes.push(this.base[c >> 6 & 0x3f]);
+      this.codes.push(this.base[c & 0x3f]);
+    }
+    if (remain >= 1) {
+      this.codes[this.codes.length - 1] = '=';
+      bin.pop();
+    }
+    if (remain == 1) {
+      this.codes[this.codes.length - 2] = '=';
+      bin.pop();
+    }
+    return this.codes.join('');
+  }
+
+  /**解码 */
+  decode (base64Str) {
+    let i = 0;
+    let bin = [];
+    let x = 0, code = 0, eq = 0;
+    while (i < base64Str.length) {
+      let c = base64Str.charAt(i++);  //字符在base里的位置，获取该子字符
+      let idx = this.base.indexOf(c);
+      if (!~idx) {
+        switch (i) {
+          case '=':
+            idx = 0; eq ++; break;
+          case ' ':
+          case '\n':
+          case '\r':
+          case '\t':
+            continue;
+          default:
+            throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u65E0\u6548\u7F16\u7801\uFF1A' + c}
+        }
+      }
+      if (eq > 0 && idx != 0) {
+        throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01'}
+      }
+      code = code << 6 | idx;
+      if (++x !== 4) {
+        continue;
+      }
+      bin.push(code >> 16);
+      bin.push(code >> 8 & 0xff);
+      bin.push(code & 0xff);
+      code = x = 0;
+    }
+    if (code != 0) {
+      throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u6570\u636E\u957F\u5EA6\u9519\u8BEF'}
+    }
+    if (eq === 1) { //取消高位补的0
+      bin.pop();
+    } else if (eq === 2) {
+      bin.pop();
+      bin.pop();
+    } else if (eq > 2) { //若超过两位还没有被组成3个8位二进制数，说明数据长度报错了
+      throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01'}
+    }
+    return bin;
   }
 }
