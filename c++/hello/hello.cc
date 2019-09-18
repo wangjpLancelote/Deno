@@ -2,9 +2,8 @@
 #include <v8.h>
 #include <iostream>
 
-namespace hello
-{
-    using v8 :: FunctionCallbackInfo;
+namespace demo {
+    using v8 :: FunctionCallBackInfo;
     using v8 :: Isolate;
     using v8 :: Local;
     using v8 :: Object;
