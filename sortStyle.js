@@ -151,9 +151,58 @@ const selectSort = target => {
 // let r = selectSort(test);
 // console.log('r', r);
 
-/**插入排序 */
+/**插入排序
+ * 从第二个元素开始遍历
+ * 第一个元素默认是长度为1的有序数列
+ * 从第二个元素开始与有序队列的元素比较，若较小，则在有序队列中开辟新的地址存放该元素，否则，将该元素放在有序队列的末尾
+ * 最差时间复杂度 O(n^2)
+ * 最好时间复杂度 O(n) 在队列是有序的情况下，只需遍历一次就可以完成排序
+ * 稳定
+ * 数列越接近排序状态效率越高
+ */
 const insertionSort = target => {
 	let len = target.length;
 	let current, preIndex;
-	for (let i = 0; i < len; ++i) {}
+	for (let i = 1; i < len; ++i) {
+		current = target[i];
+		preIndex = i - 1;
+		while (preIndex > -1 && target[preIndex] > current) {
+			/**将基准下标移向下一个 因为新增加了一个元素且该元素比基准小*/
+			target[preIndex + 1] = target[preIndex];
+			/**倒序，往前一位比较 */
+			preIndex = preIndex - 1;
+		}
+		/**将current 补回到i下标 */
+		target[preIndex + 1] = current;
+	}
+	return target;
 };
+
+// let r = insertionSort(test);
+// console.log('r', r);
+
+/**希尔排序
+ * 等间隔分组形式的插入排序
+ * 适用于长度较大的数列，分组本质上是提高排序效率
+ * 间隔一般取每次数列的一般长度，间隔循环减半，最后间隔只剩1的时候，做最后一次插入排序,结束
+ */
+const shellSort = target => {
+	for (let gap = Math.floor(target.length / 2); gap > 0; gap = Math.floor(gap / 2)) {
+		for (let i = gap; i < target.length; ++i) {
+			let j = i;
+			let current = target[j];
+
+			for (; j > 0; j -= gap) {
+				if (current >= target[j - gap]) continue;
+				/**交换位置 */
+				target[j] = target[j - gap];
+			}
+			/**补回到i下标 */
+			target[j] = current;
+		}
+	}
+	return target;
+};
+
+let r = shellSort(test);
+console.log('r', r);

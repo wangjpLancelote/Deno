@@ -1840,3 +1840,10 @@ class Base64Code {
     return bin;
   }
 }
+
+/**防抖函数 */
+const debounce = args => {
+  return function () {
+    
+  }
+}
