@@ -1056,18 +1056,15 @@ class strategy {
 let cnt = 0;
 async function tt(p) {
   if (p > 1) {
-    console.log("mo");
     return "12345";
     return await Promise.resolve("123");
   } else {
     p++;
-    console.log("tiems");
     return tt(p);
   }
 }
 async function dd() {
   let data = await tt(1);
-  console.log("data", data);
 }
 dd();
 class RedisService {
@@ -1841,9 +1838,56 @@ class Base64Code {
   }
 }
 
-/**防抖函数 */
-const debounce = args => {
+/**防抖函数
+ * 强制让函数在规定时间内段只执行一次
+ * @param {Function} fn
+ * @param {Time} delay
+ * @param {Boolean} immediate 是否是在时间区间内最开始时候执行
+ * 返回一个用于执行的函数
+ */
+const debounce = (fn, delay, immediate = false) => {
+  let timer;
   return function () {
-    
+    let context = this;
+    let args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      fn.apply(context, args);
+    }, delay)
+  }
+}
+
+
+// setTimeout(() => {
+//   debounce(() => {console.log('111')}, 2000)();
+// }, 5000)
+
+/**
+ * 节流函数
+ * 节流意味着控制流量，限流，只允许在规定时间间隔内执行一次该函数
+ * 让函数以规定时间间隔执行
+ * 返回一个函数
+ * @param {Function} fn 
+ * @param {Time} threshold 
+ */
+const throttle = (fn, threshold = 250) => {
+  /**记录上次执行的时间 */
+  let last;
+  /**定时器 */
+  let timer;
+  return function () {
+    let context = this;
+    let args = arguments;
+    let now = +new Date();
+    if (last && now < last + threshold) {
+      clearTimeout(timer);
+      setTimeout(() => {
+        last = now;
+        fn.apply(context, args);
+      }, threshold)
+    } else {
+      last = now;
+      fn.apply(context, args);
+    }
   }
 }

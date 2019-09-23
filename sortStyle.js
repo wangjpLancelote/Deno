@@ -178,6 +178,20 @@ const insertionSort = target => {
 	return target;
 };
 
+/**插入排序核心部分
+ * 反向遍历，找到更大的数，同时新申请一个内存，如果前一个进行比较的数更大就交换位置，同时进行比较的数往前移一位
+ */
+const insertSortMicro = (preIndex, current, target) => {
+	while (preIndex > -1 && target[preIndex] > current) {
+		/**将基准下标移向下一个 因为新增加了一个元素且该元素比基准小*/
+		target[preIndex + 1] = target[preIndex];
+		/**倒序，往前一位比较 */
+		preIndex = preIndex - 1;
+	}
+	/**将current 补回到i下标 */
+	target[preIndex + 1] = current;
+};
+
 // let r = insertionSort(test);
 // console.log('r', r);
 
@@ -189,20 +203,140 @@ const insertionSort = target => {
 const shellSort = target => {
 	for (let gap = Math.floor(target.length / 2); gap > 0; gap = Math.floor(gap / 2)) {
 		for (let i = gap; i < target.length; ++i) {
-			let j = i;
-			let current = target[j];
+			let current = target[i];
+			let preIndex = i - 1;
 
-			for (; j > 0; j -= gap) {
-				if (current >= target[j - gap]) continue;
-				/**交换位置 */
-				target[j] = target[j - gap];
-			}
-			/**补回到i下标 */
-			target[j] = current;
+			/**插入排序 内循环 */
+			// while (preIndex > -1 && target[preIndex] > current) {
+			// 	target[preIndex + 1] = target[preIndex];
+			// 	preIndex = preIndex - 1;
+			// }
+			// /**补回到i下标 */
+			// target[preIndex + 1] = current;
+			insertSortMicro(preIndex, current, target);
 		}
 	}
 	return target;
 };
 
-let r = shellSort(test);
-console.log('r', r);
+// let r = shellSort(test);
+// console.log('shellSort', r);
+
+const getMaxList = target => {
+	let tmp;
+	for (let i of target) {
+		if (tmp === undefined) {
+			tmp = i;
+		} else {
+			tmp < i ? (tmp = i) : tmp;
+		}
+	}
+	return tmp;
+};
+/**原因：当待排序中的值有较大差距时，会造成内存空间的浪费
+ * 桶排序
+ * 分成N + 1个桶
+ */
+const bucketSort = target => {
+	let max = getMaxList(target);
+	/**申请最大元素 + 1长度的数组 初始化为 0*/
+	let bucket = new Int8Array(max + 1);
+	for (let i = 0; i < target.length; ++i) {
+		bucket[target[i]] += 1;
+	}
+
+	/**
+	 * 对桶排序元素，
+	 * 每个大于0的元素的下标就是target数列里面的值，
+	 * 且都是按顺序排列，
+	 * 所以从0开始，每次自增1，对应的target下标
+	 * 时间复杂度 : O(x * N) x 是数列最大的数
+	 * 稳定
+	 */
+	for (let i = 0, j = 0; i < bucket.length; ++i) {
+		if (bucket[i]) {
+			/**i是target的值 */
+			target[j++] = i;
+		}
+	}
+	return target;
+};
+// test.push(15);
+// let r = bucketSort(test);
+// console.log('r', r);
+
+/**基数排序
+ * 为了进一步减少内存开销，将桶的大小固定为10
+ * 将基数相同的数放在一个桶里
+ * 第一步：通过对数取模求出数的低位模(0-9)，根据低位将数放在对应的桶里
+ * 第二步：取高位模，将第一步的数排序，就完成了排序
+ */
+const radixSort = target => {
+	let counter = [];
+	for (let i = 0; i < 10; ++i) {
+		counter[i] = [];
+	}
+	for (let i = 0; i < target.length; ++i) {
+		let tmp = target[i] % 10;
+		counter[tmp].push(target[i]);
+	}
+};
+// test.push(14);
+// radixSort(test);
+
+/**
+ * 归并排序
+ * 先拆解后合并
+ * 分治和递归的思想，
+ * 将整个数列一次分成两段数列，直至分成两段有序数列，
+ * 再将数列组合起来
+ * 需要一个辅助数组
+ * 先分(分成一段一段的小数组) 再治(合并成大数组)
+ */
+
+class MergeSort {
+	constructor(target) {
+		this.tmp = [];
+		this.target = target;
+		this.first = 0;
+		this.last = this.target.length - 1;
+	}
+
+	mergeInside(first, mid, last) {
+		let f = first;
+		let l = last;
+		console.log('first:%d, tF: %d, mid: %d, last: %d, tL: %d', first, this.target[first], mid, last, this.target[last]);
+		let t = mid + 1;
+		let k = 0;
+		while (f <= mid && t <= l) {
+			this.tmp[k++] = this.target[f] < this.target[t] ? this.target[f++] : this.target[t++];
+		}
+		while (f <= mid) {
+			this.tmp[k++] = this.target[f++];
+		}
+		while (t <= l) {
+			this.tmp[k++] = this.target[t++];
+		}
+
+		console.log('tmpK', this.tmp);
+
+		return this.tmp;
+	}
+
+	mergeArray(first = this.first, last = this.last) {
+		if (first < last) {
+			let mid = Math.floor((first + last) >> 1);
+			this.mergeArray(first, mid);
+			this.mergeArray(mid + 1, last);
+			console.log('=============>>>111');
+			this.mergeInside(first, mid, last);
+		}
+	}
+}
+
+let r = new MergeSort(test);
+r.mergeArray(0, test.length - 1);
+// console.log('r', r);
+
+/**堆排序 */
+const heapSort = target => {};
