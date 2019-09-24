@@ -298,45 +298,55 @@ class MergeSort {
 	constructor(target) {
 		this.tmp = [];
 		this.target = target;
-		this.first = 0;
-		this.last = this.target.length - 1;
 	}
 
-	mergeInside(first, mid, last) {
-		let f = first;
-		let l = last;
-		console.log('first:%d, tF: %d, mid: %d, last: %d, tL: %d', first, this.target[first], mid, last, this.target[last]);
-		let t = mid + 1;
-		let k = 0;
-		while (f <= mid && t <= l) {
-			this.tmp[k++] = this.target[f] < this.target[t] ? this.target[f++] : this.target[t++];
-		}
-		while (f <= mid) {
-			this.tmp[k++] = this.target[f++];
-		}
-		while (t <= l) {
-			this.tmp[k++] = this.target[t++];
-		}
-
-		console.log('tmpK', this.tmp);
-
-		return this.tmp;
+	/**自上而下的递归 */
+	mergeSort(arr = this.target) {
+		let len = arr.length;
+		if (len < 2) return arr;
+		let mid = Math.floor(len / 2),
+			left = arr.slice(0, mid),
+			right = arr.slice(mid);
+		return (this.target = this.tmp = this.merge(this.mergeSort(left), this.mergeSort(right)));
 	}
 
-	mergeArray(first = this.first, last = this.last) {
-		if (first < last) {
-			let mid = Math.floor((first + last) >> 1);
-			this.mergeArray(first, mid);
-			this.mergeArray(mid + 1, last);
-			console.log('=============>>>111');
-			this.mergeInside(first, mid, last);
+	/**合并 */
+	merge(left, right) {
+		let res = [];
+		console.log('============>>>第一步', res);
+		while (left.length && right.length) {
+			if (left[0] <= right[0]) {
+				res.push(left.shift());
+			} else {
+				res.push(right.shift());
+			}
 		}
+		console.log('============>>>第二步', res);
+		while (left.length) {
+			res.push(left.shift());
+		}
+		console.log('============>>>第三步', res);
+		while (right.length) {
+			res.push(right.shift());
+		}
+		console.log('============>>>第四步', res);
+		return res;
 	}
 }
 
-let r = new MergeSort(test);
-r.mergeArray(0, test.length - 1);
+// let r = new MergeSort(test);
+// r.mergeSort();
 // console.log('r', r);
 
-/**堆排序 */
-const heapSort = target => {};
+/**堆排序
+ * 大顶堆 - 每个节点的值都大于或等于其节点的值，在堆排序算法中用于生序排列
+ * 小顶堆 - 每个节点的值都小于或等于其节点的值。 在堆排序算法中用于降序排列
+ * 堆是一个完全二叉树，除了最后一层，其他层的结点数达到最大，最后一层的所有结点都集中在左边，左边结点排列满的情况，右边才能缺失结点
+ * 堆的存储是靠数组来实现
+ * 子节点下标分别是根结点的[2i+1, 2i+2]，根结点从0开始
+ */
+class HeapSort {
+	constructor(target) {
+		this.target = target;
+	}
+}
