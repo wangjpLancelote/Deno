@@ -1891,3 +1891,40 @@ const throttle = (fn, threshold = 250) => {
     }
   }
 }
+
+class MetaPrograming {
+  constructor () {
+    console.log('target', new.target, new.target === MetaPrograming);
+  }
+}
+new MetaPrograming();
+
+let test = [1,2,3,4,5,6,7];
+for (let v of test) {
+  console.log('v', v);
+}
+
+test[Symbol.iterator] = function * () {
+  let idx = 1;
+  do {
+    yield this[idx]
+  } while ((idx += 2) < this.length)
+}
+
+for (let c of test) {
+  console.log('c', c)
+}
+
+test[Symbol.toPrimitive] = function (hint) {
+  console.log('hint', hint);
+  if (hint ==='default' || hint === 'number') {
+    return this.reduce((p, b) => {
+      return p + b;
+    }, 0)
+  }
+}
+
+test[Symbol.isConcatSpreadable] = false;
+[].concat(test, [9])
+console.log('test', test);
+// console.log('ss', test + 10);

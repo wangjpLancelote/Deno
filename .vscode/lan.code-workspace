@@ -1,40 +1,34 @@
 {
-  "folders": [
-    {
-      "path": "/Users/wangjianping/cms-api"
-    },
-    {
-      "path": "/Users/wangjianping/Deno"
-    },
-    {
-      "path": "/Users/wangjianping/h5-api"
-    },
-    {
-      "path": "/Users/wangjianping/new_cms"
-    },
-    {
-      "path": "/Users/wangjianping/ntt-api"
-    },
-    {
-      "path": "/Users/wangjianping/ntt-cloud"
-    },
-    {
-      "path": "/Users/wangjianping/ntt-cms"
-    },
-    {
-      "path": "/Users/wangjianping/ntt-node-lib"
-    },
-    {
-      "path": "/Users/wangjianping/ntt-node-model"
-    },
-    {
-      "path": "/Users/wangjianping/goPro",
-      "GOPATH": "/Users/wangjianping/goPro/goBin"
-    }
-  ],
-  "settings": {
-    "editor.tabSize": 2,
-    "go.useLanguageServer": true,
-    "go.inferGopath": true
-  }
+	"folders": [
+		{
+			"path": "/Users/wangjianping/cms-api"
+		},
+		{
+			"path": "/Users/wangjianping/Deno"
+		},
+		{
+			"path": "/Users/wangjianping/h5-api"
+		},
+		{
+			"path": "/Users/wangjianping/new_cms"
+		},
+		{
+			"path": "/Users/wangjianping/ntt-api"
+		},
+		{
+			"path": "/Users/wangjianping/ntt-node-lib"
+		},
+		{
+			"path": "/Users/wangjianping/ntt-node-model"
+		},
+		{
+			"path": "/Users/wangjianping/goPro",
+			"GOPATH": "/Users/wangjianping/goPro/goBin"
+		}
+	],
+	"settings": {
+		"editor.tabSize": 2,
+		"go.useLanguageServer": true,
+		"go.inferGopath": true
+	}
 }
