@@ -1,0 +1,19 @@
+{
+	"name": "htt",
+	"version": "1.0.0",
+	"description": "http demo",
+	"main": "client.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "parcel ./*.html",
+		"build": "parcel build ./*.html"
+	},
+	"keywords": [
+		"ISC"
+	],
+	"author": "W.J.P",
+	"license": "MIT",
+	"dependencies": {
+		"parcel-bundler": "^1.12.3"
+	}
+}

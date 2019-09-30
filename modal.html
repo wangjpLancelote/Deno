@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Document</title>
+	</head>
+	<body>
+		<div id="one">1</div>
+		<div id="two">2</div>
+		<div id="three">3</div>
+	</body>
+</html>
+<script>
+	let one = document.querySelector('#one');
+	let two = document.querySelector('#two');
+	let three = document.querySelector('#three');
+	// console.log('one', one);
+	// console.log('two', two);
+	// console.log('three', three);
+	function clickTwo() {
+		two.addEventListener('click', function() {
+			two.innerHTML = 'wang';
+		});
+	}
+	// one.on('click', function() {
+	//
+	// });
+	one.addEventListener('click', function() {
+		one.innerHTML = 'jjj';
+		clickTwo();
+	});
+</script>
+<style>
+	#one,
+	#two,
+	#three {
+		width: 100px;
+		height: 40px;
+		border: 1px solid #ccc;
+	}
+</style>
