@@ -1892,18 +1892,40 @@ const throttle = (fn, threshold = 250) => {
   }
 }
 
+
+/**
+ * 使用元编程，可以修改对象属性，修改方法属性
+ * new 关键字，自带target属性，返回当前属性类型。方法的类型，类类型
+ */
 class MetaPrograming {
+  static get[Symbol.species] () {return this;}
+
+  get len () {
+    return 1
+  }
+
   constructor () {
     console.log('target', new.target, new.target === MetaPrograming);
   }
+
+
+  again () {
+    return new this.constructor[Symbol.species]();
+  }
 }
-new MetaPrograming();
+// console.log('g', MetaPrograming.get());
+let m = new MetaPrograming();
+// console.log('m', m.again())
+// console.log('00', m.len);
 
 let test = [1,2,3,4,5,6,7];
 for (let v of test) {
-  console.log('v', v);
+  // console.log('v', v);
 }
 
+/**修改对象(包括数组)的迭代器属性 
+ * 自定义迭代器方法
+*/
 test[Symbol.iterator] = function * () {
   let idx = 1;
   do {
@@ -1912,7 +1934,7 @@ test[Symbol.iterator] = function * () {
 }
 
 for (let c of test) {
-  console.log('c', c)
+  // console.log('c', c)
 }
 
 test[Symbol.toPrimitive] = function (hint) {
@@ -1926,5 +1948,6 @@ test[Symbol.toPrimitive] = function (hint) {
 
 test[Symbol.isConcatSpreadable] = false;
 [].concat(test, [9])
-console.log('test', test);
+// console.log('test', test);
 // console.log('ss', test + 10);
+

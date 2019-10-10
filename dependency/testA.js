@@ -1,11 +1,8 @@
-
-const { sayB } = require('./testB');
-
-sayB();
-function sayA () {
-    console.log('sayA');
+class Test {
+	get() {
+		console.log('88');
+	}
 }
 
-module.exports = {
-    sayA
-}
+let t = new Test();
+exports.t = t;

@@ -1,11 +1,3 @@
+const a = require('./testA');
 
-const { sayA } = require('./testA');
-
-sayA();
-function sayB () {
-    console.log('sayB');
-}
-
-module.exports = {
-    sayB
-}
+console.log('a', a.t.get());

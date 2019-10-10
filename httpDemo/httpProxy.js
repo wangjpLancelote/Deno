@@ -44,7 +44,7 @@ const server = http.createServer((request, response) => {
 
 /**
  * 代理服务器 3000端口
- * 代理实体 4000端口
+ * 实体服务器 4000端口
  */
 server.listen(3000, () => {
 	console.log('proxyHttp is running at http://localhost:3000');

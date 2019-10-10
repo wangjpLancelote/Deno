@@ -343,10 +343,226 @@ class MergeSort {
  * 小顶堆 - 每个节点的值都小于或等于其节点的值。 在堆排序算法中用于降序排列
  * 堆是一个完全二叉树，除了最后一层，其他层的结点数达到最大，最后一层的所有结点都集中在左边，左边结点排列满的情况，右边才能缺失结点
  * 堆的存储是靠数组来实现
- * 子节点下标分别是根结点的[2i+1, 2i+2]，根结点从0开始
+ * 子节点下标分别是根结点的[2i+1, 2i+2]，根结点下标从0开始
+ *
+ * 复杂度分析
+ * 每一层只遍历一个节点，具有n个节点的完全二叉树的深度为[log2n+1]，shiftDown的复杂度是O(logn) 而外层循环共有n次，最终复杂度是O(nlogn)
+ * 堆主要用来实现优先队列，用堆可以使入队和出队的复杂度都很低
  */
 class HeapSort {
 	constructor(target) {
 		this.target = target;
 	}
+
+	swap(arr, i, j) {
+		[arr[i], arr[j]] = [arr[j], arr[i]];
+		// console.log('arr', arr);
+		return arr;
+	}
+
+	/**这里的i是非叶子节点的下标 */
+	shiftDown(arr, i, length) {
+		let tmp = arr[i];
+
+		/**对结点i一下的节点全部做顺序调整 */
+		for (let j = 2 * i + 1; j < length; j = 2 * j + 1) {
+			tmp = arr[i];
+			if (j + 1 < length && arr[j] < arr[j + 1]) {
+				//这里是找到两个同级孩子节点2 * j + 1 和2 * j + 2,比较出较大的一个,再与父节点比较
+				j++;
+			}
+			if (tmp < arr[j]) {
+				/**父节点小于子节点，交换 */
+				this.swap(arr, i, j);
+				i = j;
+			} else {
+				break;
+			}
+		}
+	}
+
+	heapSort() {
+		/**初始化大顶堆，从后往前。找到第一个非叶子节点，比较 */
+		for (let i = Math.floor(this.target.length / 2 - 1); i >= 0; i--) {
+			this.shiftDown(this.target, i, this.target.length);
+		}
+		/**倒序遍历 */
+		for (let i = Math.floor(this.target.length - 1); i > 0; i--) {
+			/**根节点与最后节点交换 */
+			this.swap(this.target, 0, i);
+			this.shiftDown(this.target, 0, i);
+		}
+	}
 }
+
+// let r = new HeapSort(test);
+// r.heapSort();
+// console.log('r', r);
+
+/**
+ * BST [二叉搜索树]
+ * 二叉树演变了许多其他的数据结构
+ * 二叉树的遍历有两种: 深度优先遍历和广度优先遍历
+ * 深度遍历有前序遍历，中序遍历，后序遍历，广度遍历有层次遍历
+ * 树本身就是递归定义，因此采用递归的方法去实现树的三种遍历容易理解且代码简洁，广度遍历则需要其他的数据结构支撑，例如堆
+ *
+ * 二叉搜索树是一种完全二叉树，只允许左侧的节点小于父节点，右侧节点大于或等于父节点
+ *
+ * 节点属性: 节点的深度取决于其祖先的数量 （节点深度 = 节点数量 /2 -1）
+ * 树的高度：为节点深度的最大值
+ */
+class BST {
+	constructor() {
+		/**模板节点 [父节点，左节点，右节点] */
+		this.Node = {
+			key: null,
+			left: null,
+			right: null
+		};
+
+		this.root = null; //根节点
+	}
+
+	insert(key) {
+		this.Node.key = key;
+		let node = this.deepClone(this.Node);
+		// node.key = key;
+		if (this.root === null) {
+			/**设为根节点 */
+			this.root = {
+				key: key,
+				left: null,
+				right: null
+			};
+			return this;
+		} else {
+			/**插入新节点 */
+			this.insertNode(this.root, node);
+			return this;
+		}
+	}
+	deepClone(target) {
+		let res = {};
+		if (_.isPlainObject(target)) {
+			for (let i in target) {
+				if (Array.isArray(target[i])) {
+					res[i] = target[i].slice();
+				} else {
+					res[i] = target[i];
+				}
+			}
+		}
+		return res;
+	}
+	insertNode(root, newNode) {
+		console.log('newNode', root.key, newNode.key);
+		if (newNode.key < root.key) {
+			//新插入的节点比根节点小,所以只能放在父节点的左边
+			if (root.left === null) {
+				root.left = newNode;
+			} else {
+				this.insertNode(root.left, newNode);
+			}
+		} else {
+			console.log('=====', root.right);
+			if (root.right === null) {
+				console.log('<<<', newNode);
+				root.right = newNode;
+			} else {
+				/**当前位置有节点，递归处理 */
+				console.log('>>>', root.right);
+				this.insertNode(root.right, newNode);
+			}
+		}
+		return this;
+	}
+
+	get getRoot() {
+		return this.root;
+	}
+
+	search(key) {
+		return this.searchNode(this.root, key);
+	}
+
+	/**查找节点 */
+	searchNode(node, key) {
+		if (node === null) return false;
+		if (key < node.key) {
+			/**比根节点的key小，从左边搜索 */
+			return this.searchNode(node.left, key);
+		} else if (key > node.key) {
+			return this.searchNode(node.right, key);
+		} else {
+			/**found */
+			return true;
+		}
+	}
+
+	/**key 最小节点 */
+	minNode(node) {
+		if (this.root === null) return null;
+		while (node && node.left !== null) {
+			node = node.left;
+		}
+		return node.key;
+	}
+
+	/**key最大节点 */
+	maxNode(node) {
+		if (!this.root) return null;
+		while (node && node.right !== null) {
+			node = node.right;
+		}
+		return node.key;
+	}
+
+	findMinNode(node) {
+		while (node && node.left !== null) {
+			node = node.left;
+		}
+		return node;
+	}
+
+	/**移除节点 */
+	removeNode(node, element) {
+		if (node === null) return null;
+
+		if (element < node.key) {
+			node.left = this.removeNode(node.left, element);
+			return node;
+		} else if (element > node.key) {
+			node.right = this.removeNode(node.right, element);
+			return node;
+		} else {
+			/**命中 该节点分3种情况，无叶子节点，单叶子节点， 满叶子节点*/
+			if (node.left === null && node.right === null) {
+				node = null;
+				return node;
+			}
+			if (node.left === null && node.right) {
+				node = node.right;
+				return node;
+			} else if (node.left && node.right === null) {
+				node = node.left;
+				return node;
+			}
+
+			/**移除拥有完整叶子的节点 */
+			let aux = this.findMinNode(node.right); // 找到右边子树的最小节点
+			node.key = aux.key; //改变节点的键
+			node.right = this.removeNode(node.right, aux.key);
+			return node; //返回更新后的节点的引用
+		}
+	}
+}
+//二叉搜索树
+// let r = new BST();
+// r.insert(1);
+// r.insert(2);
+// r.insert(3);
+// console.log('r', r);
+// // console.log('right', r.root.right);
+// let min = r.minNode(r.root);
+// let max = r.maxNode(r.root);
+// console.log('min', min, max);

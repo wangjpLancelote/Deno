@@ -6,10 +6,81 @@
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 		<title>Document</title>
 	</head>
-	<script src="./client.js"></script>
+	<!-- <script src="./client.js"></script> -->
+	<script src="https://unpkg.com/driver.js/dist/driver.min.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/driver.js/dist/driver.min.css" />
+	<style>
+		#highLight {
+			width: 200px;
+			height: 100px;
+			border: 1px solid #ccc;
+		}
+		#highLight2 {
+			width: 200px;
+			height: 100px;
+			border: 1px solid #ccc;
+		}
+		#highLight3 {
+			width: 200px;
+			height: 100px;
+			border: 1px solid #ccc;
+		}
+	</style>
 	<body>
 		<div>axios</div>
 		<button>get</button>
 		<button>post</button>
+		<div id="highLight">
+			this is leader
+		</div>
+		<div id="highLight2">
+			this is leader
+		</div>
+		<div id="highLight3">
+			this is leader
+		</div>
 	</body>
+	<script>
+		/**
+		 * driver 是一个在页面区域高亮显示的用于新手指引操作的库，
+		 */
+		const driver = new Driver();
+		// driver.highlight('#highLight');
+		// driver.highlight({
+		// 	element: '#highLight',
+		// 	popover: {
+		// 		title: '新手引导',
+		// 		description: '新手引导内容',
+		// 		position: 'bottom',
+		// 		offset: 20
+		// 	}
+		// });
+		driver.defineSteps([
+			{
+				element: '#highLight',
+				popover: {
+					className: 'first-step-popover-class',
+					title: '第一步',
+					description: '引导第一步'
+				}
+			},
+			{
+				element: '#highLight2',
+				popover: {
+					className: 'first-step-popover-class',
+					title: '第二步',
+					description: '引导第二步'
+				}
+			},
+			{
+				element: '#highLight3',
+				popover: {
+					className: 'first-step-popover-class',
+					title: '第三步',
+					description: '引导第三步'
+				}
+			}
+		]);
+		driver.start();
+	</script>
 </html>
