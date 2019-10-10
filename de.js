@@ -1914,7 +1914,7 @@ class MetaPrograming {
   }
 }
 // console.log('g', MetaPrograming.get());
-let m = new MetaPrograming();
+// let m = new MetaPrograming();
 // console.log('m', m.again())
 // console.log('00', m.len);
 
@@ -1950,4 +1950,14 @@ test[Symbol.isConcatSpreadable] = false;
 [].concat(test, [9])
 // console.log('test', test);
 // console.log('ss', test + 10);
+
+
+// const testRet = (target) => {
+//   // return [1,2,3,4,5,6][target & 1 || 0]
+//   return [1,2,3,4,5,6][target]
+
+// }
+
+// let r = testRet(4);
+// console.log('r', r);
 

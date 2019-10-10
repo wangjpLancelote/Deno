@@ -364,15 +364,21 @@ class HeapSort {
 	shiftDown(arr, i, length) {
 		let tmp = arr[i];
 
-		/**对结点i一下的节点全部做顺序调整 */
+		/**对结点i一下的节点全部做顺序调整
+		 * i是第一个非叶子节点，j是i的两个子节点
+		 */
 		for (let j = 2 * i + 1; j < length; j = 2 * j + 1) {
+			/** */
 			tmp = arr[i];
 			if (j + 1 < length && arr[j] < arr[j + 1]) {
 				//这里是找到两个同级孩子节点2 * j + 1 和2 * j + 2,比较出较大的一个,再与父节点比较
 				j++;
 			}
 			if (tmp < arr[j]) {
-				/**父节点小于子节点，交换 */
+				/**父节点小于最大的子节点，交换数组中位置
+				 * 交换完位置之后，将i换成j，进入下次循环
+				 * 因为是倒序，因此是从下往上构建大顶堆，所以可以保证最终的各个堆都是大顶堆，整个堆就是大顶堆
+				 */
 				this.swap(arr, i, j);
 				i = j;
 			} else {
@@ -382,14 +388,22 @@ class HeapSort {
 	}
 
 	heapSort() {
-		/**初始化大顶堆，从后往前。找到第一个非叶子节点，比较 */
+		/**初始化大顶堆，从后往前。找到第一个非叶子节点，比较
+		 * 第一次构建大顶堆
+		 * 将最大的数，也就是根节点与数组最后一个数交换，完成第一个数的排序，此时，除根节点及其两个子节点之外，都是已经排好序的堆，因此，只需要找到第一个非叶子节点(2 * i + 1)，重复排序->数组交换的顺序 | 进行排序即可
+		 */
 		for (let i = Math.floor(this.target.length / 2 - 1); i >= 0; i--) {
 			this.shiftDown(this.target, i, this.target.length);
 		}
 		/**倒序遍历 */
 		for (let i = Math.floor(this.target.length - 1); i > 0; i--) {
-			/**根节点与最后节点交换 */
+			/**根节点与最后节点交换
+			 * 交换之后继续构建大顶堆
+			 */
 			this.swap(this.target, 0, i);
+			/**
+			 * 每次从0开始，每次最后一位i排序好之后，就将i自减1
+			 */
 			this.shiftDown(this.target, 0, i);
 		}
 	}
@@ -455,7 +469,6 @@ class BST {
 		return res;
 	}
 	insertNode(root, newNode) {
-		console.log('newNode', root.key, newNode.key);
 		if (newNode.key < root.key) {
 			//新插入的节点比根节点小,所以只能放在父节点的左边
 			if (root.left === null) {
@@ -464,13 +477,10 @@ class BST {
 				this.insertNode(root.left, newNode);
 			}
 		} else {
-			console.log('=====', root.right);
 			if (root.right === null) {
-				console.log('<<<', newNode);
 				root.right = newNode;
 			} else {
 				/**当前位置有节点，递归处理 */
-				console.log('>>>', root.right);
 				this.insertNode(root.right, newNode);
 			}
 		}
@@ -566,3 +576,10 @@ class BST {
 // let min = r.minNode(r.root);
 // let max = r.maxNode(r.root);
 // console.log('min', min, max);
+/**
+ * 二叉树的遍历
+ * 前序遍历: 根节点->左子树->右子树
+ * 中序遍历: 左子树->根节点->右子树
+ * 后序遍历: 左子树->右子树->根节点
+ * 层次遍历: 遍历每一次层
+ */
