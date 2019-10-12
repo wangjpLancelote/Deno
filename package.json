@@ -37,6 +37,7 @@
     "crypto-js": "^3.1.9-1",
     "dialog": "^0.3.1",
     "elasticsearch": "^16.1.1",
+    "fuse.js": "^3.4.5",
     "google-protobuf": "^3.9.0-rc.1",
     "grpc": "^1.21.1",
     "http": "0.0.0",
@@ -51,7 +52,8 @@
     "redis": "^2.8.0",
     "superagent": "^5.1.0",
     "touch": "^3.1.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "vue": "^2.6.10"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",

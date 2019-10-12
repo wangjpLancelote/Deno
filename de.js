@@ -1961,3 +1961,28 @@ test[Symbol.isConcatSpreadable] = false;
 // let r = testRet(4);
 // console.log('r', r);
 
+class Lottery {
+  constructor () {
+    this.manay = 0;
+  }
+
+  random (min, max) {
+    return (Math.random() * (max - min) + min).toFixed(2)
+  }
+
+  num () {
+    console.log('sss', this.random(0, 10000))
+    if (this.random(0, 10000) < 9900) {
+      this.manay = this.random(1, 2)
+    } else if (this.random(0, 10000) < 9990) {
+      this.manay = this.random(2, 49)
+    } else if (this.random(0, 10000) === 9999) {
+      this.manay = 50
+    }
+    return this.manay
+  }
+}
+
+      let r = new Lottery();
+r.num();
+console.log('r', r);
