@@ -1745,7 +1745,7 @@ let n = ss.map(c => {
  * base64 编码原理
  * 本质上：格式转换
  * 3 * 8 === 4 * 6 [3个8位的二进制数，可以转化为4个6位的二进制数](计算机一个字节占8为,6位二进制数高位补00,凑8位,若目标字符不是3的倍数,则将分配剩下的数继续转,通过加0补全的方式，变为3个8位数,所以要从地位开始每3位分配)
- * 
+ *
  * 流程：先将字符串的字符转为ascii码，得到N个number类型的数字，二进制转换，得到6位二进制数，高位补0，转为10进制数，对照base64码表，查找对应转化后的字符->新的字符串(base64码)
  * 常见的base64码表基本是根据字母从大到小->数字->+/从0开始排列的。
  * 解码的过程和编码相反，将N个二进制位重组得到3 * N个8位的值
@@ -1753,86 +1753,167 @@ let n = ss.map(c => {
 class Base64Code {
   constructor() {
     this.base = [
-      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-      'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-      'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z",
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h",
+      "i",
+      "j",
+      "k",
+      "l",
+      "m",
+      "n",
+      "o",
+      "p",
+      "q",
+      "r",
+      "s",
+      "t",
+      "u",
+      "v",
+      "w",
+      "x",
+      "y",
+      "z",
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "+",
+      "/"
     ];
   }
 
   /**编码 */
-  encode (bin) {
+  encode(bin) {
     let codes = [];
     let remain = bin % 3; //若不能除尽3，则会剩下的几个数
-    if (remain === 1) {  //补全两个
+    if (remain === 1) {
+      //补全两个
       bin.push(0, 0);
     } else if (remain === 2) {
       bin.push(0);
     }
 
-    for (let i = 2; i < bin.length; i += 3) { //高位开始操作
+    for (let i = 2; i < bin.length; i += 3) {
+      //高位开始操作
       let c = bin[i - 2] << 16;
       c |= bin[i - 1] << 8;
       c |= bin[i];
-      this.codes.push(this.base[c >> 18 & 0x3f]);
-      this.codes.push(this.base[c >> 12 & 0x3f]);
-      this.codes.push(this.base[c >> 6 & 0x3f]);
+      this.codes.push(this.base[(c >> 18) & 0x3f]);
+      this.codes.push(this.base[(c >> 12) & 0x3f]);
+      this.codes.push(this.base[(c >> 6) & 0x3f]);
       this.codes.push(this.base[c & 0x3f]);
     }
     if (remain >= 1) {
-      this.codes[this.codes.length - 1] = '=';
+      this.codes[this.codes.length - 1] = "=";
       bin.pop();
     }
     if (remain == 1) {
-      this.codes[this.codes.length - 2] = '=';
+      this.codes[this.codes.length - 2] = "=";
       bin.pop();
     }
-    return this.codes.join('');
+    return this.codes.join("");
   }
 
   /**解码 */
-  decode (base64Str) {
+  decode(base64Str) {
     let i = 0;
     let bin = [];
-    let x = 0, code = 0, eq = 0;
+    let x = 0,
+      code = 0,
+      eq = 0;
     while (i < base64Str.length) {
-      let c = base64Str.charAt(i++);  //字符在base里的位置，获取该子字符
+      let c = base64Str.charAt(i++); //字符在base里的位置，获取该子字符
       let idx = this.base.indexOf(c);
       if (!~idx) {
         switch (i) {
-          case '=':
-            idx = 0; eq ++; break;
-          case ' ':
-          case '\n':
-          case '\r':
-          case '\t':
+          case "=":
+            idx = 0;
+            eq++;
+            break;
+          case " ":
+          case "\n":
+          case "\r":
+          case "\t":
             continue;
           default:
-            throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u65E0\u6548\u7F16\u7801\uFF1A' + c}
+            throw {
+              message:
+                "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u65E0\u6548\u7F16\u7801\uFF1A" +
+                c
+            };
         }
       }
       if (eq > 0 && idx != 0) {
-        throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01'}
+        throw {
+          message:
+            "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01"
+        };
       }
-      code = code << 6 | idx;
+      code = (code << 6) | idx;
       if (++x !== 4) {
         continue;
       }
       bin.push(code >> 16);
-      bin.push(code >> 8 & 0xff);
+      bin.push((code >> 8) & 0xff);
       bin.push(code & 0xff);
       code = x = 0;
     }
     if (code != 0) {
-      throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u6570\u636E\u957F\u5EA6\u9519\u8BEF'}
+      throw {
+        message:
+          "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u6570\u636E\u957F\u5EA6\u9519\u8BEF"
+      };
     }
-    if (eq === 1) { //取消高位补的0
+    if (eq === 1) {
+      //取消高位补的0
       bin.pop();
     } else if (eq === 2) {
       bin.pop();
       bin.pop();
-    } else if (eq > 2) { //若超过两位还没有被组成3个8位二进制数，说明数据长度报错了
-      throw {'message': '\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01'}
+    } else if (eq > 2) {
+      //若超过两位还没有被组成3个8位二进制数，说明数据长度报错了
+      throw {
+        message:
+          "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01"
+      };
     }
     return bin;
   }
@@ -1847,16 +1928,15 @@ class Base64Code {
  */
 const debounce = (fn, delay, immediate = false) => {
   let timer;
-  return function () {
+  return function() {
     let context = this;
     let args = arguments;
     clearTimeout(timer);
-    timer = setTimeout(function () {
+    timer = setTimeout(function() {
       fn.apply(context, args);
-    }, delay)
-  }
-}
-
+    }, delay);
+  };
+};
 
 // setTimeout(() => {
 //   debounce(() => {console.log('111')}, 2000)();
@@ -1867,15 +1947,15 @@ const debounce = (fn, delay, immediate = false) => {
  * 节流意味着控制流量，限流，只允许在规定时间间隔内执行一次该函数
  * 让函数以规定时间间隔执行
  * 返回一个函数
- * @param {Function} fn 
- * @param {Time} threshold 
+ * @param {Function} fn
+ * @param {Time} threshold
  */
 const throttle = (fn, threshold = 250) => {
   /**记录上次执行的时间 */
   let last;
   /**定时器 */
   let timer;
-  return function () {
+  return function() {
     let context = this;
     let args = arguments;
     let now = +new Date();
@@ -1884,32 +1964,32 @@ const throttle = (fn, threshold = 250) => {
       setTimeout(() => {
         last = now;
         fn.apply(context, args);
-      }, threshold)
+      }, threshold);
     } else {
       last = now;
       fn.apply(context, args);
     }
-  }
-}
-
+  };
+};
 
 /**
  * 使用元编程，可以修改对象属性，修改方法属性
  * new 关键字，自带target属性，返回当前属性类型。方法的类型，类类型
  */
 class MetaPrograming {
-  static get[Symbol.species] () {return this;}
-
-  get len () {
-    return 1
+  static get [Symbol.species]() {
+    return this;
   }
 
-  constructor () {
-    console.log('target', new.target, new.target === MetaPrograming);
+  get len() {
+    return 1;
   }
 
+  constructor() {
+    console.log("target", new.target, new.target === MetaPrograming);
+  }
 
-  again () {
+  again() {
     return new this.constructor[Symbol.species]();
   }
 }
@@ -1918,39 +1998,38 @@ class MetaPrograming {
 // console.log('m', m.again())
 // console.log('00', m.len);
 
-let test = [1,2,3,4,5,6,7];
+let test = [1, 2, 3, 4, 5, 6, 7];
 for (let v of test) {
   // console.log('v', v);
 }
 
-/**修改对象(包括数组)的迭代器属性 
+/**修改对象(包括数组)的迭代器属性
  * 自定义迭代器方法
-*/
-test[Symbol.iterator] = function * () {
+ */
+test[Symbol.iterator] = function*() {
   let idx = 1;
   do {
-    yield this[idx]
-  } while ((idx += 2) < this.length)
-}
+    yield this[idx];
+  } while ((idx += 2) < this.length);
+};
 
 for (let c of test) {
   // console.log('c', c)
 }
 
-test[Symbol.toPrimitive] = function (hint) {
-  console.log('hint', hint);
-  if (hint ==='default' || hint === 'number') {
+test[Symbol.toPrimitive] = function(hint) {
+  console.log("hint", hint);
+  if (hint === "default" || hint === "number") {
     return this.reduce((p, b) => {
       return p + b;
-    }, 0)
+    }, 0);
   }
-}
+};
 
 test[Symbol.isConcatSpreadable] = false;
-[].concat(test, [9])
+[].concat(test, [9]);
 // console.log('test', test);
 // console.log('ss', test + 10);
-
 
 // const testRet = (target) => {
 //   // return [1,2,3,4,5,6][target & 1 || 0]
@@ -1962,27 +2041,200 @@ test[Symbol.isConcatSpreadable] = false;
 // console.log('r', r);
 
 class Lottery {
-  constructor () {
+  constructor() {
     this.manay = 0;
   }
 
-  random (min, max) {
-    return (Math.random() * (max - min) + min).toFixed(2)
+  random(min, max) {
+    return (Math.random() * (max - min) + min).toFixed(2);
   }
 
-  num () {
-    console.log('sss', this.random(0, 10000))
+  num() {
+    console.log("sss", this.random(0, 10000));
     if (this.random(0, 10000) < 9900) {
-      this.manay = this.random(1, 2)
+      this.manay = this.random(1, 2);
     } else if (this.random(0, 10000) < 9990) {
-      this.manay = this.random(2, 49)
+      this.manay = this.random(2, 49);
     } else if (this.random(0, 10000) === 9999) {
-      this.manay = 50
+      this.manay = 50;
     }
-    return this.manay
+    return this.manay;
   }
 }
 
-      let r = new Lottery();
-r.num();
-console.log('r', r);
+// let r = new Lottery();
+// r.num();
+// console.log('r', r);
+
+function deepCloneFP(target, map = new WeakMap()) {
+  if (typeof target === "object") {
+    const isArray = Array.isArray(target);
+    let cloneTarget = isArray ? [] : {};
+    if (map.get(target)) {
+      return map.get(target);
+    }
+    map.set(target, cloneTarget);
+
+    const keys = isArray ? target : Object.keys(target);
+    let idx = -1;
+    const len = keys.length;
+    while (++idx < len) {
+      let tmpIdx = idx;
+      if (keys) {
+        tmpIdx = keys[tmpIdx];
+      }
+      cloneTarget[tmpIdx] = deepCloneFP(target[tmpIdx], map);
+    }
+    return cloneTarget;
+  } else {
+    return target;
+  }
+}
+
+/**构建虚拟dom 类
+ * 虚拟dom 构建及其渲染流程
+ */
+class VDom {
+  constructor(type, props, children) {
+    this.type = type;
+    this.props = props;
+    this.children = children;
+  }
+}
+
+/**创建虚拟dom element */
+function createElement(type, props, children) {
+  return new VDom(type, props, children);
+}
+
+/**渲染 */
+function render(dom) {
+  let el = document.createElement(dom.type);
+
+  /**遍历props对象，然后给创建的元素el设置属性 */
+  for (let key in dom.props) {
+    setArr(el, key, dom.props[key])
+  }
+
+  dom.children.forEach(child => {
+    child = child instanceof Element ? render(child) : document.createTextNode(child)
+    el.appendChild(child)
+  })
+
+  return el;
+}
+
+/**给虚拟dom节点添加属性 */
+function setArr (node, key, value) {
+  switch (key) {
+    case 'value':
+      if (node.tagName.toLowerCase() === 'input' || node.tagName.toLowerCase() === 'textarea') {
+        node.value = value;
+      } else {
+        node.setAttribute(key, value);
+      }
+      break
+      /**style 内联样式 */
+    case 'style':
+      node.style.cssText = value;
+      break;
+    default:
+      node.setAttribute(key, value);
+      break
+  }
+}
+
+/**将元素插入到页面上 */
+function renderDom (el, target) {
+  target.appendChild(el)
+}
+
+/**
+ * dom-diff
+ * 比较的是前后两个虚拟dom,得到的是差异对象(diff), 把差异对象应用到真正的dom树上
+ * 用于查找dom改动，页面重绘，重新渲染
+ * 提高页面响应速度
+ * 
+ */
+function diff () {
+  /**存放补丁的对象 */
+  let pathces = {};
+
+  let index = 0;
+  /**递归比较 */
+  walk (oldTree, newTree, index, pathces);
+
+  return pathces
+}
+
+// function walk (oldNode, newNode, index, pathces) {
+//   /**每个元素都有一个补丁 */
+//   let current = [];
+
+//   if(!newNode) {
+//     current.push({type: 'REMOVE', index: index});
+//   } else if (typeof oldNode === 'string' && typeof newNode === 'string') {
+//     if (oldNode !== newNode) {
+//       current.push({type: 'ATTR', attr}),
+//     }
+//   }
+// }
+
+/**
+ * 基于pormise 的定时器
+ */
+class SetPromiseInterval {
+  constructor () {
+    /**任务集合 */
+    this.tasks = new Set();
+    /**方法集合 */
+    this.handlers = new Map();
+
+    /**计数器 */
+    this.count = 0;
+  }
+  
+  delay (ms) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    })
+  }
+
+  /**执行器 */
+  async run (id, handler, interval = 0) {
+    while (this.tasks.has(id)) {
+      const startTime = new Date().getTime()
+      this.handlers.set(id, handler())
+
+      try {
+        await this.handlers.get(id);
+      } catch (e) {
+        throw e
+      } finally {
+        this.handlers.delete(id);
+      }
+
+      await this.delay(interval - new Date().getTime() + startTime)
+    }
+  }
+
+  /**清除定时器 */
+  async clearPromiseInterval (intervalId) {
+    if (intervalId && this.tasks.has(intervalId)) {
+      if (this.handlers.has(intervalId)) {
+        await this.handlers.get(intervalId);
+      }
+      this.tasks.delete (intervalId);
+    }
+  }
+
+  setPromiseInterval (handler, interval = 0) {
+    this.count += 1;
+    this.tasks.add(this.count);
+    this.run(this.count, handler, interval);
+    return this.count
+  }
+}
+
+// let s = new SetPromiseInterval();
+
