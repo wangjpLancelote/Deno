@@ -50,6 +50,7 @@
     "node-cmd": "^3.0.0",
     "ora": "^3.4.0",
     "redis": "^2.8.0",
+    "screenfull": "^5.0.0",
     "superagent": "^5.1.0",
     "touch": "^3.1.0",
     "uuid": "^3.3.2",
