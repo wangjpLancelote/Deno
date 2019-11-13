@@ -2238,10 +2238,11 @@ class SetPromiseInterval {
 
 // let s = new SetPromiseInterval();
 
-superagent.get('http://www.baidu.com').end((err, {header}) => {
-  if (err) {
-    console.log('err', err);
-  }
-  console.log('body', header);
-})
+// superagent.get('http://www.baidu.com').end((err, {header}) => {
+//   if (err) {
+//     console.log('err', err);
+//   }
+//   console.log('body', header);
+// })
+
 

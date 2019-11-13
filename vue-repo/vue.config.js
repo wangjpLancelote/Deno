@@ -114,8 +114,8 @@ module.exports = {
 				/**接口跨域 换源 */
 				changeOrigin: true,
 				/**是否重写 路径
-				 * 例如原来是: http://127.0.0.1:8080/api/xxx
-				 * 重写后是 http://127.0.0.1:8080/xxx
+				 * 例如原来是: http://127.0.0.1:8081/api/xxx
+				 * 重写后是 http://127.0.0.1:8081/xxx
 				 */
 				pathRewrite: { "^/api": "" },
 				/**接受运行在https上，且使用了无效证书的服务器 */
