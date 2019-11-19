@@ -14,6 +14,7 @@ const ora = require("ora"); //node 终端加载动画
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
+const axios = require('axios');
 
 let a = [1, 2, 3, 4];
 // _.each(a, (v) => {
@@ -1818,6 +1819,7 @@ class Base64Code {
       "+",
       "/"
     ];
+    this.codes = [];
   }
 
   /**编码 */
@@ -1918,6 +1920,10 @@ class Base64Code {
     return bin;
   }
 }
+
+let base64 = new Base64Code()
+
+// let rt = base64.encode('https://cloud.benewtech.cn/forum/exhibition/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 
 /**防抖函数
  * 强制让函数在规定时间内段只执行一次
@@ -2246,3 +2252,93 @@ class SetPromiseInterval {
 // })
 
 
+// const seeds = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+// function geneActivateCodeStr() {
+//   let buf = [];
+
+//   for (let i = 0; i < 64; ++i) {
+//     buf.push(seeds[_.random(0, seeds.length - 1)]);
+//   }
+
+//   return buf.join('');
+// }
+
+// console.time('ss');
+// let rt = geneActivateCodeStr();
+// console.timeEnd('ss', rt);
+
+/**去除字符串内空格 */
+const trimInString = (str) => {
+  return str.replace(/\s*/g, '')
+}
+
+const refs = (obj) => {
+  const res = {};
+  Object.keys(obj).forEach(key => {
+    if (isRefs(obj[key])) {
+      res[key] = obj[key];
+    } else {
+      res[key] = {
+        get value () {
+          return obj[key];
+        },
+        set value (val) {
+          obj[key] = val
+        }
+      }
+    }
+  })
+  return res;
+}
+
+
+const getDwzLink = () => {
+  let token = 'b6adb3e2628337ac6d55ff001249e6fc';
+  let longUrl = 'https://cloud.benewtech.cn/forum/exhibition/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+  let TermOfValidity = '1-year'
+
+  let request = axios.create({
+    headers: {
+      'Content-Type': 'application/json',
+      'Token': token
+    }
+  });
+  request.post('https://dwz.cn/admin/v2/create', {Url: longUrl, TermOfValidity: TermOfValidity}).then(res => {
+  console.log('res', res.data);
+  }).catch(err => {
+    console.log('err', err);
+  })
+}
+// getDwzLink();
+const superAgentLink = async () => {
+  let token = 'b6adb3e2628337ac6d55ff001249e6fc';
+  let longUrl = 'https://cloud.benewtech.cn/forum/exhibition/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+  let TermOfValidity = '1-year'
+  
+  return superagent.post('https://dwz.cn/admin/v2/create')
+  .send({Url: longUrl, TermOfValidity: TermOfValidity})
+  .set('Content-Type', 'application/json')
+  .set('Token', token)
+}
+
+const reStore = (url) => {
+  let token = 'b6adb3e2628337ac6d55ff001249e6fc';
+  return superagent.post('https://dwz.cn/admin/v2/query', {shortUrl: url})
+  .set('Content-Type', 'application/json')
+  .set('Token', token)
+}
+
+async function getData () {
+  let rt = await superAgentLink();
+  console.log('短网址', rt.body.ShortUrl);
+  let restore = await reStore(rt.body.ShortUrl);
+  console.log('原网址', restore.body.LongUrl);
+}
+getData ();
+
+// const pipeDef = (x, ...fn) => {
+//   fn.reduce((y, f) => f(y), x);
+// }
+
+// const pipeDef = (...fn) => x => fn.reduce((y, f) => f(y), x);
