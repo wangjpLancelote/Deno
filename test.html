@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>qrcode</title>
+</head>
+<body>
+  <div>
+    <img src="" alt="">
+  </div>
+  <div class="test" draggable="true">
+
+  </div>
+  <div class="recive" id="n" ondrop="drop(event)" ondragover="over(event)">
+
+  </div>
+</body>
+<style>
+  .test {
+    width: 100px;
+    height: 100px;
+    background: #000;
+  }
+  .recive {
+    width: 200px;
+    height: 200px;
+    background: #ccc;
+  }
+</style>
+<script>
+  let es = new EventSource('/sse')
+  es.onmessage = function (e) {
+    console.log('e', e.data);
+  }
+
+  es.addEventListener('server-time', (e) => {
+    console.log('e', e.data);
+  })
+  es.onopen = () => {
+    console.log('open')
+  }
+  es.onerror = () => {
+    console.log('error')
+  }
+
+  let div = document.getElementsByClassName('test')[0];
+  div.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  })
+  div.addEventListener('dragstart', (e) => {
+    console.log('start', e)
+    e.dataTransfer.setData('img', e.target.id);
+  } )
+  div.addEventListener('dragend', (e) => {
+    console.log('end', e)
+    div.style.left = e.clientX + 'px';
+    div.style.top = e.clientY + 'px';
+  })
+  div.addEventListener('drop', (e) => {
+    console.log('drop', e)
+    div.style.left = e.clientX + 'px';
+    div.style.top = e.clientY + 'px';
+  })
+
+
+  function drop (e) {
+    console.log('e', e)
+    e.preventDefault();
+    let data = e.dataTransfer.getData('img');
+    e.target.appendChild(document.getElementById(data));
+  }
+
+  function over (e) {
+    e.preventDefault();
+  }
+
+</script>
+<!-- <script src="./axios.min.js"></script> -->
+</html>

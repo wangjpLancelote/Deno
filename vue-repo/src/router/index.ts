@@ -25,12 +25,12 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   /**每次跳转路由都定位到页面顶部 */
-  scrollBehavior: () => {y: 0},
+  scrollBehavior: () => {
+    0;
+  },
   routes
 });
 
 export default router;
 
-export {
-  routes
-}
+export { routes };

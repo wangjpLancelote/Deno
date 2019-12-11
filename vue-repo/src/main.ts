@@ -4,22 +4,21 @@ import router from "./router";
 import store from "./store";
 
 /**引入vuetify 模块 */
-import Vuetify from 'vuetify';
-import 'vuetify/dist/vuetify.min.css'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import Vuetify from "vuetify";
+import "vuetify/dist/vuetify.min.css";
+import "material-design-icons-iconfont/dist/material-design-icons.css";
 /**字体 */
-import '@mdi/font/css/materialdesignicons.css'
+import "@mdi/font/css/materialdesignicons.css";
 
 // import './guard.ts'
 
-
-Vue.use(Vuetify)
+Vue.use(Vuetify);
 
 export default new Vuetify({
   icons: {
-    iconfont: 'mdi'
+    iconfont: "mdi"
   }
-})
+});
 
 Vue.config.productionTip = false;
 

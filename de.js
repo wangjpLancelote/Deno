@@ -11,6 +11,8 @@ const redis = require("redis");
 const nodeCmd = require("node-cmd"); //node 调用cmd
 const dialog = require("dialog"); //node打开对话框
 const ora = require("ora"); //node 终端加载动画
+const os = require('os');
+const util = require('util');
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
@@ -2313,8 +2315,8 @@ const getDwzLink = () => {
 // getDwzLink();
 const superAgentLink = async () => {
   let token = 'b6adb3e2628337ac6d55ff001249e6fc';
-  let longUrl = 'https://cloud.benewtech.cn/forum/exhibition/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-  let TermOfValidity = '1-year'
+  let longUrl = 'https://cloud.benewtech.cn/forum/exhibition/oq81kzBsD7TYxT1I8mSnm48Ec94m2R73AwW6kiXjrnsNeItg55WBYymqlfEsjYKR';
+  let TermOfValidity = 'long-term'
   
   return superagent.post('https://dwz.cn/admin/v2/create')
   .send({Url: longUrl, TermOfValidity: TermOfValidity})
@@ -2331,14 +2333,194 @@ const reStore = (url) => {
 
 async function getData () {
   let rt = await superAgentLink();
-  console.log('短网址', rt.body.ShortUrl);
+  console.log('短网址', rt);
   let restore = await reStore(rt.body.ShortUrl);
   console.log('原网址', restore.body.LongUrl);
 }
-getData ();
+// getData ();
 
 // const pipeDef = (x, ...fn) => {
 //   fn.reduce((y, f) => f(y), x);
 // }
 
 // const pipeDef = (...fn) => x => fn.reduce((y, f) => f(y), x);
+
+function exchangeVariable (arg1, arg2) {
+  let tmpv1 = arg1 ^ arg2;
+  arg2 = tmpv1 ^ arg2
+  arg1 = tmpv1 ^ arg2;
+
+  return  {arg1, arg2}
+}
+
+// let rt = exchangeVariable(1, 2);
+// console.log('rt', rt);
+
+// let cpus = os.cpus();
+// console.log('cpus', cpus);
+
+class Crypt {
+  constructor (key) {
+    this.key = key;
+  }
+  encryptIV(data) {
+    if (!this.key || !data) {
+      return '';
+    }
+    if (!_.isString(data)) {
+      data = JSON.stringify(data);
+    }
+    let cipher;
+    // let iv = new Buffer("1234567812345678");
+    let iv = Buffer.from('1234567812345678');
+    try {
+      cipher = crypto.createCipheriv('aes-256-cbc', String(this.key), iv);
+    } catch (err) {
+      if (err) {
+        console.log(`encrypt createCipher err : key(${this.key}) data(${data}) `);
+        return '';
+      }
+    }
+    let encrypted = cipher.update(String(data), 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+  }
+
+  decryptIV(data) {
+    if (!this.key || !data || !_.isString(data)) {
+      return '';
+    }
+    // let iv = new Buffer("1234567812345678");
+    let iv = Buffer.from('1234567812345678');
+    let decipher = crypto.createDecipheriv('aes-256-cbc', String(this.key), iv);
+    let decrypted;
+    try {
+      decrypted = decipher.update(data, 'hex', 'utf8');
+    } catch (err) {
+      if (err) {
+        console.log(`decrypt decipher.update err : key(${this.key}) data(${data}) decrypted(${decrypted})`);
+        return '';
+      }
+    }
+    try {
+      decrypted += decipher.final('utf8');
+    } catch (err) {
+      if (err) {
+        console.log(`decrypt decipher.final err : key(${this.key}) data(${data}) decrypted(${decrypted})`);
+        return '';
+      }
+    }
+    return decrypted;
+  }
+}
+
+// let rt = new Crypt('%^%082uyyy3ebnYTE@$12328*&34n7fh');
+// let ey = rt.encryptIV({name: 'leon'});
+// console.log('加密: %s', ey);
+// let dy = rt.decryptIV(ey)
+// console.log('解密: %', dy)
+
+let asyncGetNum = (num) => {
+  return new Promise((resolve, reject) => {
+    if (num === undefined) {
+      reject(false);
+    } else {
+      resolve(num * 2)
+    }
+  })
+}
+
+// for (let k of [1,2,3,4,5]) {
+//   let res = [];
+//   asyncGetNum(k).then(data => {
+//     res.push(data);
+//   })
+//   console.log('res', res);
+//   return res;
+// }
+
+const kmp = (string, mat) => {
+
+}
+
+/**适配器模式 */
+// class Adapter {
+//   constructor () {
+//     InterfaceAdapter.call(this);
+//   }
+//   request () {
+//     let adaptee = new Adaptee();
+//     adaptee.specialRequest();
+//   }
+// }
+// util.inherits(Adapter, InterfaceAdapter);
+
+// class InterfaceAdapter {
+//   constructor () {
+
+//   }
+//   request () {
+//     console.log('Target :: request');
+//   }
+// }
+
+// class Adaptee {
+//   specialRequest () {
+//     console.log('Adaptee :: specialRequest');
+//   }
+// }
+
+
+function printResult(points, batches, pi, ms) {
+  console.log();
+	console.log("\t# of points\t# of batches\t# of workers\tlatency in MS\testimated π\tdeviation");
+	console.log("\t---------------------------------------------------------------------------------------");
+	console.log("\t" + points + "\t\t" + batches + "\t\t" + 4 + "\t\t" + ms + "\t\t" + pi.toPrecision(7) + "\t" + Math.abs(pi - Math.PI).toPrecision(7));
+
+}
+
+// printResult(4000, 1, 3.14, 1000)
+
+function spliceInsert (str, num) {
+  let res = str.split('');
+  let L = res.length
+  for (let i = 0; i < L; ++i) {
+    if (i === num) {
+      // res.splice(i, 0, '\n');
+      res.splice(i, 0, ',');
+      
+      num = (num << 1) + 1;
+    } else {
+      continue;
+    }
+  }
+  console.log('res', res)
+  return res.join('')
+}
+
+function changeLine (str) {
+  let res = str.split('，');
+  let line = '';
+  if (res.length > 1) {
+    for (let s of res) {
+      line += s;
+      line += '<br/>';
+    }
+  }
+  return line;
+}
+// let rt = spliceInsert('顺序有点错乱，但每天都打卡，任务圆满完成啦', 4);
+// console.log('rt\n' + rt)
+
+function __filterIncludeArr(A, B) {
+  let rt = [];
+  if (!A.length || !B.length) return rt;
+  for (let c of A) {
+    if (B.includes(c)) continue;
+    rt.push(c);
+  }
+  return rt;
+}
+
+let rt = __filterIncludeArr([1,2,3,5], [1,2,3,4]);
+console.log('rt', rt)

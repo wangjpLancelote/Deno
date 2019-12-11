@@ -1,16 +1,16 @@
-import {Component, Vue, Prop} from 'vue-property-decorator';
+import { Component, Vue, Prop } from "vue-property-decorator";
 
 @Component
 export default class HelloStep extends Vue {
-  @Prop({default: 0, type: Number}) private message!: number
+  @Prop({ default: 0, type: Number }) private message!: number;
 
-  public render () {
+  public render() {
     // const { message } : HelloStep = this;
-    return(
+    return (
       <div>
         this is step: {this.message}
-        <v-btn text small loading={true} color={'primary'}></v-btn>
+        <v-btn text small loading={true} color={"primary"}></v-btn>
       </div>
-    )
+    );
   }
 }
