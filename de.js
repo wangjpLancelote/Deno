@@ -2484,11 +2484,21 @@ function printResult(points, batches, pi, ms) {
 function spliceInsert (str, num) {
   let res = str.split('');
   let L = res.length
+  let t = '';
+  for (let v of res) {
+    t += v;
+    num --;
+    if (num <= 0) {
+      break;
+    }
+  }
+  return t;
   for (let i = 0; i < L; ++i) {
     if (i === num) {
       // res.splice(i, 0, '\n');
-      res.splice(i, 0, ',');
-      
+      let index = res[i].codePointAt(0) > 0xffff ? i + 1 : i;
+      console.log('res[i] %j, index: %d, isEmoji: %j', res[i], index, res[i].codePointAt(0) > 0xffff)
+			res.splice(index, 0, '\n');
       num = (num << 1) + 1;
     } else {
       continue;
@@ -2509,8 +2519,8 @@ function changeLine (str) {
   }
   return line;
 }
-// let rt = spliceInsert('顺序有点错乱，但每天都打卡，任务圆满完成啦', 4);
-// console.log('rt\n' + rt)
+let rt = spliceInsert('乱👍👍👍👍但每天都打卡，任务圆满完成啦顺序有点错', 5);
+console.log('rt\n' + rt)
 
 function __filterIncludeArr(A, B) {
   let rt = [];
@@ -2522,5 +2532,5 @@ function __filterIncludeArr(A, B) {
   return rt;
 }
 
-let rt = __filterIncludeArr([1,2,3,5], [1,2,3,4]);
-console.log('rt', rt)
+// let rt = __filterIncludeArr([1,2,3,5], [1,2,3,4]);
+// console.log('rt', rt)
