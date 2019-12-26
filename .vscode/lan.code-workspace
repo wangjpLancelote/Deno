@@ -33,11 +33,20 @@
     },
     {
       "path": "/Users/wangjianping/ntt-cms"
+    },
+    {
+      "path": "/Users/wangjianping/tower"
     }
   ],
 	"settings": {
 		"editor.tabSize": 2,
 		"go.useLanguageServer": true,
-		"go.inferGopath": true
+    "go.inferGopath": true,
+    "files.exclude": {
+      "**/.classpath": true,
+      "**/.project": true,
+      "**/.settings": true,
+      "**/.factorypath": true
+    }
 	}
 }

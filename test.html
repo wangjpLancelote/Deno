@@ -16,6 +16,7 @@
   <div class="recive" id="n" ondrop="drop(event)" ondragover="over(event)">
 
   </div>
+  <input type="file" id="file">
 </body>
 <style>
   .test {
@@ -75,6 +76,11 @@
   function over (e) {
     e.preventDefault();
   }
+
+  let f = document.getElementById('file');
+  f.addEventListener('click', () => {
+    
+  })
 
 </script>
 <!-- <script src="./axios.min.js"></script> -->

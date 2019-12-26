@@ -2439,9 +2439,6 @@ let asyncGetNum = (num) => {
 //   return res;
 // }
 
-const kmp = (string, mat) => {
-
-}
 
 /**适配器模式 */
 // class Adapter {
@@ -2534,3 +2531,64 @@ function __filterIncludeArr(A, B) {
 
 // let rt = __filterIncludeArr([1,2,3,5], [1,2,3,4]);
 // console.log('rt', rt)
+
+let str = 'aaeeccdd';
+let tartet = [
+  {tar: 'aa', replace: 'ee'},
+  {tar: 'dd', replace: 'ff'}
+]
+
+/**字符串匹配算法 动态规划问题
+ * mat [{target: 'xx', replace: 'xx'}]
+*/
+class KMP {
+  constructor (str, mat) {
+    this.str = str;
+    this.mat = mat;
+  }
+
+  replace () {
+    for (let t of this.mat) {
+      let s = t.target;
+      if (!s) break;
+      let rt = this.findPlace(s);
+      this.doReplace(rt, t.replace);
+    }
+  }
+
+  findPlace (target) {
+    let temp = this.str;
+    for (let s = 0; s < this.str.length; ++s) {
+      if (this.str[s] !== target[0]) continue;
+      if (this.str.length - s < target.length) break;
+      let d = s;
+      for (let i = 0; i < target.length; ++i) {
+        d += 1;
+        if (target[i] !== this.str[d]) break;
+      }
+      if (d < s + target.length) continue;
+      return {
+        start: s,
+        end: s + target.length,
+        value: target
+      }
+    }
+  }
+
+  doReplace (detail, mat) {
+    if (!detail || !detail.start || !detail.end || !detail.value) throw new Error('规则有误');
+    let idx = 0;
+    let temp = this.str.split('');
+    for (let i = detail.start; i < detail.end; ++i) {
+      temp[i] = mat[idx];
+      idx += 1;
+    }
+    this.str = temp.join('');
+    return this.str;
+  }
+}
+
+// const kmp = new KMP('saaddios', [{target: 'aa', replace: 'qq'}]);
+// kmp.replace();
+// console.log('str', kmp.str);
+
