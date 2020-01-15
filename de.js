@@ -11,12 +11,12 @@ const redis = require("redis");
 const nodeCmd = require("node-cmd"); //node 调用cmd
 const dialog = require("dialog"); //node打开对话框
 const ora = require("ora"); //node 终端加载动画
-const os = require('os');
-const util = require('util');
+const os = require("os");
+const util = require("util");
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
-const axios = require('axios');
+const axios = require("axios");
 
 let a = [1, 2, 3, 4];
 // _.each(a, (v) => {
@@ -123,8 +123,7 @@ const body = {
  * number
  */
 const defFindMedianOfTwoArray = (arr1, arr2) => {
-  if (!arr1.length && !arr2.length)
-    return new Error("can not both empty array");
+  if (!arr1.length && !arr2.length) return new Error("can not both empty array");
 
   let item1 = arr1.length ? arr1[0] : Infinity;
   let item2 = arr2.length ? arr2[0] : Infinity;
@@ -132,13 +131,10 @@ const defFindMedianOfTwoArray = (arr1, arr2) => {
   if ([Infinity].includes(item1, item2)) {
     return item1 === Infinity
       ? arr2.length & 1
-        ? (arr2[Math.floor(arr2.length / 2)] +
-            arr2[Math.ceil(arr2.length / 2)]) /
-          2
+        ? (arr2[Math.floor(arr2.length / 2)] + arr2[Math.ceil(arr2.length / 2)]) / 2
         : arr2[arr2.length / 2]
       : arr1.length & 1
-      ? (arr1[Math.floor(arr1.length / 2)] + arr1[Math.ceil(arr1.length / 2)]) /
-        2
+      ? (arr1[Math.floor(arr1.length / 2)] + arr1[Math.ceil(arr1.length / 2)]) / 2
       : arr1[arr1.length / 2];
   } else {
     // let target = item1 < item2 ? arr1 : arr2;
@@ -279,10 +275,7 @@ class Solution {
         tmp.value = this.maxLen - this.target[i];
         tmp.index = i;
       } else {
-        tmp.value =
-          tmp.value > this.maxLen - this.target[i]
-            ? this.maxLen - this.target[i]
-            : tmp.value;
+        tmp.value = tmp.value > this.maxLen - this.target[i] ? this.maxLen - this.target[i] : tmp.value;
         tmp.index = tmp.value > this.maxLen - this.target[i] ? i : tmp.index;
       }
       if (this.target[i] >= this.maxLen) {
@@ -641,7 +634,12 @@ class BinaryTreeSearch {
     this.des = [2, 3];
 
     /**下一步的方位 四个方向*/
-    this.next = [[0, -1], [0, 1], [1, 0], [-1, 0]];
+    this.next = [
+      [0, -1],
+      [0, 1],
+      [1, 0],
+      [-1, 0]
+    ];
 
     /**
      * 迷宫
@@ -649,7 +647,11 @@ class BinaryTreeSearch {
      */
     this.palace = [];
 
-    this.wall = [[0, 1], [1, 3], [3, 3]];
+    this.wall = [
+      [0, 1],
+      [1, 3],
+      [3, 3]
+    ];
 
     this.min = this.len * this.len + 1; //记录最短路径 (理论上的最大的长度，走遍所有地图)
 
@@ -719,24 +721,14 @@ class BinaryTreeSearch {
 
     /**递归搜索 */
     for (let i = 0; i < this.next.length; ++i) {
-      let tmpPos =
-        (pos[0] + this.next[i][0]) * this.len + pos[1] + this.next[i][1]; //下一步的坐标
-      if (
-        pos[0] + this.next[i][0] < 0 ||
-        pos[0] + this.next[i][0] >= this.len ||
-        pos[1] + this.next[i][1] < 0 ||
-        pos[1] + this.next[i][1] >= this.len
-      ) {
+      let tmpPos = (pos[0] + this.next[i][0]) * this.len + pos[1] + this.next[i][1]; //下一步的坐标
+      if (pos[0] + this.next[i][0] < 0 || pos[0] + this.next[i][0] >= this.len || pos[1] + this.next[i][1] < 0 || pos[1] + this.next[i][1] >= this.len) {
         continue; //下一步越界了
       } else if (this.palace[tmpPos] && this.palace[tmpPos][2] === 1) {
         //下一步不是墙
         this.palace[tmpPos][2] = 0;
         result.push(pos[0] + this.next[i][0], pos[1] + this.next[i][1]);
-        this.search(
-          [pos[0] + this.next[i][0], pos[1] + this.next[i][1]],
-          step + 1,
-          result
-        );
+        this.search([pos[0] + this.next[i][0], pos[1] + this.next[i][1]], step + 1, result);
         this.palace[tmpPos][2] = 1; //尝试结束，取消标记
         result.pop();
       }
@@ -816,9 +808,7 @@ function tes() {
     str += CONSTANT_STD_STR[Math.round(Math.random() * (len - 1))];
     num += Math.floor(Math.random() * 10);
   }
-  let str_num =
-    CONSTANT_STD_STR[Math.floor(Math.random() * (len - 1))] +
-    Math.floor(Math.random() * 10);
+  let str_num = CONSTANT_STD_STR[Math.floor(Math.random() * (len - 1))] + Math.floor(Math.random() * 10);
 
   return str + num + str_num;
 }
@@ -1161,10 +1151,7 @@ class encodeAlpha {
     for (let i = 0; i < this.target.length; ++i) {
       console.log("i", this.target[i]);
       this.cnt += 1;
-      if (
-        i + 1 < this.target.length &&
-        Number(this.target[i] + this.target[i + 1]) < 27
-      ) {
+      if (i + 1 < this.target.length && Number(this.target[i] + this.target[i + 1]) < 27) {
         this.cnt += 1;
         continue;
       }
@@ -1219,29 +1206,17 @@ class DiffieHelman {
     let prime = base.getPrime();
     let generator = base.getGenerator();
 
-    console.log(
-      "prime: %j, generator: %j",
-      prime.toString("hex"),
-      generator.toString("hex")
-    );
+    console.log("prime: %j, generator: %j", prime.toString("hex"), generator.toString("hex"));
 
     let tower = crypto.createDiffieHellman(prime, generator);
     let towerKeys = tower.generateKeys();
 
-    console.log(
-      "tower: %j, towerKeys: %j",
-      tower.toString("hex"),
-      towerKeys.toString("hex")
-    );
+    console.log("tower: %j, towerKeys: %j", tower.toString("hex"), towerKeys.toString("hex"));
 
     let base_secret = base.computeSecret(towerKeys);
     let tower_secret = base.computeSecret(base_keys);
 
-    console.log(
-      "base_secret: %j, tower_secret: %j",
-      base_secret.toString("hex"),
-      tower_secret.toString("hex")
-    );
+    console.log("base_secret: %j, tower_secret: %j", base_secret.toString("hex"), tower_secret.toString("hex"));
   }
 }
 
@@ -1879,16 +1854,13 @@ class Base64Code {
             continue;
           default:
             throw {
-              message:
-                "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u65E0\u6548\u7F16\u7801\uFF1A" +
-                c
+              message: "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u65E0\u6548\u7F16\u7801\uFF1A" + c
             };
         }
       }
       if (eq > 0 && idx != 0) {
         throw {
-          message:
-            "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01"
+          message: "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01"
         };
       }
       code = (code << 6) | idx;
@@ -1902,8 +1874,7 @@ class Base64Code {
     }
     if (code != 0) {
       throw {
-        message:
-          "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u6570\u636E\u957F\u5EA6\u9519\u8BEF"
+        message: "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u6570\u636E\u957F\u5EA6\u9519\u8BEF"
       };
     }
     if (eq === 1) {
@@ -1915,15 +1886,14 @@ class Base64Code {
     } else if (eq > 2) {
       //若超过两位还没有被组成3个8位二进制数，说明数据长度报错了
       throw {
-        message:
-          "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01"
+        message: "\u0062\u0061\u0073\u0065\u0036\u0034\u002E\u0074\u0068\u0065\u002D\u0078\u002E\u0063\u006E\u0020\u0045\u0072\u0072\u006F\u0072\u003A\u7F16\u7801\u683C\u5F0F\u9519\u8BEF\uFF01"
       };
     }
     return bin;
   }
 }
 
-let base64 = new Base64Code()
+let base64 = new Base64Code();
 
 // let rt = base64.encode('https://cloud.benewtech.cn/forum/exhibition/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 
@@ -2121,40 +2091,40 @@ function render(dom) {
 
   /**遍历props对象，然后给创建的元素el设置属性 */
   for (let key in dom.props) {
-    setArr(el, key, dom.props[key])
+    setArr(el, key, dom.props[key]);
   }
 
   dom.children.forEach(child => {
-    child = child instanceof Element ? render(child) : document.createTextNode(child)
-    el.appendChild(child)
-  })
+    child = child instanceof Element ? render(child) : document.createTextNode(child);
+    el.appendChild(child);
+  });
 
   return el;
 }
 
 /**给虚拟dom节点添加属性 */
-function setArr (node, key, value) {
+function setArr(node, key, value) {
   switch (key) {
-    case 'value':
-      if (node.tagName.toLowerCase() === 'input' || node.tagName.toLowerCase() === 'textarea') {
+    case "value":
+      if (node.tagName.toLowerCase() === "input" || node.tagName.toLowerCase() === "textarea") {
         node.value = value;
       } else {
         node.setAttribute(key, value);
       }
-      break
-      /**style 内联样式 */
-    case 'style':
+      break;
+    /**style 内联样式 */
+    case "style":
       node.style.cssText = value;
       break;
     default:
       node.setAttribute(key, value);
-      break
+      break;
   }
 }
 
 /**将元素插入到页面上 */
-function renderDom (el, target) {
-  target.appendChild(el)
+function renderDom(el, target) {
+  target.appendChild(el);
 }
 
 /**
@@ -2162,17 +2132,17 @@ function renderDom (el, target) {
  * 比较的是前后两个虚拟dom,得到的是差异对象(diff), 把差异对象应用到真正的dom树上
  * 用于查找dom改动，页面重绘，重新渲染
  * 提高页面响应速度
- * 
+ *
  */
-function diff () {
+function diff() {
   /**存放补丁的对象 */
   let pathces = {};
 
   let index = 0;
   /**递归比较 */
-  walk (oldTree, newTree, index, pathces);
+  walk(oldTree, newTree, index, pathces);
 
-  return pathces
+  return pathces;
 }
 
 // function walk (oldNode, newNode, index, pathces) {
@@ -2192,7 +2162,7 @@ function diff () {
  * 基于pormise 的定时器
  */
 class SetPromiseInterval {
-  constructor () {
+  constructor() {
     /**任务集合 */
     this.tasks = new Set();
     /**方法集合 */
@@ -2201,46 +2171,46 @@ class SetPromiseInterval {
     /**计数器 */
     this.count = 0;
   }
-  
-  delay (ms) {
+
+  delay(ms) {
     return new Promise(resolve => {
       setTimeout(resolve, ms);
-    })
+    });
   }
 
   /**执行器 */
-  async run (id, handler, interval = 0) {
+  async run(id, handler, interval = 0) {
     while (this.tasks.has(id)) {
-      const startTime = new Date().getTime()
-      this.handlers.set(id, handler())
+      const startTime = new Date().getTime();
+      this.handlers.set(id, handler());
 
       try {
         await this.handlers.get(id);
       } catch (e) {
-        throw e
+        throw e;
       } finally {
         this.handlers.delete(id);
       }
 
-      await this.delay(interval - new Date().getTime() + startTime)
+      await this.delay(interval - new Date().getTime() + startTime);
     }
   }
 
   /**清除定时器 */
-  async clearPromiseInterval (intervalId) {
+  async clearPromiseInterval(intervalId) {
     if (intervalId && this.tasks.has(intervalId)) {
       if (this.handlers.has(intervalId)) {
         await this.handlers.get(intervalId);
       }
-      this.tasks.delete (intervalId);
+      this.tasks.delete(intervalId);
     }
   }
 
-  setPromiseInterval (handler, interval = 0) {
+  setPromiseInterval(handler, interval = 0) {
     this.count += 1;
     this.tasks.add(this.count);
     this.run(this.count, handler, interval);
-    return this.count
+    return this.count;
   }
 }
 
@@ -2252,7 +2222,6 @@ class SetPromiseInterval {
 //   }
 //   console.log('body', header);
 // })
-
 
 // const seeds = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -2271,71 +2240,75 @@ class SetPromiseInterval {
 // console.timeEnd('ss', rt);
 
 /**去除字符串内空格 */
-const trimInString = (str) => {
-  return str.replace(/\s*/g, '')
-}
+const trimInString = str => {
+  return str.replace(/\s*/g, "");
+};
 
-const refs = (obj) => {
+const refs = obj => {
   const res = {};
   Object.keys(obj).forEach(key => {
     if (isRefs(obj[key])) {
       res[key] = obj[key];
     } else {
       res[key] = {
-        get value () {
+        get value() {
           return obj[key];
         },
-        set value (val) {
-          obj[key] = val
+        set value(val) {
+          obj[key] = val;
         }
-      }
+      };
     }
-  })
+  });
   return res;
-}
-
+};
 
 const getDwzLink = () => {
-  let token = 'b6adb3e2628337ac6d55ff001249e6fc';
-  let longUrl = 'https://cloud.benewtech.cn/forum/exhibition/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-  let TermOfValidity = '1-year'
+  let token = "b6adb3e2628337ac6d55ff001249e6fc";
+  let longUrl = "https://cloud.benewtech.cn/forum/exhibition/xxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  let TermOfValidity = "1-year";
 
   let request = axios.create({
     headers: {
-      'Content-Type': 'application/json',
-      'Token': token
+      "Content-Type": "application/json",
+      Token: token
     }
   });
-  request.post('https://dwz.cn/admin/v2/create', {Url: longUrl, TermOfValidity: TermOfValidity}).then(res => {
-  console.log('res', res.data);
-  }).catch(err => {
-    console.log('err', err);
-  })
-}
+  request
+    .post("https://dwz.cn/admin/v2/create", { Url: longUrl, TermOfValidity: TermOfValidity })
+    .then(res => {
+      console.log("res", res.data);
+    })
+    .catch(err => {
+      console.log("err", err);
+    });
+};
 // getDwzLink();
 const superAgentLink = async () => {
-  let token = 'b6adb3e2628337ac6d55ff001249e6fc';
-  let longUrl = 'https://cloud.benewtech.cn/forum/exhibition/oq81kzBsD7TYxT1I8mSnm48Ec94m2R73AwW6kiXjrnsNeItg55WBYymqlfEsjYKR';
-  let TermOfValidity = 'long-term'
-  
-  return superagent.post('https://dwz.cn/admin/v2/create')
-  .send({Url: longUrl, TermOfValidity: TermOfValidity})
-  .set('Content-Type', 'application/json')
-  .set('Token', token)
-}
+  let token = "b6adb3e2628337ac6d55ff001249e6fc";
+  let longUrl = "https://cloud.benewtech.cn/forum/exhibition/oq81kzBsD7TYxT1I8mSnm48Ec94m2R73AwW6kiXjrnsNeItg55WBYymqlfEsjYKR";
+  let TermOfValidity = "long-term";
 
-const reStore = (url) => {
-  let token = 'b6adb3e2628337ac6d55ff001249e6fc';
-  return superagent.post('https://dwz.cn/admin/v2/query', {shortUrl: url})
-  .set('Content-Type', 'application/json')
-  .set('Token', token)
-}
+  return superagent
+    .post("https://dwz.cn/admin/v2/create")
+    .send({ Url: longUrl, TermOfValidity: TermOfValidity })
+    .set("Content-Type", "application/json")
+    .set("Token", token);
+};
 
-async function getData () {
+const reStore = url => {
+  let token = "b6adb3e2628337ac6d55ff001249e6fc";
+  return superagent
+    .post("https://dwz.cn/admin/v2/query", { shortUrl: url })
+    .set("Content-Type", "application/json")
+    .set("Token", token);
+};
+
+async function getData() {
   let rt = await superAgentLink();
-  console.log('短网址', rt);
+  console.log("短网址", rt);
   let restore = await reStore(rt.body.ShortUrl);
-  console.log('原网址', restore.body.LongUrl);
+  console.log("原网址", restore.body.LongUrl);
 }
 // getData ();
 
@@ -2345,12 +2318,12 @@ async function getData () {
 
 // const pipeDef = (...fn) => x => fn.reduce((y, f) => f(y), x);
 
-function exchangeVariable (arg1, arg2) {
+function exchangeVariable(arg1, arg2) {
   let tmpv1 = arg1 ^ arg2;
-  arg2 = tmpv1 ^ arg2
+  arg2 = tmpv1 ^ arg2;
   arg1 = tmpv1 ^ arg2;
 
-  return  {arg1, arg2}
+  return { arg1, arg2 };
 }
 
 // let rt = exchangeVariable(1, 2);
@@ -2360,54 +2333,54 @@ function exchangeVariable (arg1, arg2) {
 // console.log('cpus', cpus);
 
 class Crypt {
-  constructor (key) {
+  constructor(key) {
     this.key = key;
   }
   encryptIV(data) {
     if (!this.key || !data) {
-      return '';
+      return "";
     }
     if (!_.isString(data)) {
       data = JSON.stringify(data);
     }
     let cipher;
     // let iv = new Buffer("1234567812345678");
-    let iv = Buffer.from('1234567812345678');
+    let iv = Buffer.from("1234567812345678");
     try {
-      cipher = crypto.createCipheriv('aes-256-cbc', String(this.key), iv);
+      cipher = crypto.createCipheriv("aes-256-cbc", String(this.key), iv);
     } catch (err) {
       if (err) {
         console.log(`encrypt createCipher err : key(${this.key}) data(${data}) `);
-        return '';
+        return "";
       }
     }
-    let encrypted = cipher.update(String(data), 'utf8', 'hex');
-    encrypted += cipher.final('hex');
+    let encrypted = cipher.update(String(data), "utf8", "hex");
+    encrypted += cipher.final("hex");
     return encrypted;
   }
 
   decryptIV(data) {
     if (!this.key || !data || !_.isString(data)) {
-      return '';
+      return "";
     }
     // let iv = new Buffer("1234567812345678");
-    let iv = Buffer.from('1234567812345678');
-    let decipher = crypto.createDecipheriv('aes-256-cbc', String(this.key), iv);
+    let iv = Buffer.from("1234567812345678");
+    let decipher = crypto.createDecipheriv("aes-256-cbc", String(this.key), iv);
     let decrypted;
     try {
-      decrypted = decipher.update(data, 'hex', 'utf8');
+      decrypted = decipher.update(data, "hex", "utf8");
     } catch (err) {
       if (err) {
         console.log(`decrypt decipher.update err : key(${this.key}) data(${data}) decrypted(${decrypted})`);
-        return '';
+        return "";
       }
     }
     try {
-      decrypted += decipher.final('utf8');
+      decrypted += decipher.final("utf8");
     } catch (err) {
       if (err) {
         console.log(`decrypt decipher.final err : key(${this.key}) data(${data}) decrypted(${decrypted})`);
-        return '';
+        return "";
       }
     }
     return decrypted;
@@ -2420,15 +2393,15 @@ class Crypt {
 // let dy = rt.decryptIV(ey)
 // console.log('解密: %', dy)
 
-let asyncGetNum = (num) => {
+let asyncGetNum = num => {
   return new Promise((resolve, reject) => {
     if (num === undefined) {
       reject(false);
     } else {
-      resolve(num * 2)
+      resolve(num * 2);
     }
-  })
-}
+  });
+};
 
 // for (let k of [1,2,3,4,5]) {
 //   let res = [];
@@ -2438,7 +2411,6 @@ let asyncGetNum = (num) => {
 //   console.log('res', res);
 //   return res;
 // }
-
 
 /**适配器模式 */
 // class Adapter {
@@ -2467,24 +2439,22 @@ let asyncGetNum = (num) => {
 //   }
 // }
 
-
 function printResult(points, batches, pi, ms) {
   console.log();
-	console.log("\t# of points\t# of batches\t# of workers\tlatency in MS\testimated π\tdeviation");
-	console.log("\t---------------------------------------------------------------------------------------");
-	console.log("\t" + points + "\t\t" + batches + "\t\t" + 4 + "\t\t" + ms + "\t\t" + pi.toPrecision(7) + "\t" + Math.abs(pi - Math.PI).toPrecision(7));
-
+  console.log("\t# of points\t# of batches\t# of workers\tlatency in MS\testimated π\tdeviation");
+  console.log("\t---------------------------------------------------------------------------------------");
+  console.log("\t" + points + "\t\t" + batches + "\t\t" + 4 + "\t\t" + ms + "\t\t" + pi.toPrecision(7) + "\t" + Math.abs(pi - Math.PI).toPrecision(7));
 }
 
 // printResult(4000, 1, 3.14, 1000)
 
-function spliceInsert (str, num) {
-  let res = str.split('');
-  let L = res.length
-  let t = '';
+function spliceInsert(str, num) {
+  let res = str.split("");
+  let L = res.length;
+  let t = "";
   for (let v of res) {
     t += v;
-    num --;
+    num--;
     if (num <= 0) {
       break;
     }
@@ -2494,30 +2464,30 @@ function spliceInsert (str, num) {
     if (i === num) {
       // res.splice(i, 0, '\n');
       let index = res[i].codePointAt(0) > 0xffff ? i + 1 : i;
-      console.log('res[i] %j, index: %d, isEmoji: %j', res[i], index, res[i].codePointAt(0) > 0xffff)
-			res.splice(index, 0, '\n');
+      console.log("res[i] %j, index: %d, isEmoji: %j", res[i], index, res[i].codePointAt(0) > 0xffff);
+      res.splice(index, 0, "\n");
       num = (num << 1) + 1;
     } else {
       continue;
     }
   }
-  console.log('res', res)
-  return res.join('')
+  console.log("res", res);
+  return res.join("");
 }
 
-function changeLine (str) {
-  let res = str.split('，');
-  let line = '';
+function changeLine(str) {
+  let res = str.split("，");
+  let line = "";
   if (res.length > 1) {
     for (let s of res) {
       line += s;
-      line += '<br/>';
+      line += "<br/>";
     }
   }
   return line;
 }
-let rt = spliceInsert('乱👍👍👍👍但每天都打卡，任务圆满完成啦顺序有点错', 5);
-console.log('rt\n' + rt)
+let rt = spliceInsert("乱👍👍👍👍但每天都打卡，任务圆满完成啦顺序有点错", 5);
+console.log("rt\n" + rt);
 
 function __filterIncludeArr(A, B) {
   let rt = [];
@@ -2532,22 +2502,22 @@ function __filterIncludeArr(A, B) {
 // let rt = __filterIncludeArr([1,2,3,5], [1,2,3,4]);
 // console.log('rt', rt)
 
-let str = 'aaeeccdd';
+let str = "aaeeccdd";
 let tartet = [
-  {tar: 'aa', replace: 'ee'},
-  {tar: 'dd', replace: 'ff'}
-]
+  { tar: "aa", replace: "ee" },
+  { tar: "dd", replace: "ff" }
+];
 
 /**字符串匹配算法 动态规划问题
  * mat [{target: 'xx', replace: 'xx'}]
-*/
+ */
 class KMP {
-  constructor (str, mat) {
+  constructor(str, mat) {
     this.str = str;
     this.mat = mat;
   }
 
-  replace () {
+  replace() {
     for (let t of this.mat) {
       let s = t.target;
       if (!s) break;
@@ -2556,7 +2526,7 @@ class KMP {
     }
   }
 
-  findPlace (target) {
+  findPlace(target) {
     let temp = this.str;
     for (let s = 0; s < this.str.length; ++s) {
       if (this.str[s] !== target[0]) continue;
@@ -2571,19 +2541,19 @@ class KMP {
         start: s,
         end: s + target.length,
         value: target
-      }
+      };
     }
   }
 
-  doReplace (detail, mat) {
-    if (!detail || !detail.start || !detail.end || !detail.value) throw new Error('规则有误');
+  doReplace(detail, mat) {
+    if (!detail || !detail.start || !detail.end || !detail.value) throw new Error("规则有误");
     let idx = 0;
-    let temp = this.str.split('');
+    let temp = this.str.split("");
     for (let i = detail.start; i < detail.end; ++i) {
       temp[i] = mat[idx];
       idx += 1;
     }
-    this.str = temp.join('');
+    this.str = temp.join("");
     return this.str;
   }
 }
@@ -2591,4 +2561,421 @@ class KMP {
 // const kmp = new KMP('saaddios', [{target: 'aa', replace: 'qq'}]);
 // kmp.replace();
 // console.log('str', kmp.str);
+// let appid = "wx18393ade222909a0";
+// let secret = "0f9bc9d88ad8ed4917595aae66f09cff";
 
+// async function __getWechateAccesToken() {
+//   return superagent.get("https://api.weixin.qq.com/cgi-bin/token?" + `grant_type=client_credential&appid=${appid}&secret=${secret}`);
+// }
+// async function getdd() {
+//   let rts = await __getWechateAccesToken();
+//   console.log("rt", rts.body);
+// }
+// getdd();
+
+/**
+ * 特征提取算法
+ * 将图片灰度化 --> 判断灰度图像的相似度
+ * 1.压缩图片 将图片绘制在canvas上，相邻且颜色相近的像素会被删减掉，有效减少了图片的信息量，因此能够实现压缩的效果
+ * width 就是要压缩的范围值
+ */
+const compressImage = (imgSrc, imgWidth) => {
+  return new Promise((resolve, reject) => {
+    if (!imgSrc) {
+      reject("imgSrc can not be empty");
+    }
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.onload = function() {
+      canvas.width = imgWidth;
+      canvas.height = imgWidth;
+      ctx.drawImage(img, 0, 0, imgWidth, imgWidth);
+      const data = ctx.getImageData(0, 0, imgWidth, imgWidth);
+      resolve(data);
+    };
+    img.src = imgSrc;
+  });
+};
+/**
+ * 2. 图片灰度化 根据RGBA数组生成 ImageData
+ * 灰度化是指每个像素只有一个采样颜色的图像
+ * @param dataDetail {Number[]}
+ */
+const createImageData = dataDetail => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const imgWidth = Math.sqrt(dataDetail.length / 4);
+  const newImageData = ctx.createImageData(imgWidth, imgWidth);
+  for (let i = 0; i < dataDetail.length; i += 4) {
+    let R = dataDetail[i];
+    let G = dataDetail[i + 1];
+    let B = dataDetail[i + 2];
+    let alpha = dataDetail[i + 3];
+
+    newImageData.data[i] = R;
+    newImageData.data[i + 1] = G;
+    newImageData.data[i + 2] = B;
+    newImageData.data[i + 3] = alpha;
+  }
+
+  return new newImageData();
+};
+
+/**
+ * 图像灰度化
+ * @param imgData : ImageData
+ * ImageData.data 是一个Uint8ClampedArray 数组 数组中的每个数字取值为0~255 每4个数字为一组，表示一个像素的RGBA值，ImageData为只读对象，所以要另外写一个createImageData方法，来创建新的ImageData对象
+ * 灰度值就是取每个像素点的值取平均值
+ */
+const createGrayScale = imgData => {
+  const newData = Array(imgData.data.length);
+  /**像素点填充0 初始化像素 就是全黑色 */
+  newData.fill(0);
+  imgData.data.forEach((_data, index) => {
+    /**每4位为一个像素点 */
+    if ((index + 1) % 4 === 0) {
+      const R = imgData.data[index - 3];
+      const G = imgData.data[index - 2];
+      const B = imgData.data[index - 1];
+
+      /**取平均值 */
+      const gray = ~~((R + G + B) / 3);
+      newData[index - 3] = gray;
+      newData[index - 2] = gray;
+      newData[index - 1] = gray;
+      newData[index] = 255; //alpha 值固定为255
+    }
+  });
+  return createImageData(newData); //返回 灰度图像
+};
+
+/**指纹提取 (平均哈希算法) ：若灰度图的某个像素的灰度值大于平均值，则视为1，否则为0，这部分信息组合起来就是图片的指纹[一串哈希字符串],由0和1组成
+ * @param imgData : ImageData
+ */
+const getHashFingerPrint = imgData => {
+  const getGrayList = imgData.data.reduce((pre, cur, index) => {
+    if ((index + 1) % 4 === 0) {
+      pre.push(imgData.data[index - 1]);
+    }
+    return pre;
+  }, []);
+  const length = getGrayList.length;
+  /**算出 像素灰度值的平均值 */
+  const grayAverage = getGrayList.reduce((pre, next) => pre + next, 0) / length;
+  return getGrayList.map(gray => (gray >= grayAverage ? 1 : 0)).join("");
+};
+
+/**
+ * 感知哈希算法：离散余弦变换(DCT)
+ * 利用离散余弦变换将图像域转化为频率域，计算出高频和低频的均值，低频的部分会集中在左上角，DCT计算出的是32 * 32的矩阵，保留左上角8 * 8的矩阵
+ * 计算均值：和均值hash一样计算DCT的均值
+ * 计算hash值，根据8 * 8的DCT矩阵，设置0或1的hash值，构成一个64位的整数,得到图片的指纹
+ * @param N: 矩阵长度
+ * @param cosMap: map
+ */
+const memorizeCosines = (N, cosMap) => {
+  cosMap = cosMap || {};
+  cosMap[N] = new Array(N * N);
+
+  let PI_N = Math.PI / N;
+  for (let k = 0; k < N; ++k) {
+    for (let n = 0; n < N; ++n) {
+      cosMap[N][n + k * N] = Math.cos(PI_N * (n + 0.5) * k);
+    }
+  }
+  return cosMap;
+};
+
+/**
+ * 经过dct处理后生成的一维数组，
+ *
+ * @param {} signal
+ * @param {*} scale
+ */
+const dct = (signal, scale = 2) => {
+  let L = signal.length;
+  let cosMap = null;
+  if (!cosMap || !cosMap[L]) {
+    cosMap = memorizeCosines(L, cosMap);
+  }
+
+  let coefficients = signal.map(function() {
+    return 0;
+  });
+  return coefficients.map((_, idx) => {
+    return (
+      scale *
+      signal.reduce(function(pre, cur, index) {
+        return pre + cur * cosMap[L][index + idx * L];
+      }, 0)
+    );
+  });
+};
+
+/**
+ * 矩阵处理方法: 经过dct方法生成的一维数组升维成二维数组(矩阵)
+ * 以及从矩阵中获取其左上角内容(截取8 * 8矩阵)
+ */
+
+const createMatrix = (arr = []) => {
+  const length = arr.length;
+  const matrixWidth = Math.sqrt(length);
+  /**二维数组 */
+  const matrix = [];
+  for (let i = 0; i < matrixWidth; ++i) {
+    /**获得二维数组中项 */
+    const _ = arr.slice(i * matrixWidth, i * matrixWidth + matrixWidth);
+    matrix.push(_);
+  }
+  return matrix;
+};
+
+/**截取 矩阵*/
+const getMatrixRange = (matrix, range) => {
+  const rangeMatrix = [];
+  for (let i = 0; i < range; ++i) {
+    for (let j = 0; j < range; ++j) {
+      rangeMatrix.push(matrix[i][j]);
+    }
+  }
+};
+
+const getPHashFingerPrint = imgData => {
+  /**dct 化 */
+  const dctData = dct(imgData.data);
+  /**二维矩阵化 */
+  const dctMatrix = createMatrix(dctData);
+  /**截取矩阵 */
+  const rangeMatrix = getMatrixRange(dctMatrix, dctMatrix.length / 8);
+  const rangeAve = rangeMatrix.reduce((pre, cur) => pre + cur, 0) / rangeMatrix.length;
+  /**生成均值 */
+  return rangeMatrix.map(val => (val >= rangeAve ? 1 : 0)).join("");
+};
+
+/**
+ * 颜色分布法
+ * 划分颜色区间，默认区间有4个
+ * 把256种颜色划分成了4种
+ * 划分区间的数量要求就是能被256整除
+ * @param imgData :imageData
+ * @param zoneAmount :number
+ */
+const simplifyColorData = (imgData, zoneAmount = 4) => {
+  const colorZoneDataList = []; //number[]
+  const zoneStep = 256;
+  const zoneBorder = [0]; //边界
+  for (let i = 1; i < zoneAmount; ++i) {
+    zoneBorder.push(zoneStep * i - 1);
+  }
+  imgData.forEach((data, index) => {
+    if ((index + 1) % 4 !== 0) {
+      for (let i = 0; i < zoneBorder.length; ++i) {
+        if (data > zoneBorder[i] && data <= zoneBorder[i + 1]) {
+          data = i;
+        }
+      }
+    }
+    colorZoneDataList.push(data);
+  });
+  return colorZoneDataList;
+};
+
+/**
+ * 简化颜色后，归类到不同分组中
+ * @param simplifiedDataList :number[]
+ */
+const seperateListToColorZone = simplifiedDataList => {
+  const zonedList = []; //string[]分类的区间
+  let tempZone = []; //number[]
+  simplifiedDataList.forEach((data, index) => {
+    /**4位 一组 组成数组*/
+    if ((index + 1) % 4 !== 0) {
+      tempZone.push(data);
+    } else {
+      zonedList.push(JSON.stringify(tempZone));
+      tempZone = [];
+    }
+  });
+  return zonedList;
+};
+/**
+ * 统计相同分组的总数
+ * @param zonedList :string[]
+ * @param zoneAmount :number
+ */
+const getFingerPrint = (zonedList, zoneAmount = 16) => {
+  const colorSeperateMap = {};
+  for (let i = 0; i < zoneAmount; ++i) {
+    for (let j = 0; j < zoneAmount; ++j) {
+      for (let k = 0; k < zoneAmount; ++k) {
+        colorSeperateMap[JSON.stringify([i, j, k])] = 0;
+      }
+    }
+  }
+  zonedList.forEach(zone => {
+    colorSeperateMap[zone]++;
+  });
+  /**返回的是一个 8 * 8 矩阵 矩阵中的每个元素是计算出的相同分组出现的次数 这个矩阵就是该图片的指纹*/
+  return Object.values(colorSeperateMap);
+};
+
+/**内容特征法
+ * 是指 把图片转化为灰度图后再转化为 二值图, 然后根据像素的取值（一般是黑和白，因为容易区分，用0或1就可以表示）形成指纹后进行比对，核心就是找到一个阈值生成二值图。
+ * 若直接用RGB的均值作为灰度，那么处理后的灰度图像整体会偏暗，对后续生成的二值图会产生较大的干扰。
+ * 为了改善这种情况，会为RGB三种颜色添加不同的权重，经过统计，比较好的权重配比是 R:G:B=0.299:0.587:0.114
+ */
+
+const grayScaleWeight = {
+  R: 0.299,
+  G: 0.587,
+  B: 0.114
+};
+
+/**加权 灰度化
+ * @param imgData :imageData
+ */
+const toGray = imgData => {
+  const grayData = [];
+  const data = imgData.data; //RGB对象
+
+  for (let i = 0; i < data.length; i += 4) {
+    const gray = ~~(data[i] * grayScaleWeight.R + data[i + 1] * grayScaleWeight.G + data[i + 2] * grayScaleWeight * B); //加权灰度
+    data[i] = data[i + 1] = data[i + 2] = gray;
+    grayData.push(gray);
+  }
+  /**返回一个每个元素代表一个像素的灰度值的数组 */
+  return grayData;
+};
+
+/**
+ * 计算二值图的域值
+ * 大津法
+ * @param imgData :imageData
+ */
+
+const OTSUAlgorithm = imgData => {
+  const grayData = toGray(imgData);
+  let ptr = 0;
+  /**初始化 */
+  let histData = Array(256).fill(0);
+  let total = grayData.length;
+
+  while (ptr < total) {
+    /**获得 0-255 范围内的灰度值 默认值是1*/
+    let h = 0xff & grayData[ptr++];
+    histData[h]++;
+  }
+  let sum = 0;
+  for (let i = 0; i < 256; ++i) {
+    sum += i * histData[i];
+  }
+
+  let wB = 0;
+  let wF = 0;
+  let sumB = 0;
+  let varMax = 0;
+  /**要计算的阈值 */
+  let threshold = 0;
+
+  for (let t = 0; t < 256; ++t) {
+    wB += histData[t];
+    if (wB === 0) continue;
+    wF = total - wB;
+    if (wF === 0) break;
+
+    sumB += t * histData[t];
+
+    let mB = sumB / wB;
+    let mF = (sum - sumB) / wF;
+    let varBetween = wB * wF * (mB - mF) ** 2;
+
+    if (varBetween > varMax) {
+      varMax = varBetween;
+      threshold = t;
+    }
+  }
+
+  return threshold;
+};
+
+/**
+ * 使用阈值对原图进行处理
+ * 得到一个只包含0和1的矩阵
+ * @param imgData :imageData
+ * @param threshold :number
+ */
+const binaryZation = (imgData, threshold) => {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const imgWidth = Math.sqrt(imgData.data.length / 4);
+  const newImageData = ctx.createImageData(imgWidth, imgWidth); //使用canvas重绘 灰度图像
+  for (let i = 0; i < imgData.data.length; i += 4) {
+    let R = imgData.data[i];
+    let G = imgData.data[i + 1];
+    let B = imgData.data[i + 2];
+    let Alpha = imgData.data[i + 3];
+    let sum = (R + G + B) / 3;
+
+    newImageData.data[i] = sum > threshold ? 255 : 0; //灰度图矩阵 非黑即白
+    newImageData.data[i + 1] = sum > threshold ? 255 : 0;
+    newImageData.data[i + 2] = sum > threshold ? 255 : 0;
+    newImageData.data[i + 3] = Alpha;
+  }
+
+  return newImageData;
+};
+
+/**
+ * 汉明距离：两个等长字符串之间对应位置不同字符的个数，距离越短，说明两个字符串越相等
+ * 反推 相似度相关性公式: (字符串长度 - 汉明长度) / 字符串长度 值越大，越相似
+ */
+const hammingDistance = (str1, str2) => {
+  let dis = 0;
+  let arr1 = str1.split("");
+  let arr2 = str2.split("");
+  arr1.forEach((item, index) => {
+    if (item !== arr2[index]) {
+      dis++;
+    } else {
+      return;
+    }
+  });
+  return dis;
+};
+
+/**
+ * 综上比对算法的适用场景
+ * 对于颜色较为丰富的两张图片，颜色分布法的计算结果是最符合直觉的。或者说对于两张差异较大的图片来说。
+ * 对于内容相似但配色不同的图片，内容特征法或平均哈希算法，感知哈希算法是比较符合预期的。
+ */
+
+let testArr = [
+  {
+    uid: 1,
+    du: 10
+  },
+  {
+    uid: 1,
+    du: 20
+  },
+  {
+    uid: 1,
+    du: 30
+  },
+  {
+    uid: 2,
+    du: 10
+  }
+];
+// testArr = testArr.sort((a, b) => {
+//   if (a.uid > b.uid) {
+//     return -1;
+//   }
+//   if (a.uid === b.uid && a.du < b.du) {
+//     return -1;
+//   }
+//   return 1;
+// });
+// console.log("res", testArr);
