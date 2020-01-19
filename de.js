@@ -2979,3 +2979,8 @@ let testArr = [
 //   return 1;
 // });
 // console.log("res", testArr);
+
+let now = moment().toDate(); //现在时间的date格式
+let startFormat = moment(now).format("YYYY-MM-DD"); //2020-01-19
+let startDate = moment(startFormat).toDate(); // 当天的0点 date格式
+let endDate = new Date(new Date(startDate).valueOf() + 24 * 60 * 60 * 1000); //后一天的0点 date格式
