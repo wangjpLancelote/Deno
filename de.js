@@ -13,6 +13,8 @@ const dialog = require("dialog"); //node打开对话框
 const ora = require("ora"); //node 终端加载动画
 const os = require("os");
 const util = require("util");
+const fs = require("fs");
+const stream = require("stream");
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
@@ -2984,3 +2986,64 @@ let now = moment().toDate(); //现在时间的date格式
 let startFormat = moment(now).format("YYYY-MM-DD"); //2020-01-19
 let startDate = moment(startFormat).toDate(); // 当天的0点 date格式
 let endDate = new Date(new Date(startDate).valueOf() + 24 * 60 * 60 * 1000); //后一天的0点 date格式
+
+class NodeAdvanced {
+  constructor() {
+    this.fileName = process.argv[2];
+    this.destPath = process.argv[3];
+
+    this.fileSize = 0;
+    this.counter = 1;
+    this.fileArray = [];
+    this.duplicate = "";
+  }
+
+  /**
+   * 高效 对大文件操作 > 2GB
+   */
+  static readBigFileEfficy() {
+    const readable = fs.createReadStream(this.fileName);
+    readable.read(); //设置可读流的缓冲区
+    const writeable = fs.createWriteStream(this.destPath || "output");
+
+    fs.stat(this.fileName, (err, stats) => {
+      this.fileSize = stats.size;
+      this.counter = 1;
+      this.fileArray = this.fileName.split(".");
+
+      try {
+        this.duplicate = this.destPath + "/" + this.fileArray[0] + "_Copy." + this.fileArray[1];
+      } catch (e) {
+        console.exception("File Name is inValid! please rename");
+      }
+
+      process.stdout.write(`File: ${this.duplicate} is being created`);
+
+      readable.on("data", chunk => {
+        let percentageCopied = ((chunk.length * this.counter) / this.fileSize) * 100;
+        process.stdout.clearLine(); //清除输出行信息
+        process.stdout.cursorTo(0);
+        process.stdout.write(`${Math.round(percentageCopied)}%`); //计算传输的百分比
+        writeable.write(chunk); //写入流
+        this.counter += 1;
+      });
+
+      readable.pipe(writeable); //使用pipe 管理流读写,他能控制磁盘的读写的速度以至于不会阻塞内存。
+
+      readable.on("end", e => {
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        process.stdout.write("Successful");
+        return;
+      });
+
+      readable.on("error", e => {
+        console.log("some error occured");
+      });
+
+      writeable.on("finish", () => {
+        console.log("successfule write");
+      });
+    });
+  }
+}
