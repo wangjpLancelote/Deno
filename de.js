@@ -3047,3 +3047,158 @@ class NodeAdvanced {
     });
   }
 }
+
+// let testMap = [
+//   {
+//     a: 1,
+//     b: 1
+//   },
+//   {
+//     a: 2,
+//     b: 2
+//   },
+//   {
+//     a: 3,
+//     b: 3
+//   }
+// ];
+// console.log(_.map(testMap, "a"));
+// console.log(_.mapKeys(testMap, "a"));
+
+/**
+ * 确保n 为2的幂
+ * @param {Number} n
+ */
+const get2Cloth = n => {
+  n |= n >>> 1; //1
+  n |= n >>> 2; //2
+  n |= n >>> 4;
+  n |= n >>> 8;
+  n |= n >>> 16;
+  return n;
+};
+
+// let text = [{ path: 1, children: [{ path: 2, children: [{ path: 5 }] }] }, { path: 3 }];
+
+const noIlleageObjectKey = (object, params) => {};
+
+/**状态码 默认是PENDING */
+const PENDING = 'pending';
+const RESOLVED = 'resolved';
+const REJECTED = 'rejected';
+class MyPromise {
+  constructor (fn) {
+    this.state = PENDING;
+    this.value = null;
+    this.resolvedCallbakcs = [];
+    this.rejectedCallbacks = [];
+
+    this.fn = fn;  //待传入的回调
+  }
+
+  /**resolve方法 本质上是传入一个函数并执行 只有等待中的状态才能改变状态 */
+  resolve (value) {
+    if (value instanceof MyPromise) {
+      return value.then(this.resolve, this.reject);
+    }
+    setTimeout(() => {
+      if (this.state === PENDING) {
+        this.state = RESOLVED;
+        this.value = value;
+        this.resolvedCallbakcs.map(cb => cb(this.value));
+      }
+    }, 0)
+
+  }
+
+  reject (value) {
+    setTimeout(() => {
+      if (this.state === PENDING) {
+        this.state = REJECTED;
+        this.value = value;
+        this.rejectedCallbacks.map(cb => cb(this.value));
+      }
+    }, 0)
+  }
+
+  then (onFullfilled, onRejected) {
+    onFullfilled = typeof onFullfilled === 'function' ? onFullfilled : v => v;
+    onRejected = typeof onRejected === 'function' ? onRejected : r => {throw r};
+
+    if (this.state === PENDING) {
+      return (promise2 = new MyPromise((resolve, reject) => {
+        this.resolvedCallbakcs.push(() => {
+          try {
+            const x = onFullfilled(this.value);
+            this.resolutionProcedure(promise2, x, resolve, reject);
+          } catch (e) {
+            reject(e)
+          }
+        });
+
+        this.rejectedCallbacks.push(() => {
+          try {
+            const x = onRejected(this.value);
+            this.resolutionProcedure(promise2, x, resolve, reject)
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }))
+    }
+
+    if (this.state === RESOLVED) {
+      return (promise2 = new MyPromise((resolve, reject) => {
+        setTimeout(() => {
+          try {
+            const x = onFullfilled(this.value);
+            this.resolutionProcedure(promise2, x, resolve, reject);
+          } catch (e) {
+            reject(e);
+          }
+        })
+      }))
+      // onFullfilled(this.value);
+    }
+
+    if (this.state === REJECTED) {
+      return (promise2 = new MyPromise9((resolve, reject) => {
+        setTimeout(() => {
+          try {
+            const x = onRejected(this.value);
+            this.resolutionProcedure(promise2, x, resolve, reject);
+          } catch (e) {
+            reject(e)
+          }
+        })
+      }))
+    }
+  }
+
+  catch () {
+
+  }
+
+  resolutionProcedure (promise, x, resolve, reject) {
+    if (promise === x) {
+      return reject(new TypeError('Error'));
+    }
+  }
+
+
+}
+
+console.log('dd', new Date(new Date().getTime() + 30 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss'))
+
+/**
+ * 需要共用的列表接口 单独出来
+ * @couponcupply
+ * @servicePackage
+ * @channelVendor
+ * @resourceRights
+ * @lineAd
+ * @resourceTags
+ * @albumCategory
+ * @servicePackageRight
+ * @article
+ */

@@ -15,6 +15,9 @@ export default class HelloChaox extends Vue {
         <v-avatar color="indigo" size="36">
           <span class="white--text headline">36</span>
         </v-avatar>
+        <v-avatar color="indigo">
+      <v-icon dark>mdi-account-circle</v-icon>
+    </v-avatar>
       </div>
     );
   }
