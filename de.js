@@ -15,10 +15,13 @@ const os = require("os");
 const util = require("util");
 const fs = require("fs");
 const stream = require("stream");
+const repl = require('repl');
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
 const axios = require("axios");
+
+// repl.start('> ').context._ = _;
 
 let a = [1, 2, 3, 4];
 // _.each(a, (v) => {
@@ -1061,7 +1064,7 @@ async function tt(p) {
 async function dd() {
   let data = await tt(1);
 }
-dd();
+// dd();
 class RedisService {
   constructor() {
     this.client = redis.createClient({
@@ -1104,7 +1107,7 @@ class RedisService {
   }
 }
 
-let redisService = new RedisService();
+// let redisService = new RedisService();
 // async function getRes () {
 //     let res = await redisService.setnx('names', Date.now());
 //     console.log('res', res);
@@ -3188,8 +3191,6 @@ class MyPromise {
 
 }
 
-console.log('dd', new Date(new Date().getTime() + 30 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss'))
-
 /**
  * 需要共用的列表接口 单独出来
  * @couponcupply
@@ -3202,3 +3203,92 @@ console.log('dd', new Date(new Date().getTime() + 30 * 60 * 1000).format('YYYY-M
  * @servicePackageRight
  * @article
  */
+
+ /**KMP */
+class KMPAglo {
+  constructor () {
+
+  }
+}
+
+/**
+ * boyer-moore
+ */
+class BMAglo {
+  constructor () {
+
+  }
+}
+
+/**sunday */
+class SundayAglo {
+  constructor (target, source) {
+    /**待匹配的字符串 */
+    this.target = target;
+    /**主串 */
+    this.source = source;
+
+    /**需要跳过的位置 */
+    this.offset = 0;
+
+    this.pattern = null;
+
+    /**匹配字符串的长度 */
+    // this.targetLen = this.target.length;
+  }
+
+  get targetLen () {
+    return this.target.length
+  }
+
+  get sourceLen () {
+    return this.source.length;
+  }
+
+  search () {
+
+    this.pattern = this.pick(this.offset, this.targetLen);
+    if (!this.hasCross()) { //第一段未匹配,必定有不匹配字符
+      if (this.offset === (this.sourceLen - this.targetLen - 1)) return false;
+      if (!this.offset) {
+        this.offset += this.targetLen;
+      }
+      if (!~this.index(this.source[this.offset])) {  //target中不存在此字符，可直接跳过整串
+        this.offset = this.offset + 1;
+        return this.search();
+      } else {
+        let idx = this.lastIndexOf(this.source[this.offset]);
+        this.offset += this.targetLen - idx + 1;
+        this.offset += 1;
+        return this.search();
+      }
+    }
+    return true
+  }
+
+  /**从主串中第offset位取出长度与target相同的串 */
+  pick (offset) {
+    return this.source.substr(offset, this.targetLen);
+  }
+
+  /**主串与子串不匹配的第一个字符 */
+  index (str) {
+    return this.target.indexOf(str);
+  }
+
+  lastIndexOf (str) {
+    return this.target.lastIndexOf(str)
+  }
+
+  /**是否有不匹配的字符 当前字符串是否相等 */
+  hasCross () {
+    if (this.pattern && this.pattern.length) {
+      return this.pattern === this.target;
+    } else {
+      throw new Error("当前pattern有误");
+    }
+  }
+}
+
+
+
