@@ -115,6 +115,9 @@
         >
       </li>
     </ul>
+    <div class="my-2">
+        <v-btn large color="primary">Primary</v-btn>
+      </div>
   </div>
 </template>
 
@@ -124,6 +127,8 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 @Component
 export default class HelloWorld extends Vue {
   @Prop() private msg!: string;
+
+  mounted () { }
 }
 </script>
 

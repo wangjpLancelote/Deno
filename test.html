@@ -4,19 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>qrcode</title>
+  <title>video</title>
 </head>
 <body>
-  <div>
+  <!-- <div>
     <img src="" alt="">
-  </div>
-  <div class="test" draggable="true">
+  </div> -->
+  <!-- <div class="test" draggable="true">
 
-  </div>
-  <div class="recive" id="n" ondrop="drop(event)" ondragover="over(event)">
+  </div> -->
+  <!-- <div class="recive" id="n" ondrop="drop(event)" ondragover="over(event)">
 
-  </div>
-  <input type="file" id="file">
+  </div> -->
+  <input type="file" id="file" onchange="loadFile(event)">
+  <video
+  id="previewContainer"
+  controls
+  width="480"
+  height="270"
+  style="display: none;">
+
+  </video>
+  <button onclick="captureVideo()">截图</button>
 </body>
 <style>
   .test {
@@ -31,56 +40,84 @@
   }
 </style>
 <script>
-  let es = new EventSource('/sse')
-  es.onmessage = function (e) {
-    console.log('e', e.data);
-  }
+  // let es = new EventSource('/sse')
+  // es.onmessage = function (e) {
+  //   console.log('e', e.data);
+  // }
 
-  es.addEventListener('server-time', (e) => {
-    console.log('e', e.data);
-  })
-  es.onopen = () => {
-    console.log('open')
-  }
-  es.onerror = () => {
-    console.log('error')
-  }
+  // es.addEventListener('server-time', (e) => {
+  //   console.log('e', e.data);
+  // })
+  // es.onopen = () => {
+  //   console.log('open')
+  // }
+  // es.onerror = () => {
+  //   console.log('error')
+  // }
 
-  let div = document.getElementsByClassName('test')[0];
-  div.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  })
-  div.addEventListener('dragstart', (e) => {
-    console.log('start', e)
-    e.dataTransfer.setData('img', e.target.id);
-  } )
-  div.addEventListener('dragend', (e) => {
-    console.log('end', e)
-    div.style.left = e.clientX + 'px';
-    div.style.top = e.clientY + 'px';
-  })
-  div.addEventListener('drop', (e) => {
-    console.log('drop', e)
-    div.style.left = e.clientX + 'px';
-    div.style.top = e.clientY + 'px';
-  })
+  // let div = document.getElementsByClassName('test')[0];
+  // div.addEventListener('dragover', (e) => {
+  //   e.preventDefault();
+  // })
+  // div.addEventListener('dragstart', (e) => {
+  //   console.log('start', e)
+  //   e.dataTransfer.setData('img', e.target.id);
+  // } )
+  // div.addEventListener('dragend', (e) => {
+  //   console.log('end', e)
+  //   div.style.left = e.clientX + 'px';
+  //   div.style.top = e.clientY + 'px';
+  // })
+  // div.addEventListener('drop', (e) => {
+  //   console.log('drop', e)
+  //   div.style.left = e.clientX + 'px';
+  //   div.style.top = e.clientY + 'px';
+  // })
 
 
-  function drop (e) {
-    console.log('e', e)
-    e.preventDefault();
-    let data = e.dataTransfer.getData('img');
-    e.target.appendChild(document.getElementById(data));
-  }
+  // function drop (e) {
+  //   console.log('e', e)
+  //   e.preventDefault();
+  //   let data = e.dataTransfer.getData('img');
+  //   e.target.appendChild(document.getElementById(data));
+  // }
 
-  function over (e) {
-    e.preventDefault();
-  }
+  // function over (e) {
+  //   e.preventDefault();
+  // }
 
-  let f = document.getElementById('file');
-  f.addEventListener('click', () => {
+  // let f = document.getElementById('file');
+  // f.addEventListener('click', () => {
     
-  })
+  // })
+
+  //视频本地预览
+  const loadFile = function (event) {
+    console.log('event', event)
+    const reader = new FileReader();
+    reader.onload = function () {
+      const output = document.querySelector('#previewContainer');
+      output.style.display = 'block';
+      output.src = URL.createObjectURL(new Blob([reader.result]));
+    }
+    reader.readAsArrayBuffer(event.target.files[0])
+  }
+
+  let video = document.querySelector('#previewContainer');
+  let canvas = document.createElement('canvas');
+  let img = document.createElement('img');
+  img.crossOrigin = '';
+
+  let ctx = canvas.getContext('2d');
+  /** 视频截图 */
+  function captureVideo () {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    // ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, 100, 100);
+    img.src = canvas.toDataURL();
+    document.body.append(img);
+  }
 
 </script>
 <!-- <script src="./axios.min.js"></script> -->

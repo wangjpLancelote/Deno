@@ -2,6 +2,7 @@
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js App" />
+    <!-- <hello-world msg="abcdefg"></hello-world> -->
     <HelloChaox />
   </div>
 </template>
@@ -15,7 +16,11 @@ export default {
   name: "home",
   components: {
     HelloWorld,
-    HelloChaox
+    HelloChaox,
+  },
+  mounted() {
+    // this.$refs.myElement.show();
+    // console.log("ddd", this.$refs.common.openDialog());
   }
 };
 </script>

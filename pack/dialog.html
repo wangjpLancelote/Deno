@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialog</title>
+</head>
+<link rel="stylesheet" href="./dialog.css">
+<link rel="stylesheet" href="https://assets.benewtech.cn/element-ui/2.12.0/theme_chalk/index.css">
+<style>
+    .test {
+        width: 300px;
+        height: 80px;
+        background-color: aqua;
+        margin: 0 auto;
+        border-radius: 5px;
+    }
+    .close {
+        position: absolute;
+        top: 13px;
+        right: 10px;
+        border-radius: 50%;
+        font-size: 24px;
+    }
+    .cursor_cha {
+        cursor: pointer;
+    }
+    .index_header {
+        width: 100%;
+        height: 50px;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+    }
+    .index_winbox {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .index_maskContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .index_footer {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 10px;
+    }
+</style>
+<body>
+    <div class="test cursor_cha">
+        dialog
+    </div>
+</body>
+<script src="https://assets.benewtech.cn/0.19.2/axios.min.js"></script>
+<script src="./dialog.js">
+</script>
+<script>
+    let a = new PluginDialog({width: '40%', label: '标题[uid]'});
+    // a.init();
+    let testDom = document.querySelector('.test');
+    testDom.addEventListener('click', (e) => {
+        a.init()
+        a.open([1,2]);
+        let btn = document.querySelector('#addBtn');
+        btn.addEventListener('click', () => {
+            a.close((res) => {
+                console.log('res', res)
+            })
+        })
+    })
+    
+    // a.open();
+</script>
+</html>

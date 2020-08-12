@@ -6,10 +6,25 @@ const path = require("path");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const productionGzipExtension = ["js", "css"];
 const resolve = dir => path.resolve(__dirname, dir);
+const TerserPlugin = require("terser-webpack-plugin");
+
+console.log("process.ENV", process.env);
+let isWebComponent = false;
+let isLib = false;
+let isUglify = true;
+if (process.env && process.env.TYPE === 'package') {
+  isWebComponent = true;
+}
+if (process.env && process.env.TYPE === 'lib') {
+  isLib = true;
+}
+if (process.env && process.env.uglify === 'no') { //不压缩
+  isUglify = false;
+}
 
 module.exports = {
   publicPath: "./", //默认是'/' 部署应用包时文件读取的基本URL
-  outputDir: "dist", //打包输出的目录
+  outputDir: isWebComponent || isLib ? "lib" : "dist", //打包输出的目录
   assetsDir: "", //相对于outputdir 的资源目录
   lintOnSave: false,
   runtimeCompiler: true, //是否使用包含运行时编译器的Vue构建版本
@@ -17,58 +32,70 @@ module.exports = {
 
   css: {
     /**组件内的css提取到一个单独的css文件 */
-    extract: true,
+    // extract: true,
+    extract: false,
+
     sourceMap: false,
     /**预处理的css loader传递自定义选项，例如使用`{sass: {...}}` */
     loaderOptions: {},
     //为所有的css及其预处理文件开启css modules
-    modules: false
+    // modules: false
+    requireModuleExtension: true
   },
   /**生产环境下为 Babel和typeScript 使用thread-loader
    * 多核机器下默认开启
    */
   parallel: require("os").cpus().length > 1,
   pwa: {},
-  chainWebpack: config => {
-    /**HMR */
-    config.resolve.symlinks(true),
-      /**lazy loading routes */
-      config.plugin("html").tap(args => {
-        args[0].chunkSortMode = "none";
-        return args;
-      });
+  // chainWebpack: config => {
+  //   /**HMR */
+  //   config.resolve.symlinks(true),
+  //     /**lazy loading routes */
+  //     config.plugin("html").tap(args => {
+  //       if (args && args[0]) args[0].chunkSortMode = "none";
+  //       return args;
+  //     });
 
-    config.resolve.alias
-      .set("@", resolve("src"))
-      .set("assets", resolve("src/assets"))
-      .set("components", resolve("src/components"))
-      .set("layout", resolve("src/layout"))
-      .set("base", resolve("src/base"))
-      .set("static", resolve("src/static"));
-  },
+  //   config.resolve.alias
+  //     .set("@", resolve("src"))
+  //     .set("assets", resolve("src/assets"))
+  //     .set("components", resolve("src/components"))
+  //     .set("layout", resolve("src/layout"))
+  //     .set("base", resolve("src/base"))
+  //     .set("static", resolve("src/static"));
+  // },
 
   configureWebpack: config => {
+    config.optimization = {
+      minimize: true,
+      minimizer: [new TerserPlugin()]
+    };
+    output = {
+      libraryExport: "default"
+    };
     if (PROD_STATEMENT) {
       const plugins = [];
-      plugins.push(
-        new UglifyJsPlugin({
-          uglifyOptions: {
-            /**压缩配置 */
-            compress: {
-              // warnings: true,
-              drop_console: true,
-              drop_debugger: true,
-              pure_funcs: ["console.log"] //移除console
+      if (isUglify) {
+        plugins.push(
+          new UglifyJsPlugin({
+            uglifyOptions: {
+              /**压缩配置 */
+              compress: {
+                // warnings: true,
+                drop_console: true,
+                drop_debugger: true,
+                pure_funcs: ["console.log"] //移除console
+              },
+              mangle: false,
+              output: {
+                beautify: true //压缩注释
+              }
             },
-            mangle: false,
-            output: {
-              beautify: true //压缩注释
-            }
-          },
-          sourceMap: false,
-          parallel: true
-        })
-      );
+            sourceMap: false,
+            parallel: true
+          })
+        );
+      }
       plugins.push(
         new CompressionWebpackPlugin({
           filename: "[path].gz[query]",

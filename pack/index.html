@@ -1,0 +1,322 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>无标题文档</title>
+<style>
+    *{ padding:0; margin:0;}
+    body{ font-size:14px; color:#666666;}
+    a{
+        text-decoration: none;
+    }
+    .popBox{ position:fixed; z-index:1001; width:400px; border:1px solid #CCCCCC; padding:20px; border-radius:10px;
+        background: #fff;}
+    .pop-title{ height:30px; line-height:30px; border-bottom:1px solid #ccc;}
+    .pop-content{
+        padding: 20px 0 ;
+        line-height: 24px;
+    }
+    .poptips{
+        padding: 20px;
+        text-align: center;
+        line-height: 24px;
+        font-size: 14px;
+    }
+    .pop-foot{
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+    }
+    .pop-foot a{
+        display:inline-block;
+        margin: 0 10px;
+        width: 40%;
+        font-size: 14px;
+        color: #fff;
+        background: #ff5533;
+        
+    }
+    .pop-mark{
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+    #popclose{
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        width: 34px;
+        height: 30px;
+        color: #ff5533;
+        line-height: 30px;
+        text-align: center;
+        font-size: 14px;
+    }
+    #popclose:hover{
+        color: #444;
+        font-size: 16px;
+    }
+</style>
+<script>
+window.onload = function(){
+    var aInpt = document.getElementsByTagName('input');
+    aInpt[0].onclick = function(){
+    
+        var p1 = new Dialog();
+        p1.init({//参数
+            mark : true,
+            w:400,
+            dir:'center',
+            title:'公告',
+            popup:'alert',
+            html:'这里是弹出内同这里是弹出内同这里是弹出内同这里是弹出内同这里是弹出内同这里是弹出内同这里是弹出内同'
+        });
+//        alert(p1.settings.w);
+    }
+    aInpt[1].onclick = function(){
+        var p2 = new Dialog();
+        p2.init({//参数
+            w:200,
+            dir:'right',
+            title:'公告',
+            popup:'notice',
+            html:'noticenoticenoticenotice文件名:17第十讲angularjs ngSanitize ngRoute ngAnimate插件(2).zip 文件大小: 65.99M 文件名:18第十讲angularjs ngSanitize ngRoute ngAnimate插件(3).zip 文件文件名:17第十讲angularjs ngSanitize ngRoute ngAnimate插件(2).zip 文件大小: 65.99M 文件名:18第十讲angularjs ngSanitize ngRoute ngAnimate插件(3).zip 文件'
+        });
+    }
+    aInpt[2].onclick = function(){
+        var p3= new Dialog();
+        p3.init({//参数
+            w:200,
+            dir:'center',
+            popup:'tips',
+            close:false,
+            html:'这里是说明文字这里是说明文字这里是说明文字这里是说明文字这里是说明文字这里是说明文字这里是说明文字'
+        });
+    }
+    aInpt[3].onclick = function(){
+        var p4 = new Dialog();
+        p4.init({//参数
+            w:400,
+            dir:'center',
+            title:'公告',
+            popup:'confirm',
+            html:'这里是说明文字这里是说明文字这里是说明文字这里是说明文字这里是说明文字这里是说明文字这里是说明文字'
+        });
+    }
+    aInpt[4].onclick = function(){
+        var p5 = new Dialog();
+        p5.init({//参数
+            nullBox:true,
+            w:400,
+            dir:'center',
+            /*title:'公告',
+             popup:'confirm',*/
+            html:'<div class="pop-title">'
+            +'<span>这里是标题</span>'
+            +'</div>'
+            +'<div class="pop-content">这是内容这是内容nullbox</div>'
+            +'<div class="pop-foot alert"><a href="javascript:;">确认</a></div>'
+        });
+    }
+}
+function Dialog(){
+    this.nullBox = null;
+    this.popBox = null;
+    this.markEl = null;
+    this.settings = {//默认参数
+        'nullBox':false,//如需自定义弹窗形式，设置值为true,title,close,popup,html,btn的值就不需要在设置
+        'mark':false,
+        'w' : 300,
+        'dir' : 'center', // left right
+        'title' : '',
+        'close' : true,
+        'popup' : 'alert',// confirm tips notice
+        'html': '',
+        'btn':['取消','确认']
+    }
+}
+
+Dialog.prototype = {
+    init : function(opt){
+        this.extend( this.settings , opt);
+        //创建遮罩层
+        if(this.settings.mark){
+            this.mark();
+        }
+        //创建弹窗主体DOM
+        this.createpopBox();
+        //设置初始样式
+        this.setPopAttribute();
+        //设置关闭按钮
+        if(this.settings.close){
+            this.close();
+        }
+    },
+    createpopBox : function(){
+
+        this.popBox = document.createElement('div');
+        this.popBox.className = 'popBox';
+        if(!this.settings.nullBox){
+            this.setData();
+        }else{
+            this.popBox.innerHTML = this.settings.html;
+        }
+
+    },
+
+    createTitle : function () {
+        var oTitle = document.createElement('div');
+        oTitle.className = 'pop-title';
+        var oSpan = document.createElement('span');
+        oSpan.innerHTML = this.settings.title;
+        oTitle.appendChild(oSpan);
+
+        this.popBox.appendChild(oTitle);
+    },
+    //创建按钮
+    createBtn: function () {
+        var oDiv = document.createElement('div');
+        var oBtn1 = document.createElement('a');
+        oBtn1.setAttribute('href','javascript:;');
+
+        var oBtn2 = document.createElement('a');
+        oBtn2.setAttribute('href','javascript:;');
+        oBtn2.innerHTML = this.settings.btn[1];
+
+        if(this.settings.popup == 'alert'){
+            oBtn1.innerHTML = this.settings.btn[1];
+            oDiv.className = 'pop-foot alert';
+            oDiv.appendChild(oBtn1);
+        }else if(this.settings.popup == 'confirm'){
+            oBtn1.innerHTML = this.settings.btn[0];
+            oDiv.className = 'pop-foot confirm';
+            oDiv.appendChild(oBtn1);
+            oDiv.appendChild(oBtn2);
+        }
+        this.popBox.appendChild(oDiv);
+    },
+    //关闭按钮
+    close : function () {
+        var _this = this;
+        var oClose = document.createElement('a');
+        oClose.id = 'popclose';
+        oClose.setAttribute('href','javascript:;');
+        oClose.innerHTML = '关闭';
+        this.popBox.appendChild(oClose);
+        oClose.onclick = function () {
+            if(_this.settings.mark){
+                document.body.removeChild(_this.markEl);
+            }
+            document.body.removeChild(_this.popBox);
+        }
+    },
+    mark: function () {
+        this.markEl = document.createElement('div');
+        this.markEl.className = 'pop-mark';
+        this.markEl.style.width = this.viewWidth()+'px';
+        this.markEl.style.height = this.viewHeight()+'px';
+        document.body.appendChild(this.markEl);
+    },
+    //设置初始化数据
+    setData : function(){
+        var oDiv  = document.createElement('div');
+        var _this = this;
+        oDiv.className = 'pop-content';
+        oDiv.innerHTML = this.settings.html;
+
+
+        //设置弹出框的形式
+        if(this.settings.popup == 'tips'){
+            this.popBox.appendChild(oDiv);
+            this.popBox.className = 'popBox poptips';
+            oDiv.setTimeout = setTimeout(function () {
+                if(_this.settings.mark){
+                    document.body.removeChild(this.markEl);
+                }
+                document.body.removeChild(_this.popBox);
+                clearTimeout(oDiv.setTimeout);
+            },2000);
+
+        }else if(this.settings.popup == 'alert'){
+            this.createTitle();
+            this.popBox.appendChild(oDiv);
+            this.createBtn();
+        }else if(this.settings.popup == 'confirm'){
+            this.createTitle();
+            this.popBox.appendChild(oDiv);
+            this.createBtn();
+        }else if(this.settings.popup == 'notice'){
+            this.createTitle();
+            this.popBox.appendChild(oDiv);
+        }
+    },
+    //设置弹出层的样式属性
+    setPopAttribute: function () {
+
+        //设置弹出层的大小
+        this.popBox.style.width = this.settings.w + 'px';
+//            this.popBox.style.height = this.settings.h + 'px';
+
+        document.body.appendChild(this.popBox);
+        //设置弹出层的位置
+        if(this.settings.dir == 'center'){
+            this.popBox.style.left = (this.viewWidth() - this.settings.w)/2 + 'px';
+            this.popBox.style.top = (this.viewHeight() - this.popBox.offsetHeight)/2 + 'px';
+        }else if(this.settings.dir == 'right'){
+            this.popBox.style.right = 0;
+            this.popBox.style.top = (this.viewHeight() - this.popBox.offsetHeight) + 'px';
+        }else if(this.settings.dir == 'top'){
+            this.popBox.style.left = (this.viewWidth() - this.settings.w) + 'px';
+            this.popBox.style.top = 0;
+        }
+    },
+
+    extend:function(obj1,obj2){//继承方法
+        for(var attr in obj2){
+            obj1[attr] = obj2[attr]
+        }
+    },
+    viewWidth:function (){//获取可视区的宽度
+        return document.documentElement.clientWidth;
+    },
+    viewHeight:function(){//获取可视区的高度
+        return document.documentElement.clientHeight;
+    },
+}
+/*
+function extend(obj1,obj2){//继承方法
+    for(var attr in obj2){
+        obj1[attr] = obj2[attr]
+    }
+}
+function viewWidth(){//获取可视区的宽度
+    return document.documentElement.clientWidth;
+}
+function viewHeight(){//获取可视区的高度
+    return document.documentElement.clientHeight;
+}*/
+
+
+</script>
+
+</head>
+
+<body>
+<input type="button" value="alert">
+<input type="button" value="tips">
+<input type="button" value="notice">
+<input type="button" value="confirm">
+<input type="button" value="自定义">
+<!--<div class="popBox">
+    <div class="pop-title">
+        <span></span>
+        <a href="javascript:;">关闭</a>
+    </div>
+    <div class="pop-content">
+    </div>
+    
+</div>-->
+</body>
+</html>

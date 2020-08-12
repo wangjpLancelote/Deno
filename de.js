@@ -14,6 +14,7 @@ const ora = require("ora"); //node 终端加载动画
 const os = require("os");
 const util = require("util");
 const fs = require("fs");
+const path = require('path')
 const stream = require("stream");
 const repl = require('repl');
 // const appSecret = 'DE89AE71DDC74E639D1B70AC022D68C8';
@@ -1055,7 +1056,6 @@ let cnt = 0;
 async function tt(p) {
   if (p > 1) {
     return "12345";
-    return await Promise.resolve("123");
   } else {
     p++;
     return tt(p);
@@ -2465,19 +2465,6 @@ function spliceInsert(str, num) {
     }
   }
   return t;
-  for (let i = 0; i < L; ++i) {
-    if (i === num) {
-      // res.splice(i, 0, '\n');
-      let index = res[i].codePointAt(0) > 0xffff ? i + 1 : i;
-      console.log("res[i] %j, index: %d, isEmoji: %j", res[i], index, res[i].codePointAt(0) > 0xffff);
-      res.splice(index, 0, "\n");
-      num = (num << 1) + 1;
-    } else {
-      continue;
-    }
-  }
-  console.log("res", res);
-  return res.join("");
 }
 
 function changeLine(str) {
@@ -3187,8 +3174,6 @@ class MyPromise {
       return reject(new TypeError('Error'));
     }
   }
-
-
 }
 
 /**
@@ -3289,6 +3274,175 @@ class SundayAglo {
     }
   }
 }
+
+/**
+ * 蚁群算法
+ * 一种最优的分配策略
+ * 能够将N哥不同长度的任务按照某一种策略分配给M个处理能力不同的服务器节点并且N个任务完成的时间最短。
+ */
+class Aca {
+  constructor () {
+    this.tasks = []; //任务列表，长度表示任务的数量
+    this.taskNum = 100; //任务数量，
+
+    this.nodes = []; //处理节点的数组，数组的下标表示处理节点的编号。数组值表示节点的处理速度。
+    this.nodeNum = 10; //处理节点的数量，也就是nodes数组的长度
+
+    this.iteratorNum = null; //一共需要迭代的次数,每次迭代都有antNum只蚂蚁进行任务分配
+    this.antNum = null; //每次迭代中蚂蚁的数量，每只蚂蚁都是一个任务调度者，每次迭代中的每一只蚂蚁都需要完成所有任务的分配。
+
+    this.timeMatrix = []; //任务处理时间矩阵，二维矩阵，timeMatrix[i][j]表示第i个任务分配给第j个节点所需要的处理时间。这个矩阵是基于tasks数组和node数组计算而来的
+
+    this.pheromoneMatrix = []; //信息素矩阵，二维矩阵，用来记录任务i分配给j这条路径上的信息素浓度
+    this.maxPheromoneMatrix = []; //pheromoneMatrix矩阵的每一行中最大信息素的下标
+    this.criticalPointMatrix = []; //在一次迭代中，采用随机分配的策略的蚂蚁的临界编号。、
+
+    this.p = 0.5; //每完成一次迭代后，信息素衰减的比例，因为在真实的蚁群中，蚂蚁分泌的信息素会随着时间的退役而渐渐衰减。那么在算法中，我们使得信息素完成一次迭代后进行衰减。但每一次迭代中，信息素浓度保持不变。
+    this.q = 2; //蚂蚁每经过一条路径，信息素增加的比例。算法在每完成一次迭代之后，就将蚂蚁经过的路径上增加信息素，但在一次迭代过程中，信息素不变。
+
+  }
+
+  /**初始化tasks */
+  initRandomTasks (num, range) {
+    for (let i = 0; i < num; ++i) {
+      this.tasks.push(range);
+    }
+  }
+  /**初始化nodes */
+  initRandomNodes (num, range) {
+    for (let i = 0; i < num; ++i) {
+      this.nodes.push(range);
+    }
+  }
+
+  /**初始化任务处理时间矩阵 */
+  initTimeMatrix (tasks, nodes) {
+    for (let i = 0; i < tasks.length; ++i) {
+      let timeMatrix_i = [];
+      for (let j = 0; j < nodes.length; ++j) {
+        /**时间 = 长度 / 速度 */
+        timeMatrix_i.push(tasks[i] / nodes[j]);
+      }
+      this.timeMatrix.push(timeMatrix_i);
+    }
+  }
+
+  /**初始化信息素矩阵
+   * 初始化信息素为1
+   * 意思是，分配给第i个任务的节点j这条路径的信息素浓度
+   */
+  initPheromoneMatrix (taskNum, nodeNum) {
+    for (let i = 0; i < taskNum; ++i) {
+      let pheromoneMatrix_i = [];
+      for (let j = 0; j < nodeNum; ++j) {
+        pheromoneMatrix_i.push(1);
+      }
+      this.pheromoneMatrix.push(pheromoneMatrix_i);
+    }
+  }
+
+  acaSearch (iteratorNum, antNum) {
+    for (let itCnt = 0; itCnt < iteratorNum; ++itCnt) {
+      let pathMatrix_allAnt = [];
+      for (let antCnt = 0; antCnt < antNum; ++antCnt) {
+        let pathMatrix_onAnt = this.initTimeMatrix
+      }
+    }
+  }
+
+  /**
+   * 任务分配函数
+   * 将第taskCount 个任务分配给某一节点处理
+   * antCount 蚂蚁编号
+   * taskCount 任务编号
+   * nodes 节点集合
+   * pheromoneMatrix 信息素集合
+   * 分配策略：两种，一是信息素浓度分配，也就是将任务分配给本行中信息素浓度最高的节点处理。二是随机分配，选择的条件是判断ancount 蚂蚁编号的临界点，一般是蚂蚁数量的一半
+   */
+  assignOneTask (antCount, taskCount, nodes, pheromoneMatrix) {
+    if (antCount <= this.criticalPointMatrix[taskCount]) {
+      return this.maxPheromoneMatrix[taskCount];
+    }
+
+    return Math.random(0, this.nodeNum);
+  }
+}
+
+
+/**myCall
+ * context: 传入的对象
+*/
+Function.prototype.myCall = function (context = window) {
+  /**将fn挂载在context上的原因是this指向调用的对象，这样才能达到将当前this指向context的目的 */
+  context.fn = this;
+  let res = context.fn(...[...arguments].slice(1));
+  delete context.fn;
+  return res;
+}
+
+/**数组参数arr */
+Function.prototype.myApply = function (context = window, arr) {
+  context.fn = this;
+  let res;
+  if (arr) {
+    res = context.fn(...arr);
+  } else {
+    res = context.fn();
+  }
+  delete context.fn;
+  return res;
+}
+
+/**返回一个函数 */
+Function.prototype.myBind = function (context = window) {
+  let vm = this;
+  let args = [...arguments].slice(1);
+  return function () {
+    return vm.myApply(context, args);
+  }
+}
+
+/**new 实现 */
+function myNew (targetClass, ...args) {
+  let obj = Object.create(targetClass.prototype); //创建一个新对象
+  targetClass.apply(obj, args); //链接到原型，绑定this
+  return obj;//返回新对象
+}
+
+let generateDir = 'demoVue'; //需要生成的文件夹名
+
+// console.log('path', path.resolve(__dirname, generateDir, 'de'))
+// console.log('__dir', __dirname)
+
+// console.log('fileDir', fs.existsSync(path.resolve(__dirname, generateDir)));
+
+// async function generateVueFile () {
+//   await exists(generateDir)
+//   writeFile(path.resolve(__dirname, generateDir, 'demo.vue'), '<template></template>', (err) => {console.log("写入成功")})
+// }
+// generateVueFile();
+
+// function exists (value) {
+//   if (!fs.existsSync(path.resolve(__dirname, value))) mkdir(path.resolve(__dirname, value));
+// }
+
+// function mkdir (path) {
+//   fs.mkdirSync(path, (err) => {
+//     if (err) rej(err);
+//     return path;
+//   })
+// }
+
+// function writeFile (path, content, cb) {
+//   fs.writeFile(path, content, cb)
+//   return true;
+// }
+
+
+
+
+
+
 
 
 
