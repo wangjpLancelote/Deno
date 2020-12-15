@@ -5,6 +5,9 @@ import './App.css';
 import CommentApp from './comment/CommentApp'
 import ClockIndex from './clock/ClockIndex.jsx';
 import Index from './Context/Index'
+import LotteryApp from './lottery/LotteryApp';
+import HarmonicaApp from './harmonica/HarmonicaApp'
+
 
 function App() {
   return (
@@ -27,6 +30,8 @@ function App() {
         </a>
       </header>
       {/* <CommentApp/> */}
+      <LotteryApp/>
+      <HarmonicaApp/>
       <Index/>
       <ClockIndex/>
     </div>

@@ -194,6 +194,13 @@ export const tagOptions = [
     label: '打卡主页'
   },
   {
+    tag: 'GroupPlan',
+    inputReg: null,
+    messageField: null,
+    sourceField: null,
+    label: '打卡计划'
+  },
+  {
     tag: 'GroupDetail',
     inputReg: (/[^\d]+/),
     messageField: 'categoryId',
@@ -262,6 +269,13 @@ export const tagOptions = [
     messageField: null,
     sourceField: null,
     label: '订阅'
+  },
+  {
+    tag: 'MySubscribeHome',
+    inputReg: null,
+    messageField: null,
+    sourceField: null,
+    label: '我的订阅'
   },
   {
     tag: 'MineFavoriteHome',
@@ -463,6 +477,13 @@ export const tagOptions = [
     messageField: null,
     sourceField: null,
     label: '牛币商城'
+  },
+  {
+    tag: 'RechargeHome',
+    inputReg: null,
+    messageField: null,
+    sourceField: null,
+    label: '牛币充值页面(RN)'
   },
   {
     tag: 'AppActiveH5Home',
@@ -916,7 +937,256 @@ export const tagOptions = [
     messageField: 'null',
     sourceField: null,
     label: '字母卡详情'
+  },
+  {
+    tag: 'PayRecord',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '我的购买'
+  },
+  {
+    tag: 'MineAlbumHome',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '我的专辑收藏'
+  },
+  {
+    tag: 'DynamicCardHome',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '可视化卡片',
+    params: { // 额外参数
+      pageCode: {
+        metaData: 'String',
+        type: 'input',
+        name: '页面code(必填)',
+        data: null
+      }
+    }
+  },
+  {
+    tag: 'RadioCategories',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '叫早哄睡'
+  },
+  {
+    tag: 'GroupCourseDetail',
+    inputReg: null,
+    messageField: 'typeId',
+    sourceField: 'typeId',
+    label: '打卡课程(新)详情',
+    needParams: true, // 需要
+    params: { // 额外参数
+      scheduleId: {
+        metaData: 'Number',
+        type: 'input',
+        name: '排期ID',
+        data: null
+      }
+    },
+    judgeValue: (value) => {
+      return _.isString(value) && value.trim() != '';
+    },
+    getUrl: (tag, key) => {
+      if (!tag || !_.isString(tag[key]) || tag[key].trim() == '') {
+        return '';
+      }
+      return <a href={tag[key]} target='_blank'>{'跳转'}</a>;
+    }
+  },
+  {
+    tag: 'GroupPromoteDetail',
+    inputReg: (/[^\d]+/),
+    messageField: 'typeId',
+    sourceField: 'typeId',
+    label: '打卡活动详情',
+    getValue: (input) => {
+      return (getNumArrayValue(input))[0];
+    },
+    judgeValue: (value) => {
+      return value > 0;
+    },
+    getUrl: (tag, key) => {
+      if (!tag || !(tag[key] > 0)) {
+        return '';
+      }
+      return <a href={`/servicepackages/${tag[key]}`} target='_blank'>{tag[key]}</a>;
+    }
+  },
+  {
+    tag: 'GroupDayDetail',
+    inputReg: (/[^\d]+/),
+    messageField: 'typeId',
+    sourceField: 'typeId',
+    label: '打卡日课详情',
+    getValue: (input) => {
+      return (getNumArrayValue(input))[0];
+    },
+    judgeValue: (value) => {
+      return value > 0;
+    },
+    getUrl: (tag, key) => {
+      if (!tag || !(tag[key] > 0)) {
+        return '';
+      }
+      return <a href={`/servicepackages/${tag[key]}`} target='_blank'>{tag[key]}</a>;
+    }
+  },
+  {
+    tag: 'GroupList',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '我的打卡列表'
   }
+  //   {
+  //     tag: 'CommodityPay',
+  //     inputReg: (/[^\d]+/),
+  //     messageField: 'service',
+  //     // sourceField: 'typeId',
+  //     sourceField: null,
+  //     label: '支付页',
+  //     params: {
+  //       type: {
+  //         metaData: 'String',
+  //         type: 'select',
+  //         name: '服务包类型',
+  //         data: [{ key: 'album', label: '专辑' }, { key: 'group', label: '打卡小组' }, { key: 'albumCombine', label: '专辑合集' }, { key: 'service', label: '服务包' }]
+  //       },
+  //       typeId: {
+  //         metaData: 'Number',
+  //         type: 'input',
+  //         name: '服务包ID',
+  //         data: null
+  //       }
+  //     },
+  //     getValue: (input) => {
+  //     },
+  //     // judgeValue: (value) => {
+  //     //   return value > 0
+  //     // },
+  //     getUrl: (tag, key) => {
+  //       if (!tag || !(tag[key] > 0)) {
+  //         return ''
+  //       }
+  //     }
+  //   }
+
+  //   {
+  //     tag: 'CommodityPayAlbum',
+  //     inputReg: (/[^\d]+/),
+  //     messageField: 'servicePkgId',
+  //     sourceField: 'typeId',
+  //     label: '专辑支付页',
+  //     getValue: (input) => {
+  //       return (getNumArrayValue(input))[0]
+  //     },
+  //     judgeValue: (value) => {
+  //       return value > 0
+  //     },
+  //     getUrl: (tag, key) => {
+  //       if (!tag || !(tag[key] > 0)) {
+  //         return ''
+  //       }
+  //       return <a href={`/servicepackages/${tag[key]}`} target='_blank'>{tag[key]}</a>
+  //     }
+  //   },
+  //   {
+  //     tag: 'CommodityGroup',
+  //     inputReg: (/[^\d]+/),
+  //     messageField: 'servicePkgId',
+  //     sourceField: 'typeId',
+  //     label: '打卡小组支付页',
+  //     getValue: (input) => {
+  //       return (getNumArrayValue(input))[0]
+  //     },
+  //     judgeValue: (value) => {
+  //       return value > 0
+  //     },
+  //     getUrl: (tag, key) => {
+  //       if (!tag || !(tag[key] > 0)) {
+  //         return ''
+  //       }
+  //       return <a href={`/servicepackages/${tag[key]}`} target='_blank'>{tag[key]}</a>
+  //     }
+  //   },
+  //   {
+  //     tag: 'CommodityPayAlbumCombine',
+  //     inputReg: (/[^\d]+/),
+  //     messageField: 'servicePkgId',
+  //     sourceField: 'typeId',
+  //     label: '专辑合集支付页',
+  //     getValue: (input) => {
+  //       return (getNumArrayValue(input))[0]
+  //     },
+  //     judgeValue: (value) => {
+  //       return value > 0
+  //     },
+  //     getUrl: (tag, key) => {
+  //       if (!tag || !(tag[key] > 0)) {
+  //         return ''
+  //       }
+  //       return <a href={`/servicepackages/${tag[key]}`} target='_blank'>{tag[key]}</a>
+  //     }
+  //   },
+  //   {
+  //     tag: 'CommodityPayService',
+  //     inputReg: (/[^\d]+/),
+  //     messageField: 'servicePkgId',
+  //     sourceField: 'typeId',
+  //     label: '服务包支付页',
+  //     getValue: (input) => {
+  //       return (getNumArrayValue(input))[0]
+  //     },
+  //     judgeValue: (value) => {
+  //       return value > 0
+  //     },
+  //     getUrl: (tag, key) => {
+  //       if (!tag || !(tag[key] > 0)) {
+  //         return ''
+  //       }
+  //       return <a href={`/servicepackages/${tag[key]}`} target='_blank'>{tag[key]}</a>
+  //     }
+  //   }
+
+  //   {
+  //     tag: 'CommodityPay',
+  //     inputReg: (/[^\d]+/),
+  //     messageField: 'service',
+  //     // sourceField: 'typeId',
+  //     sourceField: null,
+  //     label: '支付页',
+  //     params: {
+  //       type: {
+  //         metaData: 'String',
+  //         type: 'select',
+  //         name: '服务包类型',
+  //         data: [{ key: 'album', label: '专辑' }, { key: 'group', label: '打卡小组' }, { key: 'albumCombine', label: '专辑合集' }, { key: 'service', label: '服务包' }]
+  //       },
+  //       typeId: {
+  //         metaData: 'Number',
+  //         type: 'input',
+  //         name: '服务包ID',
+  //         data: null
+  //       }
+  //     },
+  //     getValue: (input) => {
+  //     },
+  //     // judgeValue: (value) => {
+  //     //   return value > 0
+  //     // },
+  //     getUrl: (tag, key) => {
+  //       if (!tag || !(tag[key] > 0)) {
+  //         return ''
+  //       }
+  //     }
+  //   }
+
 ];
 
 let getArrayValue = (input) => {

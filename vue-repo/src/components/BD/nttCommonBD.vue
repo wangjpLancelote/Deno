@@ -4,87 +4,90 @@
     :show-close="true"
     :close-on-click-modal="false"
     :title="title"
-    width="50%"
+    width="60%"
     top="30px"
   >
     <div class="box">
       <div class="flex box_outer">
-        <el-input
-          v-model="searchCondition"
-          :placeholder="holder || '输入名称或UID, 按Enter键搜索'"
-          style="width:98%;"
-          clearable
-          @keyup.enter.native="search"
-          @clear="search"
-        >
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-            type="primary"
-            @click="search"
-          />
-        </el-input>
-        <div class="table_box">
-          <el-pagination
-            :page-size="30"
-            :total="count"
-            layout="prev, pager, next"
-            background
-            @current-change="handleCurrentChange"
-          />
-          <el-table
-            ref="table"
-            :key="tableKey"
-            v-loading="listLoading"
-            :data="data"
-            :style="toastStyle"
-            height="650"
-            fit
-            stripe
-            highlight-current-row
-            header-row-class-name="headerRowClass"
-            class="table_in"
+        <div class="flex" style="width:98%;justify-content:space-between;">
+          <el-input
+            v-model="searchCondition.uid"
+            :placeholder="holder || '输入UID, 按Enter键搜索'"
+            style="width:45%;"
+            clearable
+            @keyup.enter.native="search"
+            @clear="search"
           >
-            <el-table-column
-              :label="label"
-              align="center"
-              prop="province"
-              min-width="120"
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              type="primary"
+              @click="search"
             >
-              <template slot-scope="scope">
-                <div class="flex" style="padding-left:10px;">
-                  <el-image
-                    v-if="showImage"
-                    :src="scope.row.coverUrl"
-                    :preview-src-list="[scope.row.coverUrl]"
-                    style="width: 40px; height: 40px;"
-                  >
-                    <div slot="error" class="image-slot">
-                      <i class="el-icon-picture" style="font-size:30px;" />
-                    </div>
-                  </el-image>
-                  <span v-if="showUid" style="margin-left:30px;">
-                    {{ scope.row[field] + '(' + scope.row.uid + ')' }}
-                  </span>
-                  <span v-else style="margin-left:30px;">{{ scope.row[field] }}</span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="city"
-              label="操作"
-              align="center"
-              width="100"
+              UID
+            </el-button>
+          </el-input>
+          <el-input
+            v-model="searchCondition.name"
+            :placeholder="holder || '输入名称, 按Enter键搜索'"
+            style="width:45%;"
+            clearable
+            @keyup.enter.native="search"
+            @clear="search"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              type="primary"
+              @click="search"
             >
-              <template slot-scope="scope">
-                <div class="flex" style="width:100%;height:40px;align-items:center;">
-                  <el-checkbox v-model="scope.row.lock" @change="pickData(scope.row)">
-                    选择
-                  </el-checkbox>
-                </div>
-              </template>
-            </el-table-column>
-          </el-table>
+              标题
+            </el-button>
+          </el-input>
+          <el-checkbox v-model="pickAllItem" border size="small" @change="pickAll">
+            全选
+          </el-checkbox>
+        </div>
+
+        <div class="table_box infinite-list-wrapper" style="overflow:auto;">
+          <div
+            v-infinite-scroll="loadScroll"
+            :infinite-scroll-immediate="false"
+            :infinite-scroll-disabled="disabled"
+            infinite-scroll-distance="200"
+          >
+            <div v-for="(item, index) in data" :key="index" class="flex list box_inner">
+              <div class="flex" style="padding-left:10px;flex:3;justify-content:flex-start;">
+                <el-image
+                  v-if="showImage"
+                  :src="item[imageField]"
+                  :preview-src-list="[item[imageField]]"
+                  style="width: 40px; height: 40px;"
+                >
+                  <div slot="error" class="image-slot">
+                    <i class="el-icon-picture" style="font-size:30px;" />
+                  </div>
+                </el-image>
+                <span v-if="showUid" style="margin-left:30px;">
+                  {{ item[field] + '(' + item.uid + ')' }}
+                </span>
+                <span v-else style="margin-left:30px;">{{ item[field] }}</span>
+              </div>
+              <div class="flex" style="width:100%;height:40px;align-items:center;flex:1;justify-content:center;">
+                <el-checkbox v-model="item.lock" @change="pickData(item)">
+                  选择
+                </el-checkbox>
+              </div>
+            </div>
+          </div>
+          <div class="flex" style="justify-content:center;color:#909399;">
+            <p v-if="listLoading">
+              加载中...
+            </p>
+            <p v-if="noMore">
+              ——————这是我的底线——————
+            </p>
+          </div>
         </div>
       </div>
       <div v-if="cache.length" class="overHide margin_top tagsCall">
@@ -95,7 +98,7 @@
           hit
           type="warning"
           style="margin-right:5px;margin-top:3px;"
-          @close="exclude(index, item.uid)"
+          @close="exclude(index, item)"
         >
           <span><i class="el-icon-paperclip" style="font-size:14px;margin-right:3px;" /> {{
             item[field] ? item[field] : item.uid ? item.uid : item
@@ -151,7 +154,7 @@ export default {
     },
     imageField: {
       type: String,
-      default: 'coverUrl'
+      default: 'imageUrl'
     },
     cookieDomain: {
       type: String,
@@ -161,37 +164,41 @@ export default {
       type: Object,
       default: () => {}
     },
-    url: String // 请求url
+    url: String
   },
 
   data() {
     return {
       dialogInfo: false,
-      searchCondition: '',
-      listLoading: false,
-      toastStyle: {
-        overflow: 'auto'
+      searchCondition: {
+        uid: '',
+        name: ''
       },
-      tableKey: 0,
+      listLoading: false,
       checked: [],
       cache: [],
 
       data: [],
-      count: 0,
       offset: 0,
-      limit: 20,
+      limit: 30,
+      noMore: false,
       queryParams: {
-        uid: void 0,
+        uid: void [],
         name: void ''
       },
-      axios: null
+      axios: null,
+      pickAllItem: false
     };
+  },
+  computed: {
+    disabled () {
+      return this.listLoading || this.noMore;
+    }
   },
   mounted () {},
   methods: {
-    openDialog(data) {
-      this.checked = [];
-      this.cache = [];
+    async openDialog(data) {
+      this.reset();
       if (!window.axios) {
         return this.$message({
           message: '请先安装 Axios 插件',
@@ -206,59 +213,102 @@ export default {
           type: 'error'
         });
       }
-      this.getContextData();
       if (data) {
         this.checked = data.map(v => {
           if (v && v.uid) v = v.uid;
           return v;
-        })
-        this.cache = data;
+        });
+      }
+
+      await this.getContextData();
+
+      if (data) {
+        this.cache = data.map(v => {
+          let currentItem = this.data.find(m => m.uid === v);
+          if (v && Number(v) && currentItem) {
+            v = currentItem;
+          }
+          return v;
+        });
       }
       this.dialogInfo = true;
+    },
+    reset () {
+      this.checked = [];
+      this.cache = [];
+      this.data = [];
+      this.noMore = true;
+      this.checked = [];
+      this.offset = 0;
+      this.queryParams = {
+        uid: void [],
+        name: void ''
+      };
+      this.searchCondition = {
+        uid: '',
+        name: ''
+      };
     },
     closeDialog() {
       this.dialogInfo = false;
     },
+    loadScroll () {
+      if (this.noMore) return;
+      this.getContextData();
+    },
     /** 获取列表数据 */
     async getContextData () {
       this.listLoading = true;
-      let body = { offset: this.offset * this.limit, limit: this.limit, buildQuery: { ...this.queryParams }};
-      this.toastStyle.overflow = 'hidden';
-      let rt = await this.serviceFunc(body);
-      if (rt) {
-        this.listLoading = false;
-        this.data = rt.data.data.map(v => {
-          if (this.checked.includes(v.uid)) {
-            v.lock = true;
+      let basic = { offset: this.offset, limit: this.limit };
+      try {
+        let rt = await this.serviceFunc(basic);
+        if (rt) {
+          this.listLoading = false;
+          if (rt.data.data.length < this.limit) {
+            this.noMore = true;
           } else {
-            v.lock = false;
+            this.noMore = false;
           }
-          return v;
-        });
-        this.count = rt.data.count;
-        this.toastStyle.overflow = 'auto';
+          let rtData = rt.data.data.map(v => {
+            if (this.checked.includes(v.uid)) {
+              v.lock = true;
+            } else {
+              v.lock = false;
+            }
+            return v;
+          });
+          if (!this.offset) {
+            this.data = rtData;
+          } else {
+            this.data = this.data.concat(rtData);
+          }
+          if (this.data.some(v => !v.lock)) this.pickAllItem = false;
+
+          this.offset = this.data.length;
+          this.listLoading = false;
+        }
+      } catch (e) {
+        this.noMore = true;
+      } finally {
+        this.listLoading = false;
       }
     },
-    serviceFunc (body) {
+    serviceFunc (basic) {
       let service = this.requestServiceDef();
+      let body = { ...this.queryParams, ...this.params };
       if (this.method === 'post') {
-        if (body.hasOwnProperty('buildQuery')) {
-          body.buildQuery = { ...body.buildQuery, ...this.params };
-        } else {
-          body = { ...body, ...this.params };
-        }
-        return service[this.method](this.url, body);
+        return service[this.method](this.url + (~this.url.indexOf('?') ? '&' : '?') + `offset=${basic.offset}&limit=${basic.limit}`, body);
       } else if (this.method === 'get') {
-        return service[this.method](this.url, { params: { ...body, ...this.params }});
-      } else {
-        return service[this.method](this.url, body);
+        return service[this.method](this.url + (~this.url.indexOf('?') ? '&' : '?') + `offset=${basic.offset}&limit=${basic.limit}`, { params: body });
+      } else { // POST | DELETE
+        return service[this.method](this.url, { ...basic, ...body });
       }
     },
     /** 配置请求的request */
     requestServiceDef () {
       this.axios.defaults.withCredentials = true;
       const service = this.axios.create({
-        baseURL: 'https://newcms.benewtech.cn/api/',
+        baseURL: 'http://newcms-demo.benewtech.cn/api/resources-admin/resource/selector/find/',
         timeout: 20000
       });
       service.interceptors.request.use(
@@ -313,19 +363,35 @@ export default {
       return token;
     },
     search () {
+      this.offset = 0;
+      this.data = [];
       for (let key in this.queryParams) {
         this.queryParams[key] = void Object;
       }
-      if (this.searchCondition) {
-        let target = this.searchCondition.replace('，', ',').split(',');
-        if (target.some(v => Number(v))) {
-          this.queryParams.uid = target.map(Number);
-        } else {
-          this.queryParams.name = this.searchCondition;
-        }
+
+      let guards = this.searchParamsGuards();
+      if (!guards) return;
+      this.getContextData();
+    },
+    searchParamsGuards () {
+      if (!this.searchCondition.uid) {
+        this.$set(this.searchCondition, 'uid', undefined);
+      } else {
+        this.queryParams.uid = this.searchCondition.uid.replace('，', ',').split(',').map(Number);
       }
-      this.offset = 0;
-      return this.getContextData();
+      if (this.queryParams.uid && this.queryParams.uid.length && this.queryParams.uid.some(v => isNaN(v))) {
+        window.Vue.prototype.$message({
+          message: 'UID有误',
+          type: 'error'
+        });
+        return false;
+      }
+      if (!this.searchCondition.name) {
+        this.$set(this.searchCondition, 'name', undefined);
+      } else {
+        this.queryParams.name = this.searchCondition.name;
+      }
+      return true;
     },
     handleCurrentChange (val) {
       this.offset = val - 1;
@@ -337,14 +403,64 @@ export default {
         this.cache.push(rowData);
         return;
       } else {
+        if (this.pickAllItem) this.pickAllItem = false;
         this.checked = this.checked.filter(v => v !== rowData.uid);
         this.cache = this.cache.filter(b => b.uid !== rowData.uid);
         return;
       }
     },
-    exclude (idx, uid) {
-      this.checked = this.checked.filter(v => v !== uid);
-      this.data.find(v => v.uid === uid).lock = false;
+    /** 全选 当前页数据 */
+    pickAll () {
+      this.data = this.data.map(v => {
+        v.lock = this.pickAllItem;
+        return v;
+      });
+      let canPickData = this.data.filter(c => c.lock); // 需要选中的数据
+      if (canPickData.length) { // 全选
+        this.checked = this.uniq(this.checked.concat(this.mapUid(this.data)));
+        this.cache = [...this.cache, ...this.uniqByCache(this.cache, this.data.filter(c => c.lock))];
+      } else { // 全不选
+        this.checked = this.checked.filter(v => !(this.mapUid(this.data)).includes(v));
+        this.cache = this.cache.filter(v => {
+          if (v && Number(v)) { // cache 是UID的情况
+            if (this.mapUid(this.data).includes(v)) {
+              return false;
+            }
+          } else {
+            if (this.mapUid(this.data).includes(v.uid)) {
+              return false;
+            }
+          }
+          return true;
+        });
+      }
+    },
+    /** 去重 */
+    uniq (source) {
+      return Array.from(new Set(source));
+    },
+    /** 去重 cache */
+    uniqByCache (source, target) {
+      let res = [];
+      for (let item of target) {
+        if (source.some(v => Number(v))) { // 传入的cache 可能是UID的情况
+          if (!source.includes(item.uid)) res.push(item);
+        } else {
+          if (!this.mapUid(source).includes(item.uid)) res.push(item);
+        }
+      }
+      return res;
+    },
+    mapUid (source) {
+      return source.map(v => {
+        if (v && v.uid) return v.uid;
+        return v;
+      });
+    },
+    exclude (idx, item) {
+      let targetUid = item.uid ? item.uid : item;
+      this.checked = this.checked.filter(v => v !== targetUid);
+      if (this.data.find(v => v.uid === targetUid)) this.data.find(v => v.uid === targetUid).lock = false;
       this.cache.splice(idx, 1);
     },
     ensure() {
@@ -355,15 +471,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.table_in {
-    width: 100%;
-    height:500px;
-    overflow: auto;
-    cursor: pointer;border-top:1px solid #C0C4CC;
-}
 .table_box {
     width: 98%;
-    min-height: 500px;
+    height: 60vh;
     border: 1px solid #ccc;
     margin-top: 10px;
 }
@@ -392,5 +502,13 @@ export default {
 }
 .headerRowClass {
     background: #ccc;
+}
+.box_inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height:55px;
+    border-bottom: 1px solid #cccccc;
 }
 </style>

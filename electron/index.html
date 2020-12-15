@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electron</title>
+</head>
+<body>
+    <div style="-webkit-app-region: drag;">
+        <span id="header">标题栏</span>
+        <button style="-webkit-app-region: no-drag;">按钮</button>
+    </div>
+</body>
+<script>
+    let headerDom = document.getElementById('header');
+    let isMoving = false, isClick = false, startX = 0, startY = 0;
+
+    headerDom.onmousedown = (e) => {
+        isMoving = false;
+        isClick = true;
+        startX = e.clientX;
+        startY = e.clientY;
+    }
+
+    document.onmousemove = (e) => {
+        let distanceX = e.clientX - startX;
+        let distanceY = e.clientY - startY;
+
+        if (isClick) {
+            /** 发送窗口位置到主进程进行处理 */
+            ipcRender.send('windowMove', { distanceX, distanceY });
+            isMoving = true;
+        }
+    };
+    
+    headerDom.onmouseup = () => {
+        isClick = false;
+        if (!isMoving) {
+
+        } else {
+            isMoving = false;
+        }
+    }
+</script>
+</html>

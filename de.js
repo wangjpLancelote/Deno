@@ -21,6 +21,9 @@ const repl = require('repl');
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
 const axios = require("axios");
+const { result } = require("lodash");
+const { resolve, reject } = require("bluebird");
+const { promise } = require("ora");
 
 // repl.start('> ').context._ = _;
 
@@ -3411,37 +3414,670 @@ function myNew (targetClass, ...args) {
 
 let generateDir = 'demoVue'; //需要生成的文件夹名
 
-// console.log('path', path.resolve(__dirname, generateDir, 'de'))
-// console.log('__dir', __dirname)
 
-// console.log('fileDir', fs.existsSync(path.resolve(__dirname, generateDir)));
+const xiaowang = {
+  love: "aaabbbccddd"
+}
 
-// async function generateVueFile () {
-//   await exists(generateDir)
-//   writeFile(path.resolve(__dirname, generateDir, 'demo.vue'), '<template></template>', (err) => {console.log("写入成功")})
+function sendToMyLove (obj) {
+  console.log(obj.love)
+  return "fuck off";
+}
+
+//对对象的属性值修改
+const proxy = new Proxy(xiaowang, {
+  //target就是传入的对象本身, key就是对象的属性
+  get (target, key) {
+    console.log('key' + key);
+    if (key === 'love') {
+      return target[key].replace("aaa", 'ttt');
+    }
+  }
+})
+console.log(sendToMyLove(proxy));
+
+// function addBigNum (a, b) {
+//   let res = '', temp = 0;
+//   a = a.split(',');
+//   b = b.split(',');
+//   while (a.length || b.length || temp) {
+//     temp += ~~a.pop() + ~~b.pop();
+//     res = (temp % 10) + res; //余数
+//     temp = temp > 9; //大于10
+
+//   }
+//   return res.replace(/^0+/, '');
 // }
-// generateVueFile();
 
-// function exists (value) {
-//   if (!fs.existsSync(path.resolve(__dirname, value))) mkdir(path.resolve(__dirname, value));
-// }
+function AddBigSum (A, B) {
+  let result = [];
+  A += '';
+  B += '';
+  const l = -15;
+  while (A != '' && B != "") { //超过15位之后，分别每截取前15位，分段相加
+    result.unshift(parseInt(A.substr(l)) + parseInt(B.substr(l))); //从低位加起
+    A = A.slice(0, l);
+    B = B.slice(0, l);
+  }
+  A += B; //截取之后的数字再相加
+  for (let i = result.length - 1; i > 0; i--) { //大数截取出两段数字的情况
+    result[i] += '';
+    if (result[i].length > -l) {
+      result[i - 1] += 1;
+      result[i] = result[i].substr(1);
+    } else {
+      while (result[i].length < -l) {
+        result[i] = '0' + result[i];
+      }
+    }
+  }
 
-// function mkdir (path) {
-//   fs.mkdirSync(path, (err) => {
-//     if (err) rej(err);
-//     return path;
-//   })
-// }
+  while (A && (result[0] + '').length > -l) { //判断若截取后的数字依然大于15位，则继续截取
+    result[0] = (result[0] + '').substr(1);
+    result.unshift(parseInt(A.substr(l)) + 1);
+    A = A.slice(0, l);
+  }
 
-// function writeFile (path, content, cb) {
-//   fs.writeFile(path, content, cb)
-//   return true;
-// }
+  if (A) {
+    while ((result[0] + '').length < -l) { //高位补0
+      result[0] = '0' + result[0];
+    }
+    result.unshift(A);
+  }
+  if (result[0]) {
+    result = result.join(''); //最后两段数字拼接。待拼接的数字均不大于15位
+  } else {
+    result = '0'; //否则返回0
+  }
+  return result;
+
+}
+
+function reduce (A, B) {
+  let result = [];
+  A += '';
+  B += '';
+  while (A[0] === '0') { //首位是0，无意义
+    A = A.substr(1);
+  }
+  while (B[0] === '0') {
+    B = B.substr(1);
+  }
+  const l = -15;
+  let N = '1';
+  for (let i = 0; i < -l; ++i) {
+    N += '0';
+  }
+  N = parseInt(N);
+  console.log('N', N)
+  while (A !== '' && B !== '') {
+    result.unshift(parseInt(A.substr(l)) - parseInt(B.substr(l))) //从低位数减起
+    A = A.slice(0, l); //去除后15位后的数字
+    B = B.slice(0, l);
+  }
+  if (A !== '' || B !== '') { //截取后剩余数字
+    let s = B === '' ? 1 : -1;
+    A += B;
+    while (A !== '') {
+      result.unshift(s * parseInt(A.substr(l))); //若B小于A，则为减
+      A = A.slice(0, l);
+    }
+  }
+  while (result.length !== 0 && result[0] === 0) {
+    result.shift(); //首位是0，则无意义
+  }
+
+  let s = '';
+  if (result.length === 0) {
+    result = 0;
+  } else if (result[0] < 0) {
+    s = '_';
+    for (let i = result.length - 1; i > 0; i--) {
+      if (result[i] > 0) {
+        result[i] -= N; //低位不足，向高位借一位，高位减1，低位加1,这里是分成两段来计算。
+        result[i -  1] ++;
+      }
+
+      result[i] *= -1;
+      result[i - 1] = '';
+      while (result[i].length < -l) { //位数不足补0
+        result[i] = '0' + result[i];
+      }
+    }
+    result[0] *= -1;
+  } else {
+    for (let i = result.length - 1; i > 0; i--) {
+      if (result[i] < 0) {
+        result[i] += N;
+        result[i - 1]--;
+      }
+      result[i] += '';
+      while (result[i].length < -l) {
+        result[i] = '0' + result[i];
+      }
+    }
+  }
+  if (result) {
+    while ((result[0] = parseInt(result[0])) === 0) {
+      result.shift();
+    }
+    result = s + result.join('');
+  }
+  return result;
+
+}
+
+/**异步并发数限制
+ * 利用Promsie.then() 将任务加到微任务队列，防止立即执行迭代方法
+ * 微任务处理过程中，产生新的微任务，会在同一事件循环中，追加到微任务队列中
+ * Promise.race() 在某个任务完成时，继续添加任务，保持任务按照最大并发数执行。
+ * 任务完成，需要从任务队列中移除
+ */
+function limit (count, array, iterateFunc) {
+  const tasks = [];
+  const doingTasks = [];
+  let i = 0;
+  const enqueue = () => {
+    if (i === array.length) {
+      return Promise.resolve();
+    }
+    const task = Promise.resolve().then(() => iterateFunc(array[i++]))
+    tasks.push(task);
+    const doing = task.then(() => doingTasks.splice(doingTasks.indexOf(doing), 1))
+    doingTasks.push(doing);
+    const res = doingTasks.length >= count ? Promise.race(doingTasks) : Promise.resolve();
+    return res.then(enqueue);
+  }
+  return enqueue().then(() => Promise.all(tasks));
+}
+
+const timeout = i => new Promise(resolve => setTimeout(() => resolve(i), i));
+limit(2, [1000, 1000, 1000, 1000], timeout).then(res => {
+  console.log(res);
+})
+
+/**
+ * 异步串行 | 异步并行
+ */
+
+ function promiseAdd (a, b) {
+   return new Promise((resolve, reject) => {
+     setTimeout((err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(a + b);
+      }
+     }, 500);
+   })
+ }
+
+ /**串行处理
+  * reduce 从 0 开始 Promsie.resolve(0)
+  */
+ async function serialSum (...args) {
+  return args.reduce((task, now) => {
+    return task.then((res) => promiseAdd(res, now))
+  }, Promise.resolve(0))
+ }
+
+ /**并行处理 */
+ async function parallelSum (...args) {
+  if (args.length === 1) return args[0];
+  const task = []; //并行任务队列
+  for (let i = 0; i < args.length; i += 2) {
+    task.push(promiseAdd(args[i], args[i + 1] || 0)); //添加任务
+  }
+  const results = await Promise.all(task); //核心，利用Promsie.all() 并行执行所有task
+  return parallelSum(...results); //递归
+ }
 
 
+//  (async () => {
+//    console.log('并行 running');
+//    const res1 = await serialSum(1,2,3,4,5,8,9,10,11,13);
+//    console.log('res1: %d', res1);
+//    const res2 = await parallelSum(1,2,3,4,5,8,9,10,11,13);
+//    console.log('res2: %d', res2);
+//    console.log('并行 Done');
+//  })()
+
+ /**数组扁平化 */
+ function flatArr (array = []) {
+   return array.reduce((res, item) => res.concat(Array.isArray(item) ? flatArr(item) : item), []);
+ }
+
+ /**对象扁平化 */
+ function flatObject (obj = {}) {
+   const res = {};
+   function flat (item, preKey = '') {
+    Object.entries(item).forEach(([key, val]) => {
+      const newKey = preKey ? `${preKey}.${key}` : key
+      if (val && typeof val === 'object') {
+        flat(val, newKey);
+      } else {
+        res[newKey] = val;
+      }
+    })
+   }
+   flat(obj);
+   return res;
+ }
+
+ /**懒加载
+  * 判断页面是否在可见区域
+  */
+ function isVisible (el) {
+  const position = el.getBoundingClientRect();
+  const windowHeight = document.documentElement.clientHeight;
+  /**顶部边缘可见 */
+  const topVisible = position.top > 0 && position.top < windowHeight;
+
+  /**底部边缘可见 */
+  const bottomVisible = position.bottom < windowHeight && position.bottom > 0;
+
+  return topVisible || bottomVisible;
+ }
+
+ /**深度复制 */
+ function deepCopyT (source, cache = new WeakMap()) {
+  if (!source instanceof Object) return source;
+
+  if (cache.get(source)) return cache.get(source);
+
+  //函数
+  if (source instanceof Function) {
+    return function () { //返回函数
+      source.apply(this.arguments);
+    }
+  }
+
+  //日期
+  if (source instanceof Date) return new Date(source);
+
+  /**正则对象 */
+  if (source instanceof RegExp) return new RegExp(source.source, source.flags);
+
+  const res = Array.isArray(source) ? [] : {};
+
+  cache.set(source, res);
+  Object.keys(source).forEach(key => {
+    if (source[key] instanceof Object) {
+      res[key] = deepCopy(source[key], cache);
+    } else {
+      res[key] = source[key];
+    }
+  })
+  return res;
+ }
 
 
+ /**
+  * Promise 的并行调度器
+  */
+ class Scheduler {
+   constructor () {
+     this.queue = [];
+     this.maxCount = 2;
+     this.runCounts = 0; //运行的条数
+   }
 
+   add (promiseCreator) {
+    this.queue.push(promiseCreator);
+   }
+
+   taskStart () {
+     for (let i = 0; i < this.maxCount; ++i) {
+       this.request();
+     }
+   }
+   request () {
+     if (!this.queue || !this.queue.length || this.runCounts >= this.maxCount) {
+       return;
+     }
+     this.runCounts++;
+     this.queue.shift()().then(() => {
+       this.runCounts--;
+       this.request();
+     })
+   }
+ }
+
+ const timeoutFunc = time => new Promise(resolve => {
+   setTimeout(resolve, time);
+ });
+
+ const scheduler = new Scheduler();
+
+ const addTask = (time, order) => {
+  scheduler.add(() => timeoutFunc(time).then(() => console.log(order)));
+ }
+
+ addTask(1000, '1');
+ addTask(5000, '2');
+ addTask(3000, '3');
+ addTask(4000, '4');
+ scheduler.taskStart(); //并行就是不确定执行顺序，因此每一次的执行结果都不同
+
+ /**渲染几万条数据 */
+ function renderBigTable () {
+  setTimeout(() => {
+    const total = 100000;
+
+    const once = 20;
+
+    const loopCount = Math.ceil(total / once);
+    let countOfRender = 0;
+    const ul = document.querySelector('ul');
+    function add () {
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < once; ++i) {
+        const li = document.createElement('li');
+        li.innerText = Math.floor(Math.random() * total);
+        fragment.appendChild(li);
+      }
+      ul.appendChild(fragment);
+      countOfRender += 1;
+      loop();
+    }
+    function loop () {
+      if (countOfRender < loopCount) {
+        window.requestAnimationFrame(add);
+      }
+    }
+
+    loop();
+  }, 0);
+ }
+
+
+ /**将虚拟dom转化为DOM */
+ function render (vnode, container) {
+    container.appendChild(_render(vnode));
+ }
+
+ function _render (vnode) {
+   /**数字类型就转化为string */
+    if (typeof vnode === 'number') {
+      vnode = String(vnode);
+    }
+
+    /**创建节点 */
+    if (typeof vnode === 'string') {
+      return document.createTextNode(vnode);
+    }
+
+    const dom = document.createElement(vnode.tag);
+    if (vnode.attrs) { //节点属性
+      Object.keys(vnode.attrs).forEach(key => {
+        const value = vnode.attrs[key];
+        dom.setAttribute(key, value);
+      })
+    }
+
+    /**递归遍历 */
+    vnode.children.forEach(child => render(child, dom));
+    return dom;
+ }
+
+ const templateStr = (str, obj) => {
+    let res = '';
+    let flag = false;
+    let start;
+    for (let i = 0; i < str.length; ++i) {
+      if (str[i] === '{') { //将{} 包含的内容取出
+        flag = true;
+        start = i + 1;
+        continue;
+      }
+      if (!flag) res += str[i];
+      else {
+        if (str[i] === '}') {
+          flag = false;
+          res += matchStr(str.slice(start, i), obj);
+        }
+      }
+    }
+ }
+
+ /**对象匹配 若对象没有的key，则返回原始字符，否则返回对象的值 */
+ const matchStr = (str, obj) => {
+    const keys = str.split('.').slice(1);
+    let index = 0;
+    let o = obj;
+    while (index < keys.length) {
+      const key = keys[index];
+      if (!o[key]) {
+        return `{${str}}`;
+      } else {
+        o = o[key];
+      }
+      index++;
+    }
+    return o;
+ }
+
+ /**计算前K 个出现次数最多的 */
+ const topKRequest = (words, k) => {
+    let maptemp = new Map();
+    words.forEach(item => {
+      maptemp.has(item) ? maptemp.set(item, maptemp.get(item) + 1) : maptemp.set(item, 1);
+    })
+    let ansList = [...maptemp].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    ansList = ansList.map(v => v[0]);
+    return ansList.slice(0, k);
+ }
+
+ /**首字母转大写 */
+ const toUpper =  (tar) => {
+   console.log('res' ,tar)
+   let upper = tar[0].toLocaleUpperCase();
+   return upper + tar.substr(1);
+ }
+
+ function toNonExponential(num) {
+  var m = num.toExponential().match(/\d(?:\.(\d*))?e([+-]\d+)/);
+  return num.toFixed(Math.max(0, (m[1] || '').length - m[2]));
+}
+
+/**数组扁平化的多种实现及优化
+ * 基本是利用 循环 + 递归 或 reduce + 递归 加判空或判数组条件
+ */
+class FlatClass {
+  constructor (target) {
+    this.target = target;
+  }
+
+  /**最基本且元素顺序一致的数组嵌套情况 */
+  flat (array) {
+    let arrResult = [];
+    for (let i = 0; i < array.length; ++i) {
+      if (Array.isArray(array[i])) {
+        arrResult.push(...this.flat(array[i]));
+      } else {
+        arrResult.push(array[i]);
+      }
+    }
+    return arrResult;
+  }
+
+  /**使用map  */
+  mapFlat (array) {
+    let arrResult = [];
+    array.map(v => {
+      if (Array.isArray(v)) {
+        arrResult.push(...this.mapFlat(v));
+      } else {
+        arrResult.push(v)
+      }
+    })
+    return arrResult;
+  }
+
+  /**使用reduce 归并 */
+  reduceFlat (array) {
+    return array.reduce((prev, cur) => {
+      return prev.concat(Array.isArray(cur) ? this.reduceFlat(cur) : cur);
+    }, [])
+  }
+  /**迭代器 generate */
+  // generateFlat (array, num) {
+  //   if (num === undefined) num = 1;
+  //   for (const item of array) {
+  //     if (Array.isArray(item) && num > 0) {
+  //       yield* this.generateFlat(item, num - 1);
+  //     } else {
+  //       yield item;
+  //     }
+  //   }
+  // }
+
+  /**使用栈的思想实现flat  */
+  stackFlat (array) {
+    const result = [];
+    const stack = [].concat(array); //将数组元素拷贝到栈，而不是直接复制(即深拷贝)
+    while (stack.length !== 0) {
+      const val = stack.pop(); //先从数组中去除，再判断是否该弹出该元素还是递归
+      if (Array.isArray(val)) {
+        stack.push(...val);
+      } else {
+        result.unshift(val)
+      }
+    }
+    return result;
+  }
+
+  /**使用reduce + 递归 */
+  numberFlat (array, num = 1) {
+    return num > 0 ?
+        array.reduce((pre, cur) => pre.concat(Array.isArray(cur) ? this.numberFlat(cur, num - 1) : cur), [])
+        : array.slice();
+  }
+}
+
+/**原型链重写 flat */
+Array.prototype.fakeFlat = function (num = 1) {
+  if (!Number(num) || Number(num) < 0) {
+    return this;
+  }
+  let arr = this.concat(); //获取调用这个方法的数组
+  while (num > 0) {
+    if (arr.some(x => Array.isArray(x))) {
+      arr = [].concat.apply([], arr);
+    } else {
+      break;
+    }
+    num --;
+  }
+  return arr;
+}
+
+/**
+ * 荷兰三色排序问题
+ * @param {Array} array
+ */
+const holland = (array) => {
+  /**
+   * i, j, k 表示三个区间, 若有更多的须分割的数据，则继续加区间
+   */
+  let i = 0, j = 0, k = array.length - 1;
+  let indexItem = null;
+  for (let m = 0; m < array.length; ++m) {
+    if (j === k) { //指针重合，结束
+      break;
+    }
+    if (!indexItem) {
+      indexItem = array[m];
+      i ++;
+      j ++;
+      continue;
+    }
+    if (indexItem === array[m] && i === j) { //相等，则继续往前
+      i ++;
+      j ++;
+      continue;
+    }
+    if (indexItem !== array[m] && i === j) { //第二种情况
+      indexItem = array[m];
+      j++;
+      continue;
+    }
+    if (indexItem !== array[m] && i !== j) { //第三种情况 [交换元素,指针移动]
+      let middle = array[k];
+      array[k] = array[m];
+      array[m] = middle;
+      k--;
+      j++;
+      if (array[i] !== array[j]) { //交换之后，比对元素
+        middle = array[j];
+        array[j] = array[i];
+        array[i] = middle;
+      }
+      continue;
+    }
+  }
+  return array;
+}
+
+console.log('=========>>>>000', holland([1,2,3,2,3,1,2])); // 1122233
+
+/** 贪心算法
+ * 动态规划问题，找局部最优解 换酒瓶问题
+ */
+class GreedyAlgorithm {
+  constructor (bottles, exchange) {
+    this.bottles = bottles; // 最大酒瓶数
+    this.exchange = exchange; // 每次能换的酒瓶数
+  }
+
+  calc () {
+    let sum = this.bottles;
+    let index = 0;
+    while (this.bottles >= this.exchange) { // 只要总数还大于需兑换的数，就能换
+      /** 每一轮消耗 都换得一瓶酒 同时也会产生一个酒瓶 */
+      this.bottles -= this.exchange;
+      /** 总共能喝到的酒就是 num + 多喝到的酒 */
+      ++sum;
+      ++index;
+
+      ++this.bottles;
+    }
+    return index;
+  }
+
+  reCalc () { //改进 贪心算法
+    let sum = this.bottles;
+    while (this.bottles >= this.exchange) {
+      let mode = this.bottles / this.exchange; //取模
+      sum += mode;
+
+      // 剩余的酒瓶 为兑换 + 已兑换喝掉的
+      this.bottles = this.bottles % this.exchange + mode;
+    }
+    return sum;
+  }
+}
+
+let il = new GreedyAlgorithm(9, 3);
+// console.log('========>>>能多喝到的酒瓶il:', il.calc());
+// console.log('========>>>总共喝到的酒瓶il:', (il.calc() + 9));
+console.log('========>>>改进贪心 能多喝到的酒瓶il:', il.reCalc());
+
+function extend (source) {
+  let res = {};
+  for (let key in source) {
+    if (Object.prototype.toString.call(source[key]) === '[object Array]') {
+      res[key] = source[key].slice();
+      continue;
+    }
+    if (Object.prototype.toString.call(source[key]) === '[object Object]') {
+      res[key] = this.extend(source[key]);
+      continue;
+    }
+    res[key] = source[key];
+  }
+  return res;
+}
 
 
 

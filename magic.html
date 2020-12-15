@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>magic</title>
+</head>
+<style>
+    #container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .area {
+        width: 200px;
+        height: 40px;
+        background-color: red;
+    }
+
+    /* 蒙层 */
+    .guide-mask {
+        width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: fixed;
+    }
+
+    .tooltip-box {
+            min-width: 100px;
+            height: 26px;
+            line-height: 26px;
+            background: white;
+            position: absolute;
+            border-radius: 40px;
+            padding: 5px 15px;
+            font-size: 14px;
+        }
+
+    /* 气泡 */
+    .tooltip-box:before{
+        content: "";
+        position: absolute;
+        right: 100%;
+        top: -10px;
+        left: 20%;
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 13px solid white;
+    }
+    .guide-helper-layer {
+        position: absolute;
+        z-index: 9999998;
+        background-color: #FFF;
+        background-color: rgba(255, 255, 255, .9);
+        border-radius: 4px;
+    }
+</style>
+<body>
+    <!-- <div id="container">
+        <div class="area guide-mask">第一块区域</div>
+        <div class="area guide-helper-layer">第二块区域</div>
+        <div class="area">第三块区域</div>
+        <div class="area">第四块区域</div>
+    </div> -->
+    <div class="skill guide-mark-relative">
+        <span id="love">JavaScript</span>
+        <span>Node.js</span>
+        <span>Webpack</span>
+        <span>React</span>
+        <span>Vue</span>
+        <span>Nginx</span>
+        <span>...</span>
+    </div>
+    <div class="guide-mask"></div>
+    <div class="guide-helper-layer" style="width: 472px; height:58px; top:55px;left: 36px;">
+        <div class='tooltip-box'>
+            新手引导
+        </div>
+    </div>
+</body>
+<script>
+    const guideTarget = document.querySelector('.skill');
+    const tooltip = document.querySelector('.tooltip-box');
+    var rect = guideTarget.getBoundingClientRect(); //通过getBoundingClientRect 获取目标元素的大小及其相对于视口的位置。
+    const helperLayer = document.querySelector('.guide-helper-layer');
+
+    helperLayer.style.left = rect.left - 3 + 'px';
+    helperLayer.style.top = rect.top - 3 + 'px';
+    helperLayer.style.width = rect.width + 3 * 2 + 'px';
+    helperLayer.style.height = react.height + 3 * 2 + 'px';
+    tooltip.style.top = rect.height + 3 * 2 + 10 + 5 + 'px';
+
+    const canvas = document.getElementById('guide-mask');
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    function mask() {
+            let canvas = document.getElementById('guide-mask')
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            canvas.setAttribute("width", width);
+            canvas.setAttribute("height", height);
+            const ctx = canvas.getContext("2d");
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fill();
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.globalCompositeOperation = "xor";
+            ctx.fillRect(rect.left - 3, rect.top - 3, rect.width + 3 * 2 + 10 + 5, rect.height + 3 * 2);
+            ctx.fill();
+        }
+        mask()
+</script>
+</html>

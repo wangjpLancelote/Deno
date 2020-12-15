@@ -1,0 +1,45 @@
+.awards {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+    border: 1px solid red;
+    justify-content: center;
+    align-items: center;
+    display: grid;
+    grid-template-areas:    "first second third"
+                            "eight middle four"
+                            "seven six five";
+}
+.first {
+    grid-area: 'first';
+}
+.second {
+    grid-area: 'second';
+}
+.third {
+    grid-area: 'third';
+}
+.eight {
+    grid-area: 'eight';
+}
+.middle {
+    grid-area: 'middle';
+}
+.four {
+    grid-area: 'four';
+}
+.seven {
+    grid-area: 'seven';
+}
+.six {
+    grid-area: 'six';
+}
+.five {
+    grid-area: 'five';
+}
+.box {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #ccc;
+    line-height: 100px;
+}

@@ -8,7 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "package": "uglify=no TYPE=package vue-cli-service build --target wc --name test-com src/components/table/test-com.vue",
-    "lib": "uglify=no TYPE=lib vue-cli-service build --target lib --name nttTrack",
+    "lib": "uglify=no TYPE=lib vue-cli-service build --target lib --name nttDisposeJump",
     "libInline": "uglify=no TYPE=lib vue-cli-service build --target lib --inline-vue --name myLib src/components/table/test-com.vue"
   },
   "dependencies": {
