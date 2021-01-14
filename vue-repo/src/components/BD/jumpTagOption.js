@@ -491,6 +491,20 @@ export const tagOptions = [
     messageField: 'link',
     sourceField: 'link',
     label: '网页内容',
+    params: { // 额外参数
+      openNew: {
+        metaData: 'String',
+        type: 'select',
+        name: '是否新页面打开',
+        data: [{ key: true, label: '是' }, { key: false, label: '否', default: true }]
+      },
+      actionBarGone: {
+        metaData: 'String',
+        type: 'select',
+        name: '隐藏默认导航栏',
+        data: [{ key: true, label: '是' }, { key: false, label: '否', default: true }]
+      }
+    },
     judgeValue: (value) => {
       return _.isString(value) && value.trim() != '';
     },
@@ -958,6 +972,21 @@ export const tagOptions = [
     messageField: 'null',
     sourceField: null,
     label: '可视化卡片',
+    params: { // 额外参数
+      pageCode: {
+        metaData: 'String',
+        type: 'input',
+        name: '页面code(必填)',
+        data: null
+      }
+    }
+  },
+  {
+    tag: 'DynamicCard',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '可视化卡片(RN)',
     params: { // 额外参数
       pageCode: {
         metaData: 'String',

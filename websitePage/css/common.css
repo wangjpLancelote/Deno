@@ -43,7 +43,6 @@ html, body, figure, dl, dd, img, form, div, ul, ol, li, h1, h2, h3, h4, h5, h6, 
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	-webkit-tap-highlight-color: transparent;
-	/* outline: 1px solid red; */
 }
 
 body {

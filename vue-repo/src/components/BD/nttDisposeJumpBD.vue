@@ -178,7 +178,15 @@ export default {
             for (let k of keys) {
               let rt = {
                 key: k,
-                value: isVipOrScan ? data[k] : (data.params && data.params[k] !== undefined ? (res.params[k].metaData === 'Number' ? Number(data.params[k]) : data.params[k]) : res.params[k].metaData === 'String' ? '' : 0),
+                value: isVipOrScan
+                  ? data[k]
+                  : (data.params && data.params[k] !== undefined
+                    ? (res.params[k].metaData === 'Number'
+                      ? Number(data.params[k])
+                      : data.params[k])
+                    : res.params[k].metaData === 'String'
+                      ? ''
+                      : ''),
                 name: res.params[k].name,
                 type: res.params[k].type,
                 data: res.params[k].data,
@@ -252,6 +260,10 @@ export default {
         if (isVipOrScan) {
           modified.jump[item.key] = item.value;
         } else {
+          if (item.type === 'select') {
+            let defaultDataItem = item.data.find(v => v.default);
+            if (item.value === '' || item.value === null) item.value = defaultDataItem.key;
+          }
           modified.jump.needParams = true; // 需要params参数的跳转需添加的字段
           modified.jump.params[item.key] = item.value;
           modified.jump.params['uid'] = this.form.content ? this.form.content : void 0;
@@ -259,6 +271,8 @@ export default {
       }
       if (this.form.title === '网页内容') { // 网页内容不设标题
         this.form.title = '';
+        modified.jump.params['linkUrl'] = this.form.content;
+        delete modified.jump.params['uid'];
       }
       this.$emit('getData', modified, this.identify);
       this.closeDialog();

@@ -4079,6 +4079,30 @@ function extend (source) {
   return res;
 }
 
+function concat (origin, target, index) {
+  if (index === origin.length - 1) { // 直接在最后插入数据
+    return origin.concat(target);
+  }
+  let oLen = origin.length;
+  let tLen = target.length;
+  let res = new Array(oLen + tLen); // 初始化
+  for (let i = 0; i < (oLen + tLen); ++i) {
+    if (i <= index) {
+      res[i] = origin[i];
+      continue;
+    }
+    if (i > index + tLen) {
+      res[i] = origin[i - tLen];
+      continue;
+    }
+    res[i] = target[i - index - 1];
+  }
+  return res;
+}
+console.log('====>>>fff', concat([1,2,3], [4,5], 2));
+
+
+
 
 
 
