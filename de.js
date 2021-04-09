@@ -21,9 +21,11 @@ const repl = require('repl');
 // const appKey = '338f8ee1c88d36f69812cbd299de2677';
 const Bluebird = require("bluebird");
 const axios = require("axios");
-const { result } = require("lodash");
+const { result, rest } = require("lodash");
 const { resolve, reject } = require("bluebird");
 const { promise } = require("ora");
+const chalk = require('chalk');
+const { default: Axios } = require("axios");
 
 // repl.start('> ').context._ = _;
 
@@ -2048,34 +2050,6 @@ class Lottery {
   }
 }
 
-// let r = new Lottery();
-// r.num();
-// console.log('r', r);
-
-function deepCloneFP(target, map = new WeakMap()) {
-  if (typeof target === "object") {
-    const isArray = Array.isArray(target);
-    let cloneTarget = isArray ? [] : {};
-    if (map.get(target)) {
-      return map.get(target);
-    }
-    map.set(target, cloneTarget);
-
-    const keys = isArray ? target : Object.keys(target);
-    let idx = -1;
-    const len = keys.length;
-    while (++idx < len) {
-      let tmpIdx = idx;
-      if (keys) {
-        tmpIdx = keys[tmpIdx];
-      }
-      cloneTarget[tmpIdx] = deepCloneFP(target[tmpIdx], map);
-    }
-    return cloneTarget;
-  } else {
-    return target;
-  }
-}
 
 /**构建虚拟dom 类
  * 虚拟dom 构建及其渲染流程
@@ -3407,7 +3381,7 @@ Function.prototype.myBind = function (context = window) {
 
 /**new 实现 */
 function myNew (targetClass, ...args) {
-  let obj = Object.create(targetClass.prototype); //创建一个新对象
+  let obj = Object.create(targetClass.prototype); //创建一个新对象,基于对象的prototype 创建一个新对象
   targetClass.apply(obj, args); //链接到原型，绑定this
   return obj;//返回新对象
 }
@@ -3434,7 +3408,7 @@ const proxy = new Proxy(xiaowang, {
     }
   }
 })
-console.log(sendToMyLove(proxy));
+// console.log(sendToMyLove(proxy));
 
 // function addBigNum (a, b) {
 //   let res = '', temp = 0;
@@ -3792,9 +3766,9 @@ limit(2, [1000, 1000, 1000, 1000], timeout).then(res => {
 
 
  /**将虚拟dom转化为DOM */
- function render (vnode, container) {
-    container.appendChild(_render(vnode));
- }
+//  function render (vnode, container) {
+//     container.appendChild(_render(vnode));
+//  }
 
  function _render (vnode) {
    /**数字类型就转化为string */
@@ -4019,7 +3993,7 @@ const holland = (array) => {
   return array;
 }
 
-console.log('=========>>>>000', holland([1,2,3,2,3,1,2])); // 1122233
+// console.log('=========>>>>000', holland([1,2,3,2,3,1,2])); // 1122233
 
 /** 贪心算法
  * 动态规划问题，找局部最优解 换酒瓶问题
@@ -4061,7 +4035,7 @@ class GreedyAlgorithm {
 let il = new GreedyAlgorithm(9, 3);
 // console.log('========>>>能多喝到的酒瓶il:', il.calc());
 // console.log('========>>>总共喝到的酒瓶il:', (il.calc() + 9));
-console.log('========>>>改进贪心 能多喝到的酒瓶il:', il.reCalc());
+// console.log('========>>>改进贪心 能多喝到的酒瓶il:', il.reCalc());
 
 function extend (source) {
   let res = {};
@@ -4099,10 +4073,221 @@ function concat (origin, target, index) {
   }
   return res;
 }
-console.log('====>>>fff', concat([1,2,3], [4,5], 2));
+
+function reduceWrapperMap (array, cb) {
+  return array.reduce((acc, cur, index, array) => {
+    const item = cb(cur, index, array);
+    acc.push(item);
+    return acc;
+  }, [])
+}
+
+class VueProxy {
+  constructor (target, handle = {
+    set(target, key, value, recevier) {
+      return Reflect.set(target, key, value, recevier);
+    }
+  }) {
+    if (!this.isArray(target) && !this.isObject(target)) {
+      throw new Error('不是数组或对象');
+    }
+    this._target = target;
+    this._handler = handle;
+
+    return new Proxy(this.observe(this._target), this._handler);
+  }
+
+  isArray (target) {
+    return Object.prototype.toString.call(target) === '[object Array]';
+  }
+
+  isObject (target) {
+    return Object.prototype.toString.call(target) === '[object Object]'
+  }
+
+  observe () {
+    for (let key in target) {
+      if (this.isObject(target[key]) || this.isArray(target[key])) {
+        this.observe(target[key]);
+        target[key] = new Proxy(target[key], this._handler);
+      }
+    }
+    return target;
+  }
+}
+
+/**
+ * 解码当前参数字符数字可能存在的组合，统计组合的数量
+ * 思路：拆解字符数字，算组合，若存在组合大于26，则拆分(最大不超过26，即 Z)，0无法拆解，因为所有的数字都需要映射，0开头的字符无法拆解。
+ * 例如 10345609
+ * @param {String}} strNum
+ */
+function decodeNumberCnt (strNum) {
+    if (!strNum || !strNum.length || strNum.startsWith('0')) return 0;
+}
 
 
+function deepCloneFP(target, map = new WeakMap()) {
+  if (typeof target === 'object') {
+    const isArray = Array.isArray(target);
+    let cloneTarget = isArray ? [] : {};
+    if (map.get(target)) {
+      return map.get(target);
+    }
+    map.set(target, cloneTarget);
 
+    const keys = isArray ? target : Object.keys(target);
+    console.log('keys', keys);
+    let idx = -1;
+    const len = keys.length;
 
+    while (++idx < len) {
+      let tmpKey = idx;
+      if (keys) {
+        tmpKey = keys[idx];
+      }
+      console.log('000', tmpKey);
+      cloneTarget[idx] = deepCloneFP(keys[tmpKey], map);
+    }
+    return cloneTarget;
+  } else {
+    return target;
+  }
+}
 
+/** 封装promise 具有限流、执行队列 */
+class AxiosCover {
+  constructor (n) {
+    this.limit = n;
+    this.count = 0;
+    this.queue = [];
+  }
 
+  /** 入列 */
+  enqueue (fn, promise = null, resolve = null, reject = null) {
+    if (promise) {
+      this.queue.push({fn, resolve, reject});
+      this.queue.push(promise);
+      return promise;
+    }
+    let p = new Promise((resolve, reject) => {
+      this.queue.push({ fn, resolve, reject })
+    })
+    this.queue.push(p);
+    return p;
+  }
+
+  //出列
+  dequeue () {
+    if (this.count < this.limit && this.queue.length) {
+      const { fn, resolve, reject } = this.queue.shift();
+      const p = this.queue.shift();
+      this.run(p, fn, resolve, reject);
+    }
+  }
+  /** 执行fn */
+  async run (p, fn, resolve, reject) {
+    try {
+      this.count ++;
+      const value = await fn(p, resolve, reject);
+      this.count --;
+      /** 释放主promise */
+      this.dequeue();
+      resolve(value);
+    } catch (e) {
+      this.count --;
+      this.dequeue();
+    }
+  }
+
+  build (fn, promise) {
+    let p = this.enqueue(fn, ...promise);
+    this.dequeue();
+    return p;
+  }
+
+  post (url) {
+    let fns = [], len = arguments.length - 1, parentPromise = [], hasRetry = false;
+    if (arguments.length > 1) {
+      url = arguments[0];
+      if (len > 2 && arguments[len - 2] instanceof Promise) {
+        parentPromise = [].slice().call(arguments, len - 2);
+        fns = [].slice().call(arguments, 0, len - 2);
+      } else {
+        fns = [].slice().call(arguments, 0);
+      }
+    }
+
+    /** 队列里面的promise 执行真正请求的地方 */
+    let request = (...parentP) => {
+      let res, rej, promise;
+      promise = new Promise((resolve, reject) => {
+        res = resolve;
+        rej = reject;
+        setTimeout(() => {
+          resolve(url + '执行成功');
+        }, Math.random() * 500);
+        setTimeout(() => {
+          reject(url + '执行失败');
+        }, Math.random() * 500);
+      })
+      for (const fn of fns) {
+        if (typeof fn === 'function') {
+          fn.bind(this)(promise, res, rej, fns, parentP);
+          if (fn.name === AxiosCover.retry.name) {
+            hasRetry = true; //已重试
+          }
+        }
+      }
+      if (!hasRetry) {
+        AxiosCover.retry[0].bind(this)(promise, res, rej, fns, parentP);
+      }
+      return promise;
+    };
+    return this.build(request, parentPromise);
+  }
+
+  /** 重试策略 */
+  static retry (times) {
+    return function retry (promise, resolve, reject, args, parentP) {
+      /** promise 的错误回调 */
+      promise.catch(v => {
+        if (this instanceof AxiosCover && times > 0) { //当前实例中，且重试次数大于1
+          for (let a of args) {
+            if (typeof a === 'function' && a.name === AxiosCover.retry.name) {
+              times --;
+              a = AxiosCover.retry[times];
+            }
+          }
+          console.log(args[0] + '重试');
+          this.post(...args, ...parentP);
+        } else {
+          parentP[parentP.length - 1](new Error('重试失败' + v));
+        }
+      })
+    }
+  }
+
+  /** time 限制 超时策略 */
+  static timeout (time) {
+    return function timeout (promise, resolve, reject, args) {
+      let t = setTimeout(() => {
+        reject(args[0] + '超时')
+      }, time);
+      promise.then(() => {
+        clearTimeout(t);
+        t = null;
+      }).catch(() => {
+        clearTimeout(t);
+        t = null;
+      })
+    }
+  }
+}
+
+let testText = [ { text: 'a' }, { text: 'b' }, { text: 'c' } ];
+let resTe = testText.map(v => v.text).reduce((prev, now) => {
+  console.log('ggg', prev, now)
+  return prev + `\n${now}`
+})
+console.log('res111', resTe);

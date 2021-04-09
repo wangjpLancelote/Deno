@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>websocket</title>
+</head>
+<body>
+    <div>
+        <button>发送</button>
+        <h2>data</h2>
+        <div class="response"></div>
+        <button>这是一个按钮</button>
+        <div style="height: 300px; width: 300px; 
+border-radius: 50%; background: crimson;text-align: center;
+color:white;line-height: 300px;"> 
+这是一个球</div>
+    </div>
+</body>
+<script>
+    let onButtons = document.getElementsByTagName('button')[0];
+    let onResponse = document.getElementsByClassName('response')[0];
+
+    onButtons.addEventListener('click', onClick, false);
+    function onClick () {
+        /** 建立socket 联系 */
+        let socket = new WebSocket('ws://localhost:3000');
+        socket.OPEN = function () {
+            socket.send('123');
+        }
+        socket.onmessage = function (event) {
+            console.log(event.data);
+            onResponse.innerHTML = event.data;
+        }
+        socket.onclose = function () {
+            console.log('close');
+        }
+    }
+</script>
+</html>

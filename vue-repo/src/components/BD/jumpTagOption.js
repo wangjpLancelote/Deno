@@ -496,13 +496,13 @@ export const tagOptions = [
         metaData: 'String',
         type: 'select',
         name: '是否新页面打开',
-        data: [{ key: true, label: '是' }, { key: false, label: '否', default: true }]
+        data: [{ key: false, label: '否', default: true }, { key: true, label: '是' }]
       },
       actionBarGone: {
         metaData: 'String',
         type: 'select',
         name: '隐藏默认导航栏',
-        data: [{ key: true, label: '是' }, { key: false, label: '否', default: true }]
+        data: [{ key: false, label: '否', default: true }, { key: true, label: '是' }]
       }
     },
     judgeValue: (value) => {
@@ -978,6 +978,12 @@ export const tagOptions = [
         type: 'input',
         name: '页面code(必填)',
         data: null
+      },
+      cardId: {
+        metaData: 'Number',
+        type: 'input',
+        name: '卡片ID',
+        data: null
       }
     }
   },
@@ -993,6 +999,12 @@ export const tagOptions = [
         type: 'input',
         name: '页面code(必填)',
         data: null
+      },
+      cardId: {
+        metaData: 'Number',
+        type: 'input',
+        name: '卡片ID',
+        data: null
       }
     }
   },
@@ -1002,6 +1014,13 @@ export const tagOptions = [
     messageField: 'null',
     sourceField: null,
     label: '叫早哄睡'
+  },
+  {
+    tag: 'ETClassify',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '自然拼读分级'
   },
   {
     tag: 'GroupCourseDetail',
@@ -1072,6 +1091,13 @@ export const tagOptions = [
     messageField: 'null',
     sourceField: null,
     label: '我的打卡列表'
+  },
+  {
+    tag: 'AccountMyAward',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '我的奖品'
   }
   //   {
   //     tag: 'CommodityPay',
