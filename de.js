@@ -4285,9 +4285,7 @@ class AxiosCover {
   }
 }
 
-let testText = [ { text: 'a' }, { text: 'b' }, { text: 'c' } ];
-let resTe = testText.map(v => v.text).reduce((prev, now) => {
-  console.log('ggg', prev, now)
-  return prev + `\n${now}`
-})
-console.log('res111', resTe);
+let testRow = [1,2,3,4,5];
+let arr1 = testRow.slice(0, 1);
+let arr2 = testRow.slice(1);
+console.log('arr1: %j, arr2: %j', arr1, arr2);

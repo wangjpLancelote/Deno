@@ -130,7 +130,38 @@ export const tagOptions = [
     inputReg: null,
     messageField: null,
     sourceField: null,
-    label: '专题分类'
+    label: '专题列表'
+    // needParams: true, // 需要
+    // params: { // 额外参数
+    //   catId: {
+    //     metaData: 'Number',
+    //     type: 'input',
+    //     name: '专题分类ID',
+    //     data: null
+    //   }
+    // }
+  },
+  {
+    tag: 'SubjectListHome',
+    inputReg: null,
+    messageField: null,
+    sourceField: null,
+    label: '专题分类',
+    needParams: true, // 需要
+    params: { // 额外参数
+      uid: {
+        metaData: 'Number',
+        type: 'input',
+        name: '专题ID',
+        data: null
+      },
+      catId: {
+        metaData: 'Number',
+        type: 'input',
+        name: '专题分类ID',
+        data: null
+      }
+    }
   },
   {
     tag: 'BroadcasterList',
@@ -471,6 +502,7 @@ export const tagOptions = [
       return <a href={tag[key]} target='_blank'>{'跳转'}</a>;
     }
   },
+
   {
     tag: 'MallHome',
     inputReg: null,
@@ -987,33 +1019,41 @@ export const tagOptions = [
       }
     }
   },
-  {
-    tag: 'DynamicCard',
-    inputReg: (/[^\d]+/),
-    messageField: 'null',
-    sourceField: null,
-    label: '可视化卡片(RN)',
-    params: { // 额外参数
-      pageCode: {
-        metaData: 'String',
-        type: 'input',
-        name: '页面code(必填)',
-        data: null
-      },
-      cardId: {
-        metaData: 'Number',
-        type: 'input',
-        name: '卡片ID',
-        data: null
-      }
-    }
-  },
+  //   {
+  //     tag: 'DynamicCard',
+  //     inputReg: (/[^\d]+/),
+  //     messageField: 'null',
+  //     sourceField: null,
+  //     label: '可视化卡片(RN)',
+  //     params: { // 额外参数
+  //       pageCode: {
+  //         metaData: 'String',
+  //         type: 'input',
+  //         name: '页面code(必填)',
+  //         data: null
+  //       },
+  //       cardId: {
+  //         metaData: 'Number',
+  //         type: 'input',
+  //         name: '卡片ID',
+  //         data: null
+  //       }
+  //     }
+  //   },
   {
     tag: 'RadioCategories',
     inputReg: (/[^\d]+/),
     messageField: 'null',
     sourceField: null,
-    label: '叫早哄睡'
+    label: '叫早哄睡',
+    params: {
+      categoryId: {
+        metaData: 'Number',
+        type: 'select',
+        name: '叫早分类',
+        data: [{ key: 1, label: '叫早', default: true }, { key: 2, label: '哄睡' }]
+      }
+    }
   },
   {
     tag: 'ETClassify',
@@ -1045,6 +1085,22 @@ export const tagOptions = [
         return '';
       }
       return <a href={tag[key]} target='_blank'>{'跳转'}</a>;
+    }
+  },
+  {
+    tag: 'PlayVideo',
+    inputReg: null,
+    messageField: 'typeId',
+    sourceField: 'typeId',
+    label: '播放视频(Native)',
+    needParams: true, // 需要
+    params: { // 额外参数
+      url: {
+        metaData: 'String',
+        type: 'input',
+        name: '视频地址',
+        data: null
+      }
     }
   },
   {
@@ -1098,6 +1154,13 @@ export const tagOptions = [
     messageField: 'null',
     sourceField: null,
     label: '我的奖品'
+  },
+  {
+    tag: 'RecordAlbumHome',
+    inputReg: (/[^\d]+/),
+    messageField: 'null',
+    sourceField: null,
+    label: '录音专辑页'
   }
   //   {
   //     tag: 'CommodityPay',
