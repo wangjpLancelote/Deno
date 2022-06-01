@@ -159,7 +159,93 @@ function LazyMan (name) {
 // LazyMan('Hank').sleepFirst(5).eat('supper');
 
 /** 反转链表
- *  两种方式
+ *  两种方式, 返回一个链表
+ *  如 [1, 2, 3, 4, 5] => [5, 4, 3, 2, 1]
  *  1.循环，非递归
  *  2.递归
+ *  @param { ListNode } head
+ *  @returns { ListNode }
+ *  循环解法
  */
+
+const reverseLinkLoop = (head) => {
+  let pre = null; // 上一个节点
+  let curr = head; // 当前节点
+  while (curr !== null) {
+    let nxt = curr.next; // 当前节点的下一个节点
+    curr.next = pre; // 这一步做替换，当前节点的下一个节点替换成上一个节点
+    pre = curr; // 上一个节点就变成了当前节点
+    curr = nxt; // 当前节点就变成了下一个节点
+  }
+  return pre;
+}
+
+const reverseListCallee = (head) => {
+  if (head === null || head.next === null) {
+    return head; // 临界情况，只有一个节点反转就是当前节点
+  }
+  let curr = reverseListCallee(head.next);
+  head.next.next = head;
+  head.next = null;
+  return curr;
+}
+
+/** 二叉树最底层最左边的值
+ *  例如：[2, 1, 3] => 1
+ *  [1, 2, 3, 4, null, 5, 6, null, null, 7] => 7
+ *  二叉树的取值规律：每一层数量：2^(n - 1); 第一层顶点 = 1, 第二层 = 2, 第三层 = 4, 第四层 = 8, 即第一层下标(0), 第二层下标(1, 2)
+ *  第三层下标(3, 6), 第四层下标(7, 14)
+ * 
+ *  1. 深度优先
+ *  2. 广度优先
+ */
+
+const findLeftBottomDFS = (data) => {
+  let maxDeepth = 0; // 最大层数 | 深度
+  let deep = 0; // 当前深度
+  let res = null;
+  const DFS = (root) => {
+    if (root === null) return null; // 不存在根节点
+    deep ++;
+    if (deep > maxDeepth) {
+      maxDeepth = deep;
+      res = root;
+    }
+    DFS(root.left);
+    DFS(root.right);
+    deep --; // 这里为什么要将深度减1，因为deep是一个循环外变量, 如果左子树遍历完之后就不必再去比较右子树，直接进入下一层即可，属于优化时间复杂度的操作
+  }
+  DFS(data);
+  return res; // 这个res 是一个节点，取值 = res.left
+}
+
+/** 广度优先遍历 */
+const findLeftBottomBFS = (data) => {
+  let queue = []; // 使用队列，将同一层级的节点放到一起进行比较
+  if (data) queue.push(data);
+  let val = null;
+  while (queue.length) {
+    const size = queue.length;
+    for (let i = 0; i < size; ++i) {
+      const curr = queue.shift();
+      if (i === 0) val = curr.val; // i == 0 表示是最左边的节点，
+      if (curr.left) queue.push(curr.left);
+      if (curr.right) queue.push(curr.right);
+    }
+  }
+}
+
+/** 贪心算法
+ *  最大值交换
+ *  交换数字中的任意两位数字, 获得最大值
+ *  2736 => 7236
+ */
+
+const greedy = (data) => {
+  const arr = data.toString().split(',').map(Number);
+  let last = -1, lastMax = -1, index = arr[0];
+  for (let i = arr.length - 1; i >= 0; i --) {
+    
+  }
+}
+
