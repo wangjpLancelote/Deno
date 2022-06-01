@@ -4285,7 +4285,35 @@ class AxiosCover {
   }
 }
 
-let testRow = [1,2,3,4,5];
-let arr1 = testRow.slice(0, 1);
-let arr2 = testRow.slice(1);
-console.log('arr1: %j, arr2: %j', arr1, arr2);
+// let testRow = [1,2,3,4,5];
+// let arr1 = testRow.slice(0, 1);
+// let arr2 = testRow.slice(1);
+
+function transform (data, fields) {
+  const res = []
+  fields.forEach((item, index) => {
+    res.concat(data.map(v => { v.name === item; return v; }));
+  })
+  console.log('res', res);
+  return res;
+}
+
+const getKeyByValue = (source, target) => {
+  let value = '';
+  for (let key in source) {
+    if (source[key] === target) {
+      value = key;
+      break;
+    }
+  }
+  return value;
+}
+
+const arithSerialize = {
+  1: '∩',
+  2: '∪',
+  3: '-',
+}
+
+let rts = getKeyByValue(arithSerialize, '∪');
+console.log('>>>rt', rts);
