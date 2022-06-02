@@ -243,12 +243,27 @@ const findLeftBottomBFS = (data) => {
  */
 
 const greedy = (data) => {
-  const arr = data.toString().split(',').map(Number);
-  let last = -1, lastMax = -1, index = arr[0];
+  const arr = data.toString().split('').map(Number);
+  let last = -1, lastMax = -1, max = -1;
   for (let i = arr.length - 1; i >= 0; i --) {
-    
+    last = i;
+    if (!~lastMax) {
+      lastMax = last;
+    }
+    if (i === 0 && lastMax !== i) {
+      max = lastMax;
+    }
+    if (arr[i] > arr[lastMax]) {
+      lastMax = i;
+    } else {
+      continue;
+    }
   }
+  [arr[lastMax], arr[last]] = [arr[last], arr[lastMax]];
+  return arr.join('');
 }
+
+const ss = greedy(2746);
 
 /** 青蛙跳井问题
  *  一次可以跳1级，也可以跳二级
